@@ -1,16 +1,40 @@
-from datetime import date
+from datetime import date, timedelta
 from calendar import monthrange
 from random import choice
+
+from django.conf.global_settings import DEFAULT_FROM_EMAIL
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import EmailMessage, send_mail
+
 from .models import Day, TimeBlock, Quote, EveningReflection, UserProfile
 from .forms import RegisterForm, EmailAuthenticationForm
 from datetime import date, timedelta
+from django.conf import settings
+from django.contrib.auth import login, logout
+from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import EmailMessage
+from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
+from .forms import RegisterForm, EmailAuthenticationForm
 
+# ================================================
+# 🔹 Înregistrare cu confirmare email
+# ================================================
 def register_view(request):
     if request.user.is_authenticated:
         return redirect("today")
@@ -18,12 +42,56 @@ def register_view(request):
     form = RegisterForm(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
-        user = form.save()
-        login(request, user)
-        return redirect("today")
+        user = form.save(commit=False)
+        user.is_active = False  # cont dezactivat până se confirmă email-ul
+        user.save()
+
+        # Construiește linkul de activare
+        current_site = get_current_site(request)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        activation_link = f"https://{current_site.domain}/activate/{uid}/{token}/"
+
+        # Trimite email HTML
+        message = render_to_string(
+            "planner/email/confirm_email.html",
+            {"user": user, "activation_link": activation_link}
+        )
+        email = EmailMessage(
+            subject="Confirmă-ți contul - Emotional Planner",
+            body=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[user.email],
+        )
+        email.content_subtype = "html"
+        email.send(fail_silently=False)
+
+        # Afișează pagina de confirmare că email-ul a fost trimis
+        return render(request, "planner/auth/email_confirm_success.html", {"email": user.email})
 
     return render(request, "planner/auth/register.html", {"form": form})
 
+# ================================================
+# 🔹 Activare cont
+# ================================================
+def activate_account(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+        return render(request, "planner/auth/email_confirm_success.html")
+    else:
+        return render(request, "planner/auth/email_confirm_invalid.html")
+
+# ================================================
+# 🔹 Login
+# ================================================
 def login_view(request):
     if request.user.is_authenticated:
         return redirect("today")
@@ -36,9 +104,13 @@ def login_view(request):
 
     return render(request, "planner/auth/login.html", {"form": form})
 
+# ================================================
+# 🔹 Logout
+# ================================================
 def logout_view(request):
     logout(request)
     return redirect("home")
+
 
 @login_required
 def profile_view(request):

@@ -30,11 +30,10 @@ from .views import (
     login_view,
     logout_view,
     profile_view,
-
+    activate_account,
 )
 
 urlpatterns = [
-
     # =========================
     # 🏠 HOME
     # =========================
@@ -48,21 +47,13 @@ urlpatterns = [
     # =========================
     # 📆 ZI SPECIFICĂ
     # =========================
-    path(
-        'day/<int:year>/<int:month>/<int:day>/',
-        day_detail_view,
-        name='day_detail'
-    ),
+    path('day/<int:year>/<int:month>/<int:day>/', day_detail_view, name='day_detail'),
 
     # =========================
     # 🗓 CALENDAR
     # =========================
     path("calendar/", calendar_view, name="calendar"),
-    path(
-        "calendar/<int:year>/<int:month>/",
-        calendar_view,
-        name="calendar_month"
-    ),
+    path("calendar/<int:year>/<int:month>/", calendar_view, name="calendar_month"),
 
     # =========================
     # ⏰ TIMEBLOCKS
@@ -81,49 +72,25 @@ urlpatterns = [
     # =========================
     # 🌙 CHECK-IN SEARĂ
     # =========================
-    path(
-        'evening-reflection/',
-        evening_reflection_view,
-        name='evening_reflection'
-    ),
+    path('evening-reflection/', evening_reflection_view, name='evening_reflection'),
+    path('evening-reflection/<int:year>/<int:month>/<int:day>/', evening_reflection_view, name='evening_reflection_day'),
 
     # =========================
     # 📊 ANALYTICS
     # =========================
-    path(
-        'monthly-overview/',
-        monthly_overview_view,
-        name='monthly_overview'
-    ),
-    path(
-        'weekly-score/',
-        weekly_balance_score_view,
-        name='weekly_score'
-    ),
-    path(
-        'charts/mood/',
-        mood_chart_view,
-        name='mood_chart'
-    ),
-    path(
-        'charts/productivity/',
-        productivity_chart_view,
-        name='productivity_chart'
-    ),
+    path('monthly-overview/', monthly_overview_view, name='monthly_overview'),
+    path('weekly-score/', weekly_balance_score_view, name='weekly_score'),
+    path('charts/mood/', mood_chart_view, name='mood_chart'),
+    path('charts/productivity/', productivity_chart_view, name='productivity_chart'),
 
     # =========================
     # 🔐 AUTH
     # =========================
     path("register/", register_view, name="register"),
+    path("activate/<uidb64>/<token>/", activate_account, name="activate"),
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
     path("profile/", profile_view, name="profile"),
-    path(
-    "evening-reflection/<int:year>/<int:month>/<int:day>/",
-    evening_reflection_view,
-    name="evening_reflection"
-),
-
 ]
 
 

@@ -8,7 +8,7 @@ from .models import UserProfile
 
 
 # ===================================================
-# 🌸 REGISTER FORM — EMAIL + PAROLĂ (SAFE)
+# 🌸 REGISTER FORM — EMAIL + PAROLĂ (SAFE, CU CONFIRMARE EMAIL)
 # ===================================================
 class RegisterForm(forms.ModelForm):
     password1 = forms.CharField(
@@ -30,22 +30,15 @@ class RegisterForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["email"]
-        labels = {
-            "email": "Adresa de email"
-        }
+        labels = {"email": "Adresa de email"}
         widgets = {
-            "email": forms.EmailInput(attrs={
-                "placeholder": "Adresa de email"
-            })
+            "email": forms.EmailInput(attrs={"placeholder": "Adresa de email"})
         }
 
     def clean_email(self):
         email = self.cleaned_data["email"].lower()
-
-        # ✅ verificăm EMAIL (pentru UX)
         if User.objects.filter(email=email).exists():
             raise ValidationError("Acest email este deja folosit 💭")
-
         return email
 
     def clean(self):
@@ -62,22 +55,20 @@ class RegisterForm(forms.ModelForm):
 
     def save(self, commit=True):
         """
-        ✅ username NU este email
-        ✅ username este generat sigur → nu mai apare IntegrityError
+        ✅ Creează user inactiv (până confirmă emailul)
+        ✅ Generează username unic automat
         """
         user = super().save(commit=False)
-
         email = self.cleaned_data["email"].lower()
-
-        # 🔐 username intern, unic
         user.username = f"user_{User.objects.count() + 1}"
         user.email = email
         user.set_password(self.cleaned_data["password1"])
-        user.is_active = True
+
+        # Dezactivat până la confirmarea email-ului
+        user.is_active = False
 
         if commit:
             user.save()
-
         return user
 
 
@@ -87,21 +78,20 @@ class RegisterForm(forms.ModelForm):
 class EmailAuthenticationForm(forms.Form):
     email = forms.EmailField(
         label="Email",
-        widget=forms.EmailInput(attrs={
-            "placeholder": "Adresa de email"
-        })
+        widget=forms.EmailInput(attrs={"placeholder": "Adresa de email"})
     )
-
     password = forms.CharField(
         label="Parolă",
-        widget=forms.PasswordInput(attrs={
-            "placeholder": "Introdu parola"
-        })
+        widget=forms.PasswordInput(attrs={"placeholder": "Introdu parola"})
     )
 
     def clean(self):
-        email = self.cleaned_data.get("email", "").lower()
-        password = self.cleaned_data.get("password")
+        cleaned_data = super().clean()
+        email = cleaned_data.get("email", "").lower()
+        password = cleaned_data.get("password")
+
+        if not email or not password:
+            raise ValidationError("Te rugăm să completezi email-ul și parola 💭")
 
         try:
             user = User.objects.get(email=email)
@@ -114,10 +104,10 @@ class EmailAuthenticationForm(forms.Form):
             raise ValidationError("Email sau parolă incorectă 💭")
 
         if not user.is_active:
-            raise ValidationError("Contul nu este activ.")
+            raise ValidationError("Contul nu este activ. Te rugăm să confirmi email-ul 💌")
 
         self.user = user
-        return self.cleaned_data
+        return cleaned_data
 
     def get_user(self):
         return self.user
