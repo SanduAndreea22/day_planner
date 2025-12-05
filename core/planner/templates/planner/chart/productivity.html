@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}✅ Productivitate & stare · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="card productivity-card">
+
+    <h2 class="title-gradient">
+        ✅ Productivitate & stare
+    </h2>
+
+    <p class="productivity-subtitle">
+        Câte lucruri ai dus la capăt <strong>indiferent de cum te-ai simțit</strong>.<br>
+        <span class="muted">Productivitatea nu anulează emoțiile.</span>
+    </p>
+
+    <!-- ✅ NAVIGARE SĂPTĂMÂNALĂ -->
+    <div class="week-nav">
+        <a class="week-btn" href="?offset={{ offset|add:-1 }}">
+            ← Săptămâna trecută
+        </a>
+
+        <div class="week-label">
+            {{ start|date:"d M Y" }} – {{ end|date:"d M Y" }}
+        </div>
+
+        <a class="week-btn" href="?offset={{ offset|add:1 }}">
+            Săptămâna următoare →
+        </a>
+    </div>
+
+    <!-- ✅ GRAFIC -->
+    <div class="chart-wrapper">
+        <canvas id="productivityChart"></canvas>
+    </div>
+
+    <p class="productivity-note">
+        Au fost zile mai lente. Și ele contează 🤍
+    </p>
+
+    <!-- ✅ LISTĂ ZILE -->
+    <div class="productivity-list">
+        {% for item in data %}
+            <div class="productivity-row {% if item.completed == 0 %}empty{% endif %}">
+                <div class="prod-date">
+                    {{ item.date }}
+                </div>
+
+                <div class="prod-mood" title="Starea zilei">
+                    {% if item.mood == "very_bad" %}😞
+                    {% elif item.mood == "bad" %}😕
+                    {% elif item.mood == "neutral" %}😐
+                    {% elif item.mood == "good" %}🙂
+                    {% elif item.mood == "very_good" %}😄
+                    {% else %}🌙{% endif %}
+                </div>
+
+                <div class="prod-value">
+                    {% if item.completed == 0 %}
+                        Zi fără task-uri finalizate
+                    {% else %}
+                        {{ item.completed }} task{{ item.completed|pluralize }}
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p class="muted">Nu există date pentru această perioadă.</p>
+        {% endfor %}
+    </div>
+
+    <!-- ✅ CTA -->
+    <div class="productivity-actions">
+        <a href="{% url 'calendar' %}" class="button primary">📅 Calendar</a>
+        <a href="{% url 'weekly_score' %}" class="button">← Scor săptămânal</a>
+    </div>
+
+    <p class="productivity-final">
+        🌱 Chiar și pașii mici spun o poveste.
+    </p>
+</div>
+
+<!-- ✅ JSON DATA CORECTV -->
+{{ data|json_script:"productivity-data" }}
+
+<script>
+    const PRODUCTIVITY_DATA = JSON.parse(
+        document.getElementById("productivity-data").textContent
+    );
+</script>
+
+<script src="{% static 'planner/script.js' %}"></script>
+{% endblock %}
+
+
+
+
+
+
+

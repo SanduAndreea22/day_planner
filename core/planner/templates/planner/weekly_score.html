@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}💗 Scorul săptămânii · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="card weekly-card">
+
+    <!-- 🌸 TITLU -->
+    <div class="weekly-title title-gradient">
+        💗 Săptămâna ta
+    </div>
+
+    <div class="weekly-subtitle muted">
+        Acest scor nu te definește. Este doar o reflecție blândă.
+    </div>
+
+    <!-- 📅 NAVIGARE SĂPTĂMÂNALĂ (TRECUT / VIITOR) -->
+    <div class="weekly-nav">
+        <a href="?offset={{ offset|add:-1 }}" class="week-btn muted">
+            ← Săptămâna trecută
+        </a>
+
+        <div class="week-label">
+            {{ start|date:"d M Y" }} – {{ end|date:"d M Y" }}
+        </div>
+
+        <a href="?offset={{ offset|add:1 }}" class="week-btn muted">
+            Săptămâna următoare →
+        </a>
+    </div>
+
+    <!-- ⭐ SCOR -->
+    <div class="weekly-score-wrapper">
+        <div class="weekly-score-value">
+            {{ score }} <span>/ 100</span>
+        </div>
+
+        <!-- 🌸 PROGRESS BLÂND -->
+        <div class="weekly-progress">
+            <div class="weekly-progress-fill"
+                 style="width: {{ score }}%">
+            </div>
+        </div>
+    </div>
+
+    <!-- 💬 MESAJ -->
+    <div class="weekly-message">
+        {{ emoji }} {{ message }}
+    </div>
+
+    <!-- 📎 CONTEXT -->
+    <div class="weekly-hint muted">
+        Nu este competiție. Nu există scor “rău”.
+    </div>
+
+    <!-- 📊 DETALII -->
+    <div class="weekly-details">
+
+        <div class="detail-card">
+            🌿
+            <strong>{{ days_logged }}</strong>
+            <span class="muted">
+                Zile notate<br>
+                <small>Fiecare contează</small>
+            </span>
+        </div>
+
+        <div class="detail-card highlight">
+            ✅
+            <strong>{{ completed_tasks }}</strong>
+            <span class="muted">
+                Task-uri<br>
+                <small>Ai făcut ce ai putut</small>
+            </span>
+        </div>
+
+        <div class="detail-card">
+            💭
+            <strong>{{ mood_days }}</strong>
+            <span class="muted">
+                Stări notate<br>
+                <small>Conectare cu tine</small>
+            </span>
+        </div>
+
+    </div>
+
+    <!-- 🌱 SUGESTIE -->
+    <div class="weekly-suggestion">
+        🌱 {{ suggestion }}
+    </div>
+
+    <!-- 🔘 CTA PRINCIPAL -->
+    <div class="weekly-actions">
+        <a href="{% url 'today' %}" class="button primary">
+            🌸 Începe azi
+        </a>
+
+        <a href="{% url 'calendar' %}" class="button">
+            📅 Calendar
+        </a>
+    </div>
+
+    <!-- 📈 EXTRA -->
+    <div class="weekly-actions secondary">
+        <a href="{% url 'mood_chart' %}" class="button">
+            📈 Stările tale
+        </a>
+
+        <a href="{% url 'productivity_chart' %}" class="button">
+            ✅ Productivitate
+        </a>
+    </div>
+
+</div>
+{% endblock %}
+
+
+
+
+

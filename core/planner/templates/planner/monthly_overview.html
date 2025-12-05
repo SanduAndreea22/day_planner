@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}📊 Overview lunar · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="card overview-card">
+
+    <!-- ✅ NAVIGARE LUNARĂ -->
+    <div class="month-nav">
+        <a class="month-btn"
+           href="?year={{ year }}&month={{ month|add:'-1' }}">
+            ←
+        </a>
+
+        <div class="month-label title-gradient">
+            {{ icon }} {{ month_name }} {{ year }}
+        </div>
+
+        <a class="month-btn"
+           href="?year={{ year }}&month={{ month|add:'1' }}">
+            →
+        </a>
+    </div>
+
+    <div class="overview-subtitle muted">
+        O privire blândă asupra stărilor tale din această lună.
+    </div>
+
+    <!-- ✅ LISTĂ ZILE -->
+    <div class="overview-days">
+        {% for day in days %}
+            <a href="{% url 'day_detail' day.date.year day.date.month day.date.day %}"
+               class="overview-day {% if not day.mood %}empty{% endif %}"
+               title="Vezi ziua">
+
+                <span class="day-date">
+                    {{ day.date|date:"d" }}
+                </span>
+
+                <span class="day-mood">
+                    {% if day.mood == "very_bad" %}😞 Foarte greu
+                    {% elif day.mood == "bad" %}😕 Greu
+                    {% elif day.mood == "neutral" %}😐 Neutru
+                    {% elif day.mood == "good" %}🙂 Bine
+                    {% elif day.mood == "very_good" %}😄 Foarte bine
+                    {% else %}🌙 Zi fără notițe
+                    {% endif %}
+                </span>
+            </a>
+        {% empty %}
+            <p class="muted">Nu există încă zile notate în această lună.</p>
+        {% endfor %}
+    </div>
+
+    <!-- ✅ REZUMAT -->
+    <div class="overview-summary">
+        <p>
+            Ai notat <strong>{{ total_days }}</strong> zile luna aceasta.
+        </p>
+        <p class="muted">
+            {{ interpretation }}
+        </p>
+        <p class="hint">
+            Poate luna următoare începe cu o singură zi notată.
+        </p>
+    </div>
+
+    <!-- ✅ ACȚIUNI -->
+    <div class="overview-actions">
+        <a href="{% url 'calendar' %}" class="button">
+            ← Calendar
+        </a>
+        <a href="{% url 'today' %}" class="button primary">
+            🌱 Azi
+        </a>
+    </div>
+
+</div>
+{% endblock %}
+
+
+
+
+

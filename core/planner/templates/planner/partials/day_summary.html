@@ -1,0 +1,87 @@
+<!-- ================== REZUMAT ZI (READ-ONLY) ================== -->
+
+<div class="day-summary-card read-only">
+
+    <h4 class="summary-title">🔒 Așa a arătat ziua ta</h4>
+    <p class="muted">
+        Zi închisă. Informațiile de mai jos nu mai pot fi editate.
+    </p>
+
+{% if day.color %}
+<div class="summary-row">
+    <span class="summary-label">🎨 Energia zilei</span>
+    <span class="color-label {{ day.color }}">
+        {% if day.color == "red" %}🔴 Scăzută
+        {% elif day.color == "yellow" %}🟡 Medie
+        {% elif day.color == "green" %}🟢 Bună
+        {% elif day.color == "blue" %}🔵 Calmă
+        {% elif day.color == "purple" %}🟣 Creativă
+        {% else %}{{ day.color }}
+        {% endif %}
+    </span>
+</div>
+{% endif %}
+
+{% if day.mood %}
+<div class="summary-row">
+    <span class="summary-label">💭 Starea</span>
+    <span class="mood-label {{ day.mood }}">
+        {% if day.mood == "very_bad" %}😞 Foarte greu
+        {% elif day.mood == "bad" %}😕 Greu
+        {% elif day.mood == "neutral" %}😐 Neutru
+        {% elif day.mood == "good" %}🙂 Bine
+        {% elif day.mood == "very_good" %}😄 Foarte bine
+        {% else %}{{ day.mood }}
+        {% endif %}
+    </span>
+</div>
+{% endif %}
+
+
+    {% if day.notes %}
+    <div class="summary-box">
+        <label>✨ Un gând important</label>
+        <div class="closed-box">
+            {{ day.notes|linebreaks }}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- ================== ORAR ZI ================== -->
+
+<div class="day-summary-card">
+
+    <h4 class="summary-title">⏰ Orarul zilei</h4>
+
+    {% if time_blocks %}
+        {% for block in time_blocks %}
+        <div class="time-block-summary {% if block.completed %}done{% endif %}">
+            <span class="time">
+                {{ block.start_time|time:"H:i" }} – {{ block.end_time|time:"H:i" }}
+            </span>
+            <span class="title">{{ block.title }}</span>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="muted">
+            Astăzi nu ai avut intervale planificate – și e ok 🤍
+        </p>
+    {% endif %}
+
+</div>
+
+<!-- ================== CITAT FINAL ================== -->
+
+{% if quote %}
+<div class="gentle-recommendation">
+    🌙 {{ quote.text }}
+</div>
+{% endif %}
+
+<p class="gentle-message">
+    Uneori, faptul că te oprești e un progres.
+</p>
+
+

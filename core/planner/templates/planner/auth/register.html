@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}🌸 Creează cont · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="card auth-card">
+
+    <h2 class="title-gradient auth-title">🌸 Creează cont</h2>
+
+    <!-- 💗 Context emoțional -->
+    <p class="auth-subtitle muted">
+        Creează un spațiu doar al tău. Blând. Sigur. Fără presiune.
+    </p>
+
+    <form method="post" class="auth-form" novalidate>
+        {% csrf_token %}
+
+        <!-- EMAIL -->
+        <div class="form-group">
+            {{ form.email.label_tag }}
+            {{ form.email }}
+            {% if form.email.errors %}
+                <div class="field-error">
+                    {{ form.email.errors.0 }}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- PAROLĂ -->
+        <div class="form-group">
+            {{ form.password1.label_tag }}
+            {{ form.password1 }}
+
+            <small class="password-rules muted">
+                Minimum 8 caractere · o literă mare · o cifră
+            </small>
+
+            {% if form.password1.errors %}
+                <div class="field-error">
+                    {{ form.password1.errors.0 }}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- CONFIRMĂ -->
+        <div class="form-group">
+            {{ form.password2.label_tag }}
+            {{ form.password2 }}
+
+            {% if form.password2.errors %}
+                <div class="field-error">
+                    {{ form.password2.errors.0 }}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- NON FIELD ERRORS -->
+        {% if form.non_field_errors %}
+            <div class="form-error-global">
+                {{ form.non_field_errors.0 }}
+            </div>
+        {% endif %}
+
+        <button type="submit" class="button primary auth-button">
+            Începe cu blândețe
+        </button>
+    </form>
+
+    <!-- 🔒 Reassurance -->
+    <div class="auth-trust muted">
+        <p>🔒 Datele tale sunt private</p>
+        <p>🌱 Nu trimitem spam</p>
+        <p>🕯️ Poți șterge contul oricând</p>
+    </div>
+
+    <p class="muted auth-footer">
+        Ai deja cont?
+        <a href="{% url 'login' %}"><strong>Autentifică-te</strong></a>
+    </p>
+</div>
+{% endblock %}
+
+

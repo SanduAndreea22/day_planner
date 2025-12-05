@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}🌸 Home · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="card home-card">
+
+    <!-- 🌿 Greeting -->
+    <div class="home-greeting">
+        <span class="title-gradient">
+            Bună 🌿
+        </span>
+    </div>
+
+    <!-- 📅 Data -->
+    <div class="home-date muted">
+        {{ today|date:"l, d F Y" }}
+    </div>
+
+    <!-- 💭 Quote -->
+    <div class="home-quote">
+        {% if quote %}
+            “{{ quote.text }}”
+        {% else %}
+            Azi este suficient să fii aici.
+        {% endif %}
+    </div>
+
+    <!-- 🧠 Claritate scop -->
+    <div class="home-description muted">
+        <p>
+            <strong>Emotional Planner</strong> este un spațiu personal pentru organizarea zilelor,
+            stărilor și gândurilor tale.
+        </p>
+        <p>
+            Fără presiune. Fără comparații. Doar ritmul tău.
+        </p>
+    </div>
+
+
+    <!-- 🌱 Onboarding soft -->
+    <div class="home-onboarding muted">
+        🌱 Prima ta zi începe simplu. Nu trebuie să completezi tot.
+    </div>
+
+    <!-- 🔍 Preview funcționalități -->
+    <div class="home-preview">
+
+        <div class="preview-card">
+            📅
+            <h4>Ziua ta</h4>
+            <p>
+                Vezi fiecare zi exact așa cum a fost
+                și închide-o atunci când simți.
+            </p>
+        </div>
+
+        <div class="preview-card">
+            🌙
+            <h4>Starea ta</h4>
+            <p>
+                Notează cum te simți.
+                Fără explicații, fără judecată.
+            </p>
+        </div>
+
+        <div class="preview-card">
+            ✅
+            <h4>Ce ai făcut</h4>
+            <p>
+                Task-uri simple, reale,
+                care reflectă ziua ta.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- 📖 Istoric -->
+    <div class="history-hint muted">
+        📖 Zilele tale se păstrează în timp și pot fi revizitate când simți.
+    </div>
+
+    <!-- 🔒 Încredere -->
+    <div class="home-trust muted">
+        <p>🔒 Tot ce scrii rămâne privat.</p>
+        <p>Nimeni nu vede ce notezi. Totul este doar pentru tine.</p>
+    </div>
+
+    <!-- 💬 Mesaje -->
+    <div class="home-messages muted">
+        💬 Mesajele se schimbă în funcție de zi și stare.
+    </div>
+
+</div>
+{% endblock %}
+
+

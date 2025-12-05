@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}💭 Starea emoțională · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="card mood-card">
+
+    <!-- HEADER -->
+    <div class="mood-header">
+        <h2 class="title-gradient">💭 Starea emoțională</h2>
+
+        <div class="mood-period muted">
+            {{ month_name }} {{ year }}
+        </div>
+
+        <!-- NAV LUNĂ -->
+        <div class="mood-nav">
+            <a href="?month={{ month|add:'-1' }}&year={{ year }}">← Luna trecută</a>
+            <a href="?month={{ month|add:'1' }}&year={{ year }}">Luna viitoare →</a>
+        </div>
+    </div>
+
+    <!-- SUBTITLU -->
+    <p class="mood-subtitle">
+        Observare blândă, nu judecată.<br>
+        <em>Faptul că te uiți deja spune ceva bun.</em>
+    </p>
+
+    <!-- REZUMAT AUTOMAT -->
+    {% if most_common_mood %}
+        <div class="mood-summary">
+            Majoritatea zilelor notate au fost
+            <strong>
+                {% if most_common_mood == "very_bad" %}foarte dificile
+                {% elif most_common_mood == "bad" %}mai grele
+                {% elif most_common_mood == "neutral" %}neutre
+                {% elif most_common_mood == "good" %}bune
+                {% elif most_common_mood == "very_good" %}foarte bune
+                {% endif %}
+            </strong>.
+        </div>
+    {% endif %}
+
+    <!-- LISTĂ ZILE -->
+    <div class="mood-list">
+        {% for day in days %}
+        <a
+            href="{% url 'day_detail' day.date.year day.date.month day.date.day %}"
+            class="mood-row {% if not day.mood %}empty{% endif %}"
+            title="Vezi ziua completă"
+        >
+            <span class="mood-date">
+                {{ day.date|date:"d M" }}
+            </span>
+
+            <span class="mood-emoji">
+                {% if day.mood == "very_bad" %}😞
+                {% elif day.mood == "bad" %}😕
+                {% elif day.mood == "neutral" %}😐
+                {% elif day.mood == "good" %}🙂
+                {% elif day.mood == "very_good" %}😄
+                {% else %}🌙
+                {% endif %}
+            </span>
+
+            <span class="mood-text">
+                {% if day.mood == "very_bad" %}Foarte greu
+                {% elif day.mood == "bad" %}Greu
+                {% elif day.mood == "neutral" %}Neutru
+                {% elif day.mood == "good" %}Bine
+                {% elif day.mood == "very_good" %}Foarte bine
+                {% else %}Zi fără notițe emoționale
+                {% endif %}
+            </span>
+        </a>
+        {% empty %}
+            <p class="muted">
+                Nu există zile notate în această perioadă.
+            </p>
+        {% endfor %}
+    </div>
+
+    <!-- FOOTER -->
+    <p class="mood-footer">
+        🌿 Faptul că observi deja e un prim pas.
+    </p>
+
+    <!-- CTA -->
+    <div class="mood-actions">
+        <a href="{% url 'calendar' %}" class="button primary">
+            📅 Calendar
+        </a>
+
+        <a href="{% url 'monthly_overview' %}?month={{ month }}&year={{ year }}" class="button">
+            ← Overview lunar
+        </a>
+    </div>
+
+</div>
+
+<script src="{% static 'planner/mood.js' %}"></script>
+{% endblock %}
+
+
