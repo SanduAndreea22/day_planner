@@ -156,21 +156,20 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # EMAIL
 # ====================================================
 # Folosește console backend în development pentru teste
-EMAIL_BACKEND = os.getenv(
-    "EMAIL_BACKEND",
-    "django.core.mail.backends.console.EmailBackend"
-)
+# Cheia API Brevo
+# Cheia API Brevo
+BREVO_API_KEY = os.getenv("BREVO_API_KEY", "")
 
-EMAIL_HOST = os.getenv("EMAIL_HOST", "")
-EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587")) if EMAIL_HOST else None
-EMAIL_USE_TLS = True if EMAIL_HOST else False
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+# Folosim backend-ul nostru custom
+EMAIL_BACKEND = "core.email_backends.BrevoBackend"
 
+# Email implicit
 DEFAULT_FROM_EMAIL = os.getenv(
     "DEFAULT_FROM_EMAIL",
-    "Emotional Planner <no-reply@example.com>"
+    "Emotional Planner <emotional.planner.app@gmail.com>"
 )
+
+
 
 # ====================================================
 # AUTH
@@ -178,4 +177,5 @@ DEFAULT_FROM_EMAIL = os.getenv(
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "today"
 LOGOUT_REDIRECT_URL = "home"
+
 

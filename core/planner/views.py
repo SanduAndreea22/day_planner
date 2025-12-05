@@ -33,8 +33,43 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from .forms import RegisterForm, EmailAuthenticationForm
 
 # ================================================
-# 🔹 Înregistrare cu confirmare email
+# 🔹 Înregistrare cu confirmare email (API Brevo)
 # ================================================
+import requests
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.auth.tokens import default_token_generator
+from .forms import RegisterForm
+from django.conf import settings
+
+BREVO_API_KEY = settings.EMAIL_HOST_PASSWORD  # cheia API Brevo
+
+def send_activation_email(user, activation_link):
+    """
+    Trimite email folosind Brevo API
+    """
+    url = "https://api.brevo.com/v3/smtp/email"
+    headers = {
+        "accept": "application/json",
+        "api-key": BREVO_API_KEY,
+        "content-type": "application/json"
+    }
+    data = {
+        "sender": {"name": "Emotional Planner", "email": "emotional.planner.app@gmail.com"},
+        "to": [{"email": user.email}],
+        "subject": "Confirmă-ți contul - Emotional Planner",
+        "htmlContent": f"""
+            <p>Bună {user.username},</p>
+            <p>Click pe link-ul de mai jos pentru a-ți activa contul:</p>
+            <p><a href="{activation_link}">Activează contul</a></p>
+        """
+    }
+    response = requests.post(url, headers=headers, json=data)
+    return response.status_code, response.text
+
 def register_view(request):
     if request.user.is_authenticated:
         return redirect("today")
@@ -47,29 +82,23 @@ def register_view(request):
         user.save()
 
         # Construiește linkul de activare
-        current_site = get_current_site(request)
+        current_site = request.get_host()
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
-        activation_link = f"https://{current_site.domain}/activate/{uid}/{token}/"
+        activation_link = f"https://{current_site}/activate/{uid}/{token}/"
 
-        # Trimite email HTML
-        message = render_to_string(
-            "planner/email/confirm_email.html",
-            {"user": user, "activation_link": activation_link}
-        )
-        email = EmailMessage(
-            subject="Confirmă-ți contul - Emotional Planner",
-            body=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to=[user.email],
-        )
-        email.content_subtype = "html"
-        email.send(fail_silently=False)
+        # Trimite email prin API Brevo
+        status_code, text = send_activation_email(user, activation_link)
+        if status_code != 201 and status_code != 200:
+            # Dacă email-ul nu s-a trimis, ștergem userul ca să nu fie blocat
+            user.delete()
+            return render(request, "planner/auth/email_confirm_failed.html", {"error": text})
 
-        # Afișează pagina de confirmare că email-ul a fost trimis
+        # Pagina de confirmare că email-ul a fost trimis
         return render(request, "planner/auth/email_confirm_success.html", {"email": user.email})
 
     return render(request, "planner/auth/register.html", {"form": form})
+
 
 # ================================================
 # 🔹 Activare cont
@@ -88,6 +117,7 @@ def activate_account(request, uidb64, token):
         return render(request, "planner/auth/email_confirm_success.html")
     else:
         return render(request, "planner/auth/email_confirm_invalid.html")
+
 
 # ================================================
 # 🔹 Login
