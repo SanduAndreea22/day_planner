@@ -139,7 +139,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # ====================================================
-# EMAIL
+# EMAIL (fără confirmare)
 # ====================================================
 EMAIL_BACKEND = os.getenv(
     "EMAIL_BACKEND",
@@ -156,6 +156,7 @@ DEFAULT_FROM_EMAIL = os.getenv(
     "DEFAULT_FROM_EMAIL",
     "Emotional Planner <no-reply@example.com>"
 )
+
 
 # ====================================================
 # AUTH

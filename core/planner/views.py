@@ -45,31 +45,6 @@ from django.contrib.auth.tokens import default_token_generator
 from .forms import RegisterForm
 from django.conf import settings
 
-BREVO_API_KEY = settings.EMAIL_HOST_PASSWORD  # cheia API Brevo
-
-def send_activation_email(user, activation_link):
-    """
-    Trimite email folosind Brevo API
-    """
-    url = "https://api.brevo.com/v3/smtp/email"
-    headers = {
-        "accept": "application/json",
-        "api-key": BREVO_API_KEY,
-        "content-type": "application/json"
-    }
-    data = {
-        "sender": {"name": "Emotional Planner", "email": "emotional.planner.app@gmail.com"},
-        "to": [{"email": user.email}],
-        "subject": "Confirmă-ți contul - Emotional Planner",
-        "htmlContent": f"""
-            <p>Bună {user.username},</p>
-            <p>Click pe link-ul de mai jos pentru a-ți activa contul:</p>
-            <p><a href="{activation_link}">Activează contul</a></p>
-        """
-    }
-    response = requests.post(url, headers=headers, json=data)
-    return response.status_code, response.text
-
 def register_view(request):
     if request.user.is_authenticated:
         return redirect("today")
@@ -78,45 +53,12 @@ def register_view(request):
 
     if request.method == "POST" and form.is_valid():
         user = form.save(commit=False)
-        user.is_active = False  # cont dezactivat până se confirmă email-ul
+        user.is_active = True  # cont activ imediat
         user.save()
-
-        # Construiește linkul de activare
-        current_site = request.get_host()
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        token = default_token_generator.make_token(user)
-        activation_link = f"https://{current_site}/activate/{uid}/{token}/"
-
-        # Trimite email prin API Brevo
-        status_code, text = send_activation_email(user, activation_link)
-        if status_code != 201 and status_code != 200:
-            # Dacă email-ul nu s-a trimis, ștergem userul ca să nu fie blocat
-            user.delete()
-            return render(request, "planner/auth/email_confirm_failed.html", {"error": text})
-
-        # Pagina de confirmare că email-ul a fost trimis
-        return render(request, "planner/auth/email_confirm_success.html", {"email": user.email})
+        login(request, user)  # loghează automat utilizatorul
+        return redirect("today")
 
     return render(request, "planner/auth/register.html", {"form": form})
-
-
-# ================================================
-# 🔹 Activare cont
-# ================================================
-def activate_account(request, uidb64, token):
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
-
-    if user and default_token_generator.check_token(user, token):
-        user.is_active = True
-        user.save()
-        login(request, user)
-        return render(request, "planner/auth/email_confirm_success.html")
-    else:
-        return render(request, "planner/auth/email_confirm_invalid.html")
 
 
 # ================================================
