@@ -72,8 +72,12 @@ urlpatterns = [
     # =========================
     # 🌙 CHECK-IN SEARĂ
     # =========================
-    path('evening-reflection/', evening_reflection_view, name='evening_reflection'),
-    path('evening-reflection/<int:year>/<int:month>/<int:day>/', evening_reflection_view, name='evening_reflection_day'),
+
+path('evening-reflection/', evening_reflection_view, name='evening_reflection'),
+
+# ruta cu parametri
+path('evening-reflection/<int:year>/<int:month>/<int:day>/', evening_reflection_view, name='evening_reflection'),
+
 
     # =========================
     # 📊 ANALYTICS
