@@ -76,7 +76,9 @@ urlpatterns = [
 path('evening-reflection/', evening_reflection_view, name='evening_reflection'),
 
 # ruta cu parametri
+# urls.py
 path('evening-reflection/<int:year>/<int:month>/<int:day>/', evening_reflection_view, name='evening_reflection'),
+
 
 
     # =========================
