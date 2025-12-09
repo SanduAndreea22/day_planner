@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmă contul</title>
+</head>
+<body style="font-family: Inter, Arial, sans-serif; background:#f7f9f8; padding:24px;">
+
+    <div style="
+        max-width:520px;
+        margin:auto;
+        background:#ffffff;
+        padding:32px;
+        border-radius:16px;
+        color:#2f3e46;
+    ">
+
+        <h2 style="margin-top:0;">🌸 Bună, {{ user.username }}</h2>
+
+        <p>
+            Bine ai venit în <strong>Emotional Planner</strong>.<br>
+            Ne bucurăm că ai ales să fii aici.
+        </p>
+
+        <p>
+            Pentru a-ți activa contul, apasă pe linkul de mai jos:
+        </p>
+
+        <p style="text-align:center; margin:24px 0;">
+            <a href="{{ activation_link }}"
+               style="
+                   background:#a7c7b7;
+                   color:#2f3e46;
+                   padding:12px 20px;
+                   border-radius:12px;
+                   text-decoration:none;
+                   font-weight:500;
+               ">
+                {{ activation_link }}
+            </a>
+        </p>
+
+        <p style="font-size:0.9rem; color:#6b7280;">
+            Dacă nu ai creat tu acest cont, poți ignora acest email.
+        </p>
+
+        <p style="margin-bottom:0;">
+            Cu grijă,<br>
+            <strong>Emotional Planner 🌱</strong>
+        </p>
+
+    </div>
+
+</body>
+</html>
+
+

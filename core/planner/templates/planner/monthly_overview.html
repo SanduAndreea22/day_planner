@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}📊 Overview lunar · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="month-overview-card">
+
+    <!-- NAV LUNĂ -->
+    <div class="month-nav">
+        <a class="month-btn" href="?year={{ year }}&month={{ month|add:'-1' }}">←</a>
+        <div class="month-label title-gradient">{{ month_name }} {{ year }}</div>
+        <a class="month-btn" href="?year={{ year }}&month={{ month|add:'1' }}">→</a>
+    </div>
+
+    <!-- GRID ZILE -->
+    <div class="month-grid">
+        {% for day in days %}
+        <div class="day-card
+                    {% if day.color %}color-{{ day.color }}{% endif %}
+                    {% if not day.mood %}empty{% endif %}"
+             title="{% if day.notes %}{{ day.notes|truncatechars:50 }}{% else %}Zi fără notițe{% endif %}">
+
+            <div class="day-number">{{ day.date|date:"d" }}</div>
+            <div class="day-emoji">
+                {% if day.mood == "very_bad" %}😞
+                {% elif day.mood == "bad" %}😕
+                {% elif day.mood == "neutral" %}😐
+                {% elif day.mood == "good" %}🙂
+                {% elif day.mood == "very_good" %}😄
+                {% else %}🌙
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p class="muted">Nu există încă zile notate în această lună.</p>
+        {% endfor %}
+    </div>
+
+    <!-- REZUMAT -->
+    <div class="overview-summary">
+        <p>Ai notat <strong>{{ total_days }}</strong> zile luna aceasta.</p>
+        <p class="muted">{{ interpretation }}</p>
+    </div>
+
+    <!-- CTA -->
+    <div class="overview-actions">
+        <a href="{% url 'calendar' %}" class="button">← Calendar</a>
+        <a href="{% url 'today' %}" class="button primary">🌱 Azi</a>
+    </div>
+
+</div>
+
+<!-- ================= STIL ================= -->
+<style>
+:root {
+    --bg-card: #ffffff;
+    --text-primary: #111827;
+    --text-muted: #6b7280;
+    --primary: #7dd3a7;
+    --secondary: #a5b4fc;
+    --color-red: #f87171;
+    --color-yellow: #fbbf24;
+    --color-green: #34d399;
+    --color-blue: #60a5fa;
+    --color-purple: #a78bfa;
+}
+
+/* CARD PRINCIPAL */
+.month-overview-card {
+    max-width: 960px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 24px;
+    background: var(--bg-card);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+}
+
+/* NAVIGARE LUNĂ */
+.month-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.month-btn {
+    font-size: 1.5rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: transform 0.3s ease;
+}
+.month-btn:hover { transform: scale(1.2); }
+.month-label {
+    font-size: 1.4rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* GRID ZILE */
+.month-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+.day-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.9);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+.day-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+.day-number {
+    font-weight: 600;
+    font-size: 1rem;
+}
+.day-emoji {
+    font-size: 1.4rem;
+    margin-top: 0.2rem;
+}
+.empty { opacity: 0.4; }
+
+/* CULORI ENERGIE */
+.color-red { background-color: var(--color-red); color: white; }
+.color-yellow { background-color: var(--color-yellow); color: white; }
+.color-green { background-color: var(--color-green); color: white; }
+.color-blue { background-color: var(--color-blue); color: white; }
+.color-purple { background-color: var(--color-purple); color: white; }
+
+/* REZUMAT & BUTOANE */
+.overview-summary { text-align: center; margin-bottom: 1rem; }
+.overview-summary .muted { color: var(--text-muted); }
+.overview-actions { display: flex; justify-content: center; gap: 1rem; }
+.button {
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    background: #e5e7eb;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s ease;
+}
+.button:hover { background: #d1d5db; }
+.button.primary { background: var(--primary); color: white; }
+.button.primary:hover { background: #5fd1a0; }
+
+/* DARK MODE */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-card: #1f2937;
+        --text-primary: #f4f7fb;
+        --text-muted: #9ca3af;
+    }
+    .month-overview-card, .day-card {
+        background: #374151 !important;
+        color: #f4f7fb;
+    }
+}
+</style>
+{% endblock %}
+
+
+
+
+

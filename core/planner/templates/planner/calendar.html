@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}📅 Calendar · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="calendar-card">
+
+  <!-- HEADER -->
+  <div class="calendar-header">
+    <a href="{% url 'calendar_month' prev_year prev_month %}" class="nav-arrow">←</a>
+    <div class="calendar-title title-gradient">{{ month }} / {{ year }}</div>
+    <a href="{% url 'calendar_month' next_year next_month %}" class="nav-arrow">→</a>
+  </div>
+
+  <!-- GRID ZILE -->
+  <div class="calendar-grid">
+    {% for item in days %}
+      <a href="{% url 'day_detail' item.date.year item.date.month item.date.day %}"
+         class="calendar-day
+           {% if item.day and item.day.color %}color-{{ item.day.color }}{% endif %}
+           {% if item.is_today %}today{% endif %}
+           {% if item.is_future %}future{% endif %}"
+         {% if item.day.notes %}data-notes="{{ item.day.notes|escape }}" {% endif %}>
+
+        <div class="day-number">{{ item.date.day }}</div>
+
+        {% if item.day and item.day.mood %}
+        <div class="day-mood">
+          {% if item.day.mood == "very_bad" %}😞
+          {% elif item.day.mood == "bad" %}😕
+          {% elif item.day.mood == "neutral" %}😐
+          {% elif item.day.mood == "good" %}🙂
+          {% elif item.day.mood == "very_good" %}😄
+          {% endif %}
+        </div>
+        {% elif not item.day %}
+        <span class="add">+</span>
+        {% endif %}
+
+      </a>
+    {% endfor %}
+  </div>
+
+  <!-- LEGENDĂ -->
+  <div class="calendar-legend muted">
+    😊 zi completată · ⚪ zi goală · ➕ adaugă zi
+  </div>
+
+</div>
+
+<!-- ================== STIL ================== -->
+<style>
+:root {
+    --bg-card: #ffffff;
+    --text-primary: #111827;
+    --text-muted: #6b7280;
+    --primary: #7dd3a7;
+    --secondary: #a5b4fc;
+}
+
+/* CARD */
+.calendar-card {
+    max-width: 950px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 24px;
+    background: var(--bg-card);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+    transition: background 0.5s, color 0.5s;
+}
+
+/* HEADER */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+.nav-arrow {
+    font-size: 1.5rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: transform 0.3s ease;
+}
+.nav-arrow:hover { transform: scale(1.2); }
+
+.calendar-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* GRID */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+}
+
+/* ZILE */
+.calendar-day {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.9);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.3s ease, filter 0.3s ease;
+}
+.calendar-day:hover {
+    transform: translateY(-4px) scale(1.03);
+    filter: brightness(1.05);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+}
+
+.day-number { font-size: 1rem; margin-bottom: 0.2rem; }
+.day-mood { font-size: 1.5rem; }
+
+/* Culori zi - gradient */
+.color-red { background: linear-gradient(145deg, #f87171, #fca5a5); color: white; }
+.color-yellow { background: linear-gradient(145deg, #facc15, #fde68a); color: #111827; }
+.color-green { background: linear-gradient(145deg, #4ade80, #a7f3d0); color: #111827; }
+.color-blue { background: linear-gradient(145deg, #60a5fa, #93c5fd); color: white; }
+.color-purple { background: linear-gradient(145deg, #c084fc, #e9d5ff); color: #111827; }
+
+/* Ziua curentă */
+.today {
+    box-shadow: 0 0 0 3px var(--primary), 0 4px 12px rgba(0,0,0,0.2);
+    transform: scale(1.05);
+}
+
+/* Zile viitoare */
+.future { opacity: 0.6; }
+
+/* Adaugă zi */
+.add { font-size: 1.5rem; color: var(--primary); }
+
+/* TOOLTIP NOTE */
+.calendar-day[data-notes]:hover::after {
+    content: attr(data-notes);
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    white-space: pre-wrap;
+    z-index: 10;
+    width: max-content;
+    max-width: 200px;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+/* LEGENDĂ */
+.calendar-legend {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* DARK MODE */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-card: #1f2937;
+        --text-primary: #f4f7fb;
+        --text-muted: #9ca3af;
+        --primary: #7dd3a7;
+        --secondary: #a5b4fc;
+    }
+    .calendar-card, .calendar-day {
+        background: #374151 !important;
+        color: #f4f7fb;
+    }
+    .calendar-day[data-notes]:hover::after {
+        background: #1f2937;
+        color: #f4f7fb;
+    }
+}
+</style>
+{% endblock %}
+
+
+

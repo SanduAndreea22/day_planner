@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}🌸 Creează cont · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="card auth-card" style="
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow);
+    transition: background 0.5s, color 0.5s;
+">
+
+    <h2 class="title-gradient auth-title" style="
+        font-size: 2rem;
+        text-align: center;
+        margin-bottom: 1rem;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    ">🌸 Creează cont</h2>
+
+    <p class="auth-subtitle muted" style="text-align:center; color: var(--text-muted); margin-bottom:1.5rem;">
+        Creează un spațiu doar al tău. Blând. Sigur. Fără presiune.
+    </p>
+
+    <form method="post" class="auth-form" novalidate>
+        {% csrf_token %}
+
+        <!-- EMAIL -->
+        <div class="form-group" style="margin-bottom:1rem;">
+            {{ form.email.label_tag }}
+            {{ form.email }}
+            {% if form.email.errors %}
+                <div class="field-error" style="color:red; font-size:0.85rem;">{{ form.email.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <!-- PAROLĂ -->
+        <div class="form-group" style="margin-bottom:1rem;">
+            {{ form.password1.label_tag }}
+            {{ form.password1 }}
+            <small class="password-rules muted" style="display:block; color: var(--text-muted); font-size:0.8rem; margin-top:0.3rem;">
+                Minimum 8 caractere · o literă mare · o cifră
+            </small>
+            {% if form.password1.errors %}
+                <div class="field-error" style="color:red; font-size:0.85rem;">{{ form.password1.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <!-- CONFIRMĂ PAROLĂ -->
+        <div class="form-group" style="margin-bottom:1rem;">
+            {{ form.password2.label_tag }}
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+                <div class="field-error" style="color:red; font-size:0.85rem;">{{ form.password2.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <!-- NON FIELD ERRORS -->
+        {% if form.non_field_errors %}
+            <div class="form-error-global" style="color:red; margin-bottom:1rem;">
+                {{ form.non_field_errors.0 }}
+            </div>
+        {% endif %}
+
+        <button type="submit" class="button primary" style="
+            width:100%;
+            padding:0.7rem;
+            font-size:1rem;
+            border-radius: var(--radius-md);
+            background-color: var(--primary);
+            color:white;
+            transition: background 0.3s;
+        ">
+            Începe cu blândețe
+        </button>
+    </form>
+
+    <!-- 🔒 Reassurance -->
+    <div class="auth-trust muted" style="text-align:center; color: var(--text-muted); margin-top:1.5rem;">
+        <p>🔒 Datele tale sunt private</p>
+        <p>🌱 Nu trimitem spam</p>
+        <p>🕯️ Poți șterge contul oricând</p>
+    </div>
+
+    <!-- Secondary navigation -->
+    <p class="muted auth-footer" style="text-align:center; color: var(--text-muted); margin-top:1rem;">
+        Ai deja cont?
+        <a href="{% url 'login' %}" style="color: var(--primary); text-decoration:none;"><strong>Autentifică-te</strong></a>
+    </p>
+</div>
+{% endblock %}
+
+
