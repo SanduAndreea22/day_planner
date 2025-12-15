@@ -5,24 +5,23 @@ from planner.models import Day, TimeBlock
 
 @pytest.mark.django_db
 def test_weekly_balance_score_view(client, django_user_model):
-    # Creăm user
+    # Creăm user și autentificăm
     user = django_user_model.objects.create_user(username="user15", password="pass12345")
     client.force_login(user)
 
     today = date.today()
-
-    # Creăm 3 zile cu stări și timeblocks
+    start_of_week = today - timedelta(days=today.weekday())  # Luni
+    # Creăm 3 zile în săptămâna curentă
     for i in range(3):
-        day = Day.objects.create(user=user, date=today - timedelta(days=i), mood="good")
+        day = Day.objects.create(user=user, date=start_of_week + timedelta(days=i), mood="good")
         TimeBlock.objects.create(
             day=day,
             title=f"Task {i}",
-            start_time=time(9+i, 0),  # start_time obligatoriu
-            end_time=time(10+i, 0),   # end_time obligatoriu
+            start_time=time(9+i, 0),
+            end_time=time(10+i, 0),
             completed=True
         )
 
-    # Folosim numele corect din urls.py: "weekly_score"
     url = reverse("weekly_score")
     response = client.get(url)
 
@@ -30,4 +29,7 @@ def test_weekly_balance_score_view(client, django_user_model):
     assert response.status_code == 200
     assert response.context["days_logged"] == 3
     assert response.context["completed_tasks"] == 3
+    assert response.context["mood_days"] == 3
+    assert response.context["score"] > 0
+    assert "message" in response.context
 
