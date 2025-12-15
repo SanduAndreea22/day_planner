@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block title %}🌸 Home · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="home-container">
+
+    <!-- 🌿 Greeting & Date -->
+    <header class="home-header">
+        <h1 class="home-title">Bună 🌿</h1>
+        <p class="home-date">{{ today|date:"l, d F Y" }}</p>
+    </header>
+
+    <!-- 💭 Quote -->
+    <section class="home-quote">
+        {% if quote %}
+            “{{ quote.text }}”
+        {% else %}
+            Azi este suficient să fii aici.
+        {% endif %}
+    </section>
+
+    <!-- 🧠 Description -->
+    <section class="home-description">
+        <p><strong>Emotional Planner</strong> te ajută să-ți organizezi zilele, să-ți notezi stările și să-ți urmărești progresul emoțional.</p>
+        <p>Fără presiune, fără comparații – doar ritmul tău. 🌸</p>
+        <p>Ai grijă de tine în fiecare zi și vezi cum evoluează starea ta de bine. 💛</p>
+    </section>
+
+    <!-- 🌱 Onboarding -->
+    <section class="home-onboarding">
+        🌱 Prima ta zi începe simplu. Nu trebuie să completezi tot. Notează doar ce simți și ce contează pentru tine.
+    </section>
+
+    <!-- 🔍 Preview Cards -->
+    <section class="home-preview">
+        {% for card in preview_cards %}
+        <div class="preview-card">
+            <div class="card-icon">{{ card.icon }}</div>
+            <h3 class="card-title">{{ card.title }}</h3>
+            <p class="card-desc">{{ card.description }}</p>
+        </div>
+        {% endfor %}
+    </section>
+
+    <!-- 📖 Istoric -->
+    <section class="history-hint">
+        📖 Zilele tale se păstrează în timp și pot fi revizitate când simți. Vezi cum ai evoluat săptămâna aceasta sau luna trecută.
+    </section>
+
+    <!-- 🔒 Trust -->
+    <section class="home-trust">
+        <p>🔒 Tot ce scrii rămâne privat.</p>
+        <p>Nimeni nu vede ce notezi. Totul este doar pentru tine. Confidentialitate 100% garantată.</p>
+    </section>
+
+    <!-- 💬 Messages -->
+    <section class="home-messages">
+        💬 Mesajele se schimbă în funcție de zi, stare și progresul tău emoțional. Încearcă să completezi zilnic pentru recomandări personalizate.
+    </section>
+
+</div>
+
+<!-- CSS inline pentru home -->
+<style>
+:root {
+    --primary: #7dd3a7;
+    --secondary: #a5b4fc;
+    --bg-main: #f4f7fb;
+    --bg-card: rgba(255,255,255,0.9);
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    --radius-lg: 24px;
+    --radius-md: 14px;
+    --shadow: 0 20px 40px rgba(0,0,0,.12);
+}
+
+/* Dark Mode */
+body.dark, @media (prefers-color-scheme: dark) {
+    :root {
+        --bg-main: #1f2937;
+        --bg-card: rgba(31, 41, 55, 0.9);
+        --text-main: #f4f7fb;
+        --text-muted: #9ca3af;
+    }
+}
+
+/* Global */
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    line-height: 1.6;
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* Container */
+.home-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Header */
+.home-header { text-align: center; margin-bottom: 2rem; }
+.home-title {
+    font-size: 2.5rem;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+}
+.home-date { font-size: 1rem; color: var(--text-muted); }
+
+/* Quote */
+.home-quote {
+    font-style: italic;
+    text-align: center;
+    margin: 1.5rem 0;
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Description & Onboarding */
+.home-description, .home-onboarding {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--text-muted);
+}
+
+/* Preview Cards */
+.home-preview {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+.preview-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    text-align: center;
+    width: 220px;
+    box-shadow: var(--shadow);
+    transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.5s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+}
+.preview-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, var(--primary), var(--secondary), var(--primary));
+    opacity: 0.15;
+    transform: rotate(0deg);
+    transition: transform 0.6s ease;
+    z-index: 0;
+}
+.preview-card:hover::before { transform: rotate(45deg); }
+.preview-card * { position: relative; z-index: 1; }
+.preview-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+}
+
+.card-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+.preview-card:hover .card-icon { transform: rotate(10deg) scale(1.1); color: var(--secondary); }
+
+.card-title { font-size: 1.2rem; margin-bottom: 0.5rem; }
+.card-desc { font-size: 0.95rem; color: var(--text-muted); }
+
+/* Istoric, Trust & Messages */
+.history-hint, .home-trust, .home-messages {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--text-muted);
+}
+.home-trust p { margin: 0.3rem 0; }
+.history-hint:hover, .home-trust:hover { background: rgba(125,211,167,0.1); border-radius: var(--radius-md); transition: background 0.3s ease; }
+
+/* Animatii fade-in */
+.home-container > section,
+.home-header {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+    animation: fadeInUpScale 0.8s forwards;
+}
+.home-header { animation-delay: 0.1s; }
+.home-quote { animation-delay: 0.2s; }
+.home-description { animation-delay: 0.3s; }
+.home-onboarding { animation-delay: 0.4s; }
+.home-preview { animation-delay: 0.5s; }
+.history-hint { animation-delay: 0.6s; }
+.home-trust { animation-delay: 0.7s; }
+.home-messages { animation-delay: 0.8s; }
+
+@keyframes fadeInUpScale {
+    0% { opacity: 0; transform: translateY(20px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Responsive */
+@media (max-width: 600px) { .preview-card { width: 100%; } }
+</style>
+
+<!-- JS Dark Mode Toggle -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const toggle = document.querySelector('.dark-toggle');
+    toggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark');
+        toggle.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+        localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    });
+    if(localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark');
+        toggle.textContent = '☀️';
+    }
+});
+</script>
+
+{% endblock %}
+
+
+
+

@@ -1,0 +1,175 @@
+{% if day.is_closed %}
+<!-- ================== REZUMAT ZI (READ-ONLY) ================== -->
+<div class="day-summary-card read-only" style="
+    max-width:800px;
+    margin:2rem auto;
+    padding:1.8rem;
+    border-radius:24px;
+    background:var(--bg-card);
+    box-shadow:0 15px 35px rgba(0,0,0,0.12);
+    transition: background 0.5s, color 0.5s;
+">
+
+    <h4 class="summary-title" style="
+        font-size:1.5rem;
+        font-weight:700;
+        margin-bottom:0.5rem;
+        text-align:center;
+        background:linear-gradient(90deg, var(--primary), var(--secondary));
+        -webkit-background-clip:text;
+        -webkit-text-fill-color:transparent;
+    ">🔒 Așa a arătat ziua ta</h4>
+
+    <p class="muted" style="text-align:center; color:var(--text-muted); margin-bottom:1rem;">
+        Zi închisă. Informațiile de mai jos nu mai pot fi editate.
+    </p>
+
+    <!-- 🎨 ENERGIA ZILEI -->
+    {% if day.color %}
+    <div class="summary-row" style="display:flex; justify-content:space-between; margin-bottom:0.8rem; padding:0.5rem 1rem; border-radius:14px; background:rgba(255,255,255,0.8); box-shadow:0 5px 15px rgba(0,0,0,0.05);">
+        <span class="summary-label" style="font-weight:600;">🎨 Energia zilei</span>
+        <span class="color-label {{ day.color }}" style="font-weight:600;">
+            {% if day.color == "red" %}🔴 Scăzută
+            {% elif day.color == "yellow" %}🟡 Medie
+            {% elif day.color == "green" %}🟢 Bună
+            {% elif day.color == "blue" %}🔵 Calmă
+            {% elif day.color == "purple" %}🟣 Creativă
+            {% else %}{{ day.color }}
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
+
+    <!-- 😌 STAREA EMOȚIONALĂ -->
+    {% if day.mood %}
+    <div class="summary-row" style="display:flex; justify-content:space-between; margin-bottom:0.8rem; padding:0.5rem 1rem; border-radius:14px; background:rgba(255,255,255,0.8); box-shadow:0 5px 15px rgba(0,0,0,0.05);">
+        <span class="summary-label" style="font-weight:600;">😌 Starea emoțională</span>
+        <span class="mood-label {{ day.mood }}" style="font-weight:600;">
+            {% if day.mood == "very_bad" %}😞 Foarte greu
+            {% elif day.mood == "bad" %}😕 Greu
+            {% elif day.mood == "neutral" %}😐 Neutru
+            {% elif day.mood == "good" %}🙂 Bine
+            {% elif day.mood == "very_good" %}😄 Foarte bine
+            {% else %}{{ day.mood }}
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
+
+    <!-- ✨ UN GÂND IMPORTANT -->
+    {% if day.notes %}
+    <div class="summary-box" style="margin-top:1rem;">
+        <label style="font-weight:600;">✨ Un gând important azi</label>
+        <div class="closed-box" style="
+            margin-top:0.3rem;
+            padding:0.7rem 1rem;
+            border-radius:14px;
+            background:rgba(255,255,255,0.9);
+            box-shadow:0 5px 15px rgba(0,0,0,0.05);
+            white-space:pre-wrap;
+        ">
+            {{ day.notes|linebreaks }}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- 🔋 CE MI-A CONSUMAT ENERGIA -->
+    {% if reflection and reflection.drain %}
+    <div class="summary-box" style="margin-top:1rem;">
+        <label style="font-weight:600;">🔋 Ce mi-a consumat energia azi?</label>
+        <div class="closed-box" style="
+            margin-top:0.3rem;
+            padding:0.7rem 1rem;
+            border-radius:14px;
+            background:rgba(255,255,255,0.9);
+            box-shadow:0 5px 15px rgba(0,0,0,0.05);
+            white-space:pre-wrap;
+        ">
+            {{ reflection.drain|linebreaks }}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- 🌸 SMALL WIN -->
+    {% if reflection and reflection.small_win %}
+    <div class="summary-box" style="margin-top:1rem;">
+        <label style="font-weight:600;">🌸 Un lucru mic pentru care mă pot aprecia azi</label>
+        <div class="closed-box" style="
+            margin-top:0.3rem;
+            padding:0.7rem 1rem;
+            border-radius:14px;
+            background:rgba(255,255,255,0.9);
+            box-shadow:0 5px 15px rgba(0,0,0,0.05);
+            white-space:pre-wrap;
+        ">
+            {{ reflection.small_win|linebreaks }}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ⏰ ORAR ZI -->
+    {% if time_blocks %}
+    <div class="day-summary-card" style="
+        max-width:800px;
+        margin:2rem auto;
+        padding:1.8rem;
+        border-radius:24px;
+        background:var(--bg-card);
+        box-shadow:0 15px 35px rgba(0,0,0,0.12);
+    ">
+        <h4 class="summary-title" style="
+            font-size:1.5rem;
+            font-weight:700;
+            margin-bottom:1rem;
+            text-align:center;
+            background:linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        ">⏰ Orarul zilei</h4>
+
+        {% for block in time_blocks %}
+        <div class="time-block-summary {% if block.completed %}done{% endif %}" style="
+            display:flex;
+            justify-content:space-between;
+            padding:0.5rem 1rem;
+            margin-bottom:0.5rem;
+            border-radius:14px;
+            background:rgba(255,255,255,0.8);
+            box-shadow:0 5px 15px rgba(0,0,0,0.05);
+            {% if block.completed %}opacity:0.6; text-decoration:line-through;{% endif %}
+        ">
+            <span class="time" style="font-weight:500;">{{ block.start_time|time:'H:i' }} – {{ block.end_time|time:'H:i' }}</span>
+            <span class="title" style="font-weight:500;">{{ block.title }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- 🌙 CITAT FINAL -->
+    {% if quote %}
+    <div class="gentle-recommendation" style="
+        max-width:800px;
+        margin:2rem auto 1rem auto;
+        text-align:center;
+        font-style:italic;
+        color:var(--text-muted);
+        font-size:1.1rem;
+    ">
+        🌙 {{ quote.text }}
+    </div>
+    {% endif %}
+
+    <p class="gentle-message" style="
+        max-width:800px;
+        margin:0 auto 2rem auto;
+        text-align:center;
+        font-style:italic;
+        color:var(--text-muted);
+    ">
+        Uneori, faptul că te oprești e un progres.
+    </p>
+
+</div>
+{% endif %}
+
+

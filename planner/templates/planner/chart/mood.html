@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}💭 Starea emoțională · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="mood-card">
+
+    <div class="mood-header">
+        <h2 class="title-gradient">💭 Starea emoțională</h2>
+        <div class="mood-period muted">{{ month_name }} {{ year }}</div>
+        <div class="mood-nav">
+            <a href="?month={{ month|add:'-1' }}&year={{ year }}">← Luna trecută</a>
+            <a href="?month={{ month|add:'1' }}&year={{ year }}">Luna viitoare →</a>
+        </div>
+    </div>
+
+    <p class="mood-subtitle">
+        Observare blândă, nu judecată.<br>
+        <em>Faptul că te uiți deja spune ceva bun.</em>
+    </p>
+
+    {% if most_common_mood %}
+    <div class="mood-summary">
+        Majoritatea zilelor notate au fost
+        <strong>
+            {% if most_common_mood == "very_bad" %}foarte dificile
+            {% elif most_common_mood == "bad" %}mai grele
+            {% elif most_common_mood == "neutral" %}neutre
+            {% elif most_common_mood == "good" %}bune
+            {% elif most_common_mood == "very_good" %}foarte bune
+            {% endif %}
+        </strong>.
+    </div>
+    {% endif %}
+
+    <div class="mood-list">
+        {% for day in days %}
+        <a href="{% url 'day_detail' day.date.year day.date.month day.date.day %}"
+           class="mood-row mood-{{ day.mood|default:'none' }}"
+           title="Vezi ziua completă">
+
+            <span class="mood-date">{{ day.date|date:"d M" }}</span>
+
+            <span class="mood-emoji">
+                {% if day.mood == "very_bad" %}😞
+                {% elif day.mood == "bad" %}😕
+                {% elif day.mood == "neutral" %}😐
+                {% elif day.mood == "good" %}🙂
+                {% elif day.mood == "very_good" %}😄
+                {% else %}🌙
+                {% endif %}
+            </span>
+
+            <span class="mood-text">
+                {% if day.mood == "very_bad" %}Foarte greu
+                {% elif day.mood == "bad" %}Greu
+                {% elif day.mood == "neutral" %}Neutru
+                {% elif day.mood == "good" %}Bine
+                {% elif day.mood == "very_good" %}Foarte bine
+                {% else %}Zi fără notițe emoționale
+                {% endif %}
+            </span>
+
+        </a>
+        {% empty %}
+            <p class="muted">Nu există zile notate în această perioadă.</p>
+        {% endfor %}
+    </div>
+
+    <p class="mood-footer">🌿 Faptul că observi deja e un prim pas.</p>
+
+    <div class="mood-actions">
+        <a href="{% url 'calendar' %}" class="button primary">📅 Calendar</a>
+        <a href="{% url 'monthly_overview' %}?month={{ month }}&year={{ year }}" class="button">← Overview lunar</a>
+    </div>
+
+</div>
+
+<style>
+:root {
+    --bg-card: #ffffff;
+    --text-primary: #111827;
+    --text-muted: #6b7280;
+    --primary: #7dd3a7;
+    --secondary: #a5b4fc;
+}
+
+/* CARD GENERAL */
+.mood-card {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 24px;
+    background: var(--bg-card);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.title-gradient {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.mood-period { color: var(--text-muted); margin-bottom: 0.5rem; }
+.mood-subtitle { margin-bottom: 1rem; font-size: 1rem; color: var(--text-muted); }
+.mood-nav { display: flex; justify-content: space-between; margin-bottom: 1rem; }
+.mood-nav a { text-decoration: none; font-weight: 500; color: var(--text-muted); }
+.mood-nav a:hover { color: var(--primary); }
+
+.mood-summary { font-weight: 600; margin-bottom: 1rem; font-size: 1.1rem; }
+
+/* LISTĂ ZILE */
+.mood-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1rem; }
+
+.mood-row {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 1.2rem;
+    border-radius: 16px;
+    text-decoration: none;
+    color: var(--text-primary);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease, transform 0.2s ease;
+}
+
+.mood-row:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0,0,0,0.15); }
+
+.mood-date { width: 80px; font-weight: 600; text-align: left; }
+.mood-emoji { width: 40px; font-size: 1.5rem; text-align: center; }
+.mood-text { flex: 1; text-align: left; font-weight: 500; }
+
+/* CULOARE STARE */
+.mood-very_bad { background-color: #f87171; color: #fff; } /* roșu */
+.mood-bad { background-color: #fbbf24; color: #fff; } /* galben-portocaliu */
+.mood-neutral { background-color: #f3f4f6; color: #111827; } /* gri deschis */
+.mood-good { background-color: #34d399; color: #fff; } /* verde */
+.mood-very_good { background-color: #60a5fa; color: #fff; } /* albastru */
+.mood-none { background-color: #e5e7eb; color: #111827; } /* fără stare */
+
+/* FOOTER & ACTIONS */
+.mood-footer { margin-top: 1rem; font-style: italic; color: var(--text-muted); }
+.mood-actions { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+.button {
+    padding: 0.6rem 1.2rem;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    background: #e5e7eb;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+.button:hover { background: #d1d5db; }
+.button.primary { background: var(--primary); color: #fff; }
+.button.primary:hover { background: #5fd1a0; color: #fff; }
+
+/* DARK MODE */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-card: #1f2937;
+        --text-primary: #f4f7fb;
+        --text-muted: #9ca3af;
+        --primary: #7dd3a7;
+        --secondary: #a5b4fc;
+    }
+    .mood-card { background: var(--bg-card); color: var(--text-primary); }
+    .mood-row { box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+    .mood-none { background-color: #4b5563; color: #f4f7fb; }
+}
+</style>
+
+{% endblock %}
+
+

@@ -1,0 +1,13 @@
+Bună {{ user.username }},
+
+Bine ai venit în Emotional Planner 🌸
+Ne bucurăm că ai ales un spațiu blând pentru tine.
+
+Pentru a-ți activa contul, confirmă emailul accesând linkul de mai jos:
+{{ activation_link }}
+
+Dacă nu ai creat tu acest cont, poți ignora acest email.
+
+—
+Emotional Planner 💗
+Un pas mic, în ritmul tău

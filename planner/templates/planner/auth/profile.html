@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+{% block title %}👤 Profil · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="profile-card">
+
+    <h2 class="title-gradient profile-title">
+        👤 Profilul meu
+    </h2>
+
+    <p class="muted profile-subtitle">
+        Acesta este spațiul tău. Poți schimba oricând aceste informații.
+    </p>
+
+    {% if saved %}
+        <div class="profile-toast">
+            ✅ Profil actualizat 🤍
+        </div>
+    {% endif %}
+
+    <form method="post" class="profile-form">
+        {% csrf_token %}
+
+        <!-- NICKNAME -->
+        <div class="form-group">
+            <label for="nickname">Cum vrei să te strig?</label>
+            <input
+                type="text"
+                id="nickname"
+                name="nickname"
+                value="{{ profile.nickname }}"
+                maxlength="20"
+                placeholder="ex: Andi, Lu, eu 🌱"
+                class="profile-input"
+            >
+            <small class="form-hint">
+                Poate fi un nume real, un diminutiv sau un nickname.
+            </small>
+            <div class="nickname-preview muted">
+                Ex: Bună, <span id="namePreview">{{ profile.nickname|default:"Andi" }}</span> 🌱
+            </div>
+        </div>
+
+        <!-- BIO -->
+        <div class="form-group">
+            <label for="bio">Câteva cuvinte despre tine</label>
+            <textarea
+                id="bio"
+                name="bio"
+                rows="4"
+                maxlength="200"
+                class="profile-textarea"
+                placeholder="Cum te simți în perioada asta, ce e important pentru tine..."
+            >{{ profile.bio }}</textarea>
+            <small class="form-hint">
+                Nu trebuie să fie complet. Poate fi chiar o propoziție.
+            </small>
+            <div class="char-counter muted">
+                <span id="bioCount">{{ profile.bio|length }}</span> / 200
+            </div>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="profile-actions">
+            <button type="submit" class="button primary profile-button">
+                Salvează 💾
+            </button>
+            <a href="{% url 'today' %}" class="button secondary">
+                ← Înapoi
+            </a>
+        </div>
+    </form>
+
+    <p class="profile-ending muted">
+        Acest spațiu e doar pentru tine.
+    </p>
+</div>
+
+<!-- ================== STIL ================== -->
+<style>
+:root {
+    --bg-card: #ffffff;
+    --text-primary: #111827;
+    --text-muted: #6b7280;
+    --primary: #7dd3a7;
+    --secondary: #a5b4fc;
+    --toast-bg: #d1fae5;
+    --toast-text: #065f46;
+}
+
+/* CARD PRINCIPAL */
+.profile-card {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 24px;
+    background: var(--bg-card);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+    transition: background 0.5s, color 0.5s;
+    font-family: 'Inter', sans-serif;
+}
+
+/* TITLU */
+.profile-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 0.2rem;
+}
+
+.title-gradient {
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* SUBTITLE */
+.profile-subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+}
+
+/* TOAST */
+.profile-toast {
+    background: var(--toast-bg);
+    color: var(--toast-text);
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(-10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* FORM */
+.profile-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.profile-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.profile-input, .profile-textarea {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border-radius: 12px;
+    border: 1px solid #d1d5db;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-input:focus, .profile-textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(125,211,167,0.2);
+    outline: none;
+}
+
+/* HINT & COUNTER */
+.form-hint, .nickname-preview, .char-counter {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+}
+
+/* CHAR COUNTER */
+.char-counter {
+    text-align: right;
+}
+
+/* ACTIONS */
+.profile-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.button {
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.button.primary {
+    background: var(--primary);
+    color: white;
+}
+.button.primary:hover {
+    background: #5fd1a0;
+    transform: translateY(-2px);
+}
+
+.button.secondary {
+    background: #e5e7eb;
+    color: var(--text-primary);
+}
+.button.secondary:hover {
+    background: #d1d5db;
+    transform: translateY(-2px);
+}
+
+/* FOOTER */
+.profile-ending {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* DARK MODE */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-card: #1f2937;
+        --text-primary: #f4f7fb;
+        --text-muted: #9ca3af;
+        --primary: #7dd3a7;
+        --secondary: #a5b4fc;
+        --toast-bg: #065f46;
+        --toast-text: #d1fae5;
+    }
+    .profile-card, .profile-input, .profile-textarea {
+        background: #374151;
+        color: #f4f7fb;
+        border-color: #4b5563;
+    }
+}
+</style>
+
+<script>
+    // Preview live nickname
+    const nicknameInput = document.getElementById('nickname');
+    const namePreview = document.getElementById('namePreview');
+
+    nicknameInput.addEventListener('input', () => {
+        namePreview.textContent = nicknameInput.value || 'Andi';
+    });
+
+    // Live char counter for bio
+    const bioInput = document.getElementById('bio');
+    const bioCount = document.getElementById('bioCount');
+    bioInput.addEventListener('input', () => {
+        bioCount.textContent = bioInput.value.length;
+    });
+</script>
+{% endblock %}
+
+

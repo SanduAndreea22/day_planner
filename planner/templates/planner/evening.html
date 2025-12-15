@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}🌙 Reflecție de seară · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="evening-card" style="
+    max-width:800px;
+    margin:2rem auto;
+    padding:2rem;
+    border-radius:24px;
+    background:var(--bg-card);
+    box-shadow:0 20px 40px rgba(0,0,0,0.12);
+    transition: background 0.5s, color 0.5s;
+">
+
+    <!-- TITLU -->
+    <div class="evening-title" style="
+        font-size:2rem;
+        font-weight:700;
+        text-align:center;
+        margin-bottom:1rem;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: fadeInUp 0.8s ease forwards;
+    ">
+        🌙 Reflecție de seară
+    </div>
+
+    <!-- DATA -->
+    <div class="evening-date muted" style="text-align:center; color:var(--text-muted); margin-bottom:1.5rem;">
+        {{ day.date|date:"l, d F Y" }}
+    </div>
+
+    <!-- INTRO -->
+    <div class="evening-intro" style="text-align:center; color:var(--text-muted); margin-bottom:2rem; font-style:italic;">
+        Închidem ziua blând. Fără analiză, fără presiune.
+    </div>
+
+    <!-- FORM -->
+    <form method="post" class="evening-form" style="display:flex; flex-direction:column; gap:1.5rem;">
+        {% csrf_token %}
+
+        <!-- FOARTE IMPORTANT – păstrăm starea zilei -->
+        <input type="hidden" name="mood" value="{{ day.mood }}">
+        <input type="hidden" name="color" value="{{ day.color }}">
+        <input type="hidden" name="notes" value="{{ day.notes }}">
+
+        <!-- 🔋 DRAIN -->
+        <div class="evening-section" style="display:flex; flex-direction:column;">
+            <label style="font-weight:600; margin-bottom:0.3rem;">🔋 Ce mi-a consumat energia azi?</label>
+            <textarea
+                name="drain"
+                rows="3"
+                placeholder="Orice, chiar și ceva mic…"
+                style="padding:0.5rem; border-radius:14px; border:1px solid #ccc; resize:none; transition: box-shadow 0.3s;"
+            >{{ reflection.drain }}</textarea>
+        </div>
+
+        <!-- 🌸 SMALL WIN -->
+        <div class="evening-section" style="display:flex; flex-direction:column;">
+            <label style="font-weight:600; margin-bottom:0.3rem;">🌸 Un lucru mic pentru care mă pot aprecia azi</label>
+            <textarea
+                name="small_win"
+                rows="3"
+                placeholder="Un gest, un gând, o pauză…"
+                style="padding:0.5rem; border-radius:14px; border:1px solid #ccc; resize:none; transition: box-shadow 0.3s;"
+            >{{ reflection.small_win }}</textarea>
+        </div>
+
+        <!-- ACTIUNI -->
+        <div class="evening-actions" style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-top:1rem;">
+            <button type="submit" class="button primary" style="
+                padding:0.7rem 1.2rem;
+                border-radius:14px;
+                background:var(--primary);
+                color:white;
+                font-weight:600;
+                flex:1;
+                min-width:140px;
+                transition: transform 0.2s, box-shadow 0.2s;
+            " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                Închid ziua 🌙
+            </button>
+
+            <a href="{% url 'day_detail' day.date.year day.date.month day.date.day %}" class="button" style="
+                padding:0.7rem 1.2rem;
+                border-radius:14px;
+                background:var(--secondary);
+                color:white;
+                font-weight:600;
+                flex:1;
+                min-width:140px;
+                text-align:center;
+                text-decoration:none;
+                transition: transform 0.2s, box-shadow 0.2s;
+            " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                Înapoi la zi
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- ANIMAȚII -->
+<style>
+@keyframes fadeInUp {
+    0% { opacity:0; transform:translateY(20px); }
+    100% { opacity:1; transform:translateY(0); }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-card: #1f2937;
+        --text-muted: #9ca3af;
+        --primary: #7dd3a7;
+        --secondary: #a5b4fc;
+    }
+    .evening-card {
+        background: var(--bg-card);
+        color: #f4f7fb;
+    }
+    textarea {
+        background: #374151;
+        color: #f4f7fb;
+        border:1px solid #4b5563;
+    }
+}
+</style>
+{% endblock %}
+
+

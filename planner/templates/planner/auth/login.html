@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}💗 Autentificare · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+
+    <h2 class="auth-title">💗 Autentificare</h2>
+
+    <p class="auth-subtitle muted">
+        Bine ai revenit. Continuă de unde ai rămas 🤍
+    </p>
+
+    <form method="post" class="auth-form" novalidate>
+        {% csrf_token %}
+
+        <!-- EMAIL -->
+        <div class="form-group">
+            {{ form.email.label_tag }}
+            {{ form.email }}
+            {% if form.email.errors %}
+                <div class="field-error">{{ form.email.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <!-- PAROLĂ -->
+        <div class="form-group">
+            {{ form.password.label_tag }}
+            {{ form.password }}
+
+            {% if form.password.errors %}
+                <div class="field-error">{{ form.password.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        {% if form.non_field_errors %}
+            <div class="form-error-global">{{ form.non_field_errors.0 }}</div>
+        {% endif %}
+
+        <button type="submit" class="auth-button">Revino în spațiul tău</button>
+    </form>
+
+    <div class="auth-trust muted">
+        <p>🔒 Datele tale sunt protejate</p>
+        <p>🌙 Activitatea ta este privată</p>
+        <p>🕯️ Te poți deconecta oricând</p>
+    </div>
+
+    <p class="muted auth-footer">
+        Nu ai cont?
+        <a href="{% url 'register' %}" class="accent-link">Creează unul</a>
+    </p>
+</div>
+
+<style>
+:root {
+    --primary: #7dd3a7;
+    --secondary: #a5b4fc;
+    --bg-card: rgba(255,255,255,0.95);
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    --radius-lg: 24px;
+    --radius-md: 14px;
+    --shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+/* Card */
+.auth-card {
+    max-width: 400px;
+    margin: 3rem auto;
+    padding: 2rem 2.5rem;
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    box-shadow: var(--shadow);
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s forwards;
+}
+
+/* Animatie fade-in */
+@keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Titlu gradient */
+.auth-title {
+    font-size: 2rem;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+    animation: fadeInUp 0.8s forwards;
+}
+
+/* Subtitlu */
+.auth-subtitle {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 0.8s forwards;
+    animation-delay: 0.1s;
+}
+
+/* Form */
+.auth-form { text-align: left; }
+
+/* Form group */
+.form-group { margin-bottom: 1rem; }
+.form-group input {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border-radius: var(--radius-md);
+    border: 1px solid #ccc;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+.form-group input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 8px rgba(125,211,167,0.5);
+    outline: none;
+}
+
+/* Error messages */
+.field-error { color: #f87171; font-size: 0.85rem; margin-top: 0.3rem; }
+.form-error-global { color: #f87171; font-size: 0.9rem; margin-bottom: 1rem; }
+
+/* Forgot link */
+.forgot-link {
+    display: inline-block;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+    color: var(--text-muted);
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+.forgot-link:hover { color: var(--primary); transform: translateX(2px); }
+
+/* Button */
+.auth-button {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: var(--radius-md);
+    background-color: var(--primary);
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-top: 0.5rem;
+}
+.auth-button:hover {
+    background-color: var(--secondary);
+    transform: translateY(-2px) scale(1.02);
+}
+
+/* Trust section */
+.auth-trust {
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    animation: fadeInUp 0.8s forwards;
+    animation-delay: 0.2s;
+}
+
+/* Footer */
+.auth-footer {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    text-align: center;
+}
+.accent-link {
+    color: var(--primary);
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+.accent-link:hover { color: var(--secondary); }
+</style>
+
+{% endblock %}
+
+
+

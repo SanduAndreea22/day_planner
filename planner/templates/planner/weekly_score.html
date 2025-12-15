@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}💗 Scorul săptămânii · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="weekly-card">
+
+    <!-- TITLU -->
+    <div class="weekly-title title-gradient">
+        💗 Săptămâna ta
+    </div>
+
+    <div class="weekly-subtitle muted">
+        Acest scor nu te definește. Este doar o reflecție blândă.
+    </div>
+
+    <!-- NAVIGARE SĂPTĂMÂNALĂ -->
+    <div class="weekly-nav">
+        <a href="?offset={{ offset|add:-1 }}" class="week-btn muted">← Săptămâna trecută</a>
+        <div class="week-label">{{ start|date:"d M Y" }} – {{ end|date:"d M Y" }}</div>
+        <a href="?offset={{ offset|add:1 }}" class="week-btn muted">Săptămâna următoare →</a>
+    </div>
+
+    <!-- SCOR -->
+    <div class="weekly-score-wrapper">
+        <div class="weekly-score-value">{{ score }} <span>/ 100</span></div>
+        <div class="weekly-progress">
+            <div class="weekly-progress-fill" style="width: {{ score }}%;"></div>
+        </div>
+    </div>
+
+    <!-- MESAJ -->
+    <div class="weekly-message">
+        {{ emoji }} {{ message }}
+    </div>
+
+    <!-- HINT -->
+    <div class="weekly-hint muted">
+        Nu este competiție. Nu există scor “rău”.
+    </div>
+
+    <!-- DETALII -->
+    <div class="weekly-details">
+        <div class="detail-card">
+            🌿 <strong>{{ days_logged }}</strong>
+            <span class="muted">Zile notate<br><small>Fiecare contează</small></span>
+        </div>
+        <div class="detail-card highlight">
+            ✅ <strong>{{ completed_tasks }}</strong>
+            <span class="muted">Task-uri<br><small>Ai făcut ce ai putut</small></span>
+        </div>
+        <div class="detail-card">
+            💭 <strong>{{ mood_days }}</strong>
+            <span class="muted">Stări notate<br><small>Conectare cu tine</small></span>
+        </div>
+    </div>
+
+    <!-- SUGESTIE -->
+    <div class="weekly-suggestion">
+        🌱 {{ suggestion }}
+    </div>
+
+    <!-- CTA -->
+    <div class="weekly-actions">
+        <a href="{% url 'today' %}" class="button primary">🌸 Începe azi</a>
+        <a href="{% url 'calendar' %}" class="button">📅 Calendar</a>
+    </div>
+
+    <div class="weekly-actions secondary">
+        <a href="{% url 'mood_chart' %}" class="button">📈 Stările tale</a>
+        <a href="{% url 'productivity_chart' %}" class="button">✅ Productivitate</a>
+    </div>
+
+</div>
+
+<style>
+:root {
+    --bg-card: #ffffff;
+    --text-primary: #111827;
+    --text-muted: #6b7280;
+    --primary: #7dd3a7;
+    --secondary: #a5b4fc;
+    --highlight: #fbbf24;
+}
+
+/* CARD */
+.weekly-card {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 24px;
+    background: var(--bg-card);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+    text-align: center;
+    transition: background 0.5s, color 0.5s;
+}
+
+/* TITLU & SUBTITLE */
+.weekly-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.weekly-subtitle { color: var(--text-muted); margin-bottom: 1rem; }
+
+/* NAV */
+.weekly-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+.week-btn { text-decoration: none; color: var(--text-muted); font-weight: 500; }
+.week-btn:hover { color: var(--primary); }
+.week-label { font-weight: 600; }
+
+/* SCOR */
+.weekly-score-wrapper { margin: 1rem 0; }
+.weekly-score-value { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.6rem; }
+.weekly-score-value span { font-size: 1rem; color: var(--text-muted); }
+
+.weekly-progress {
+    height: 14px;
+    background: #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.weekly-progress-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 8px;
+    transition: width 0.5s ease;
+}
+
+/* MESAJ & HINT */
+.weekly-message { font-size: 1.1rem; margin: 1rem 0; }
+.weekly-hint { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+/* DETALII */
+.weekly-details {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+.detail-card {
+    background: rgba(255,255,255,0.9);
+    padding: 1rem 1.2rem;
+    border-radius: 16px;
+    min-width: 100px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+.detail-card.highlight { background: var(--highlight); color: #111827; }
+
+/* SUGESTIE */
+.weekly-suggestion { font-style: italic; margin-bottom: 1.5rem; }
+
+/* BUTOANE */
+.weekly-actions { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.button {
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    background: #e5e7eb;
+    color: var(--text-primary);
+    transition: background 0.3s ease;
+}
+.button:hover { background: #d1d5db; }
+.button.primary { background: var(--primary); color: #fff; }
+.button.primary:hover { background: #5fd1a0; }
+
+/* DARK MODE */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-card: #1f2937;
+        --text-primary: #f4f7fb;
+        --text-muted: #9ca3af;
+        --primary: #7dd3a7;
+        --secondary: #a5b4fc;
+        --highlight: #fbbf24;
+    }
+    .weekly-card, .detail-card {
+        background: #374151 !important;
+        color: #f4f7fb;
+    }
+}
+</style>
+{% endblock %}
+
+
+
+
