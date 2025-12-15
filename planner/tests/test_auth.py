@@ -1,6 +1,7 @@
 import pytest
 from django.urls import reverse
 from django.contrib.auth.models import User
+from planner.models import UserProfile
 
 @pytest.mark.django_db
 def test_register_view(client):
@@ -21,10 +22,21 @@ def test_login_logout(client, django_user_model):
     login_url = reverse("login")
     logout_url = reverse("logout")
 
-    # login
     response = client.post(login_url, {"username": "user1", "password": "pass12345"})
     assert response.status_code == 302
 
-    # logout
     response = client.get(logout_url)
     assert response.status_code == 302
+
+@pytest.mark.django_db
+def test_profile_view(client, django_user_model):
+    user = django_user_model.objects.create_user(username="user2", password="pass12345")
+    client.force_login(user)
+    url = reverse("profile")
+    response = client.get(url)
+    assert response.status_code == 200
+
+    response = client.post(url, {"nickname": "NewNick", "bio": "Bio text"})
+    profile = UserProfile.objects.get(user=user)
+    assert profile.nickname == "NewNick"
+    assert profile.bio == "Bio text"
