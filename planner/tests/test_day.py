@@ -1,6 +1,6 @@
 import pytest
 from django.urls import reverse
-from core.planner.models import Day, TimeBlock
+from planner.models import Day, TimeBlock
 from django.contrib.auth.models import User
 from datetime import date
 
