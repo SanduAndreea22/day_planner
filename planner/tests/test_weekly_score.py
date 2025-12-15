@@ -1,4 +1,5 @@
 import pytest
+from django.urls import reverse
 from datetime import date, timedelta, time
 from planner.models import Day, TimeBlock
 
@@ -14,12 +15,14 @@ def test_weekly_balance_score_view(client, django_user_model):
         TimeBlock.objects.create(
             day=day,
             title=f"Task {i}",
-            start_time=time(9+i, 0),   # start_time necesar
-            end_time=time(10+i, 0),    # end_time necesar
+            start_time=time(9+i, 0),  # start_time obligatoriu
+            end_time=time(10+i, 0),   # end_time obligatoriu
             completed=True
         )
 
     url = reverse("weekly_balance_score")
     response = client.get(url)
     assert response.status_code == 200
-    assert "score" in response.context
+    assert response.context["days_logged"] == 3
+    assert response.context["completed_tasks"] == 3
+
