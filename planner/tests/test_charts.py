@@ -1,6 +1,6 @@
 import pytest
 from django.urls import reverse
-from datetime import date
+from datetime import date, time
 from planner.models import Day, TimeBlock
 
 @pytest.mark.django_db
@@ -28,5 +28,6 @@ def test_productivity_chart_view(client, django_user_model):
     assert response.status_code == 200
     data = response.context["data"]
     assert data[0]["completed"] == 1
+
 
 
