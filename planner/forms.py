@@ -8,21 +8,21 @@ from .models import UserProfile
 
 
 # ===================================================
-# 🌸 REGISTER FORM — EMAIL + PAROLĂ (SAFE, CU CONFIRMARE EMAIL)
+# 🌸 REGISTER FORM — EMAIL + PASSWORD (SAFE, WITH EMAIL CONFIRMATION)
 # ===================================================
 class RegisterForm(forms.ModelForm):
     password1 = forms.CharField(
-        label="Parolă",
+        label="Password",
         widget=forms.PasswordInput(attrs={
-            "placeholder": "Introdu parola",
+            "placeholder": "Enter your password",
             "autocomplete": "new-password"
         })
     )
 
     password2 = forms.CharField(
-        label="Confirmă parola",
+        label="Confirm Password",
         widget=forms.PasswordInput(attrs={
-            "placeholder": "Confirmă parola",
+            "placeholder": "Confirm your password",
             "autocomplete": "new-password"
         })
     )
@@ -30,15 +30,15 @@ class RegisterForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["email"]
-        labels = {"email": "Adresa de email"}
+        labels = {"email": "Email address"}
         widgets = {
-            "email": forms.EmailInput(attrs={"placeholder": "Adresa de email"})
+            "email": forms.EmailInput(attrs={"placeholder": "Email address"})
         }
 
     def clean_email(self):
         email = self.cleaned_data["email"].lower()
         if User.objects.filter(email=email).exists():
-            raise ValidationError("Acest email este deja folosit 💭")
+            raise ValidationError("This email is already in use 💭")
         return email
 
     def clean(self):
@@ -48,15 +48,15 @@ class RegisterForm(forms.ModelForm):
 
         if p1 and p2:
             if p1 != p2:
-                raise ValidationError("Parolele nu coincid, mai încearcă 🤍")
+                raise ValidationError("Passwords do not match, please try again 🤍")
             validate_password(p1)
 
         return cleaned_data
 
     def save(self, commit=True):
         """
-        ✅ Creează user inactiv (până confirmă emailul)
-        ✅ Generează username unic automat
+        ✅ Creates an inactive user (until email is confirmed)
+        ✅ Generates a unique username automatically
         """
         user = super().save(commit=False)
         email = self.cleaned_data["email"].lower()
@@ -64,7 +64,7 @@ class RegisterForm(forms.ModelForm):
         user.email = email
         user.set_password(self.cleaned_data["password1"])
 
-        # Dezactivat până la confirmarea email-ului
+        # Inactive until email confirmation
         user.is_active = False
 
         if commit:
@@ -73,16 +73,16 @@ class RegisterForm(forms.ModelForm):
 
 
 # ===================================================
-# 🔑 LOGIN FORM — AUTENTIFICARE CU EMAIL
+# 🔑 LOGIN FORM — AUTHENTICATION WITH EMAIL
 # ===================================================
 class EmailAuthenticationForm(forms.Form):
     email = forms.EmailField(
         label="Email",
-        widget=forms.EmailInput(attrs={"placeholder": "Adresa de email"})
+        widget=forms.EmailInput(attrs={"placeholder": "Email address"})
     )
     password = forms.CharField(
-        label="Parolă",
-        widget=forms.PasswordInput(attrs={"placeholder": "Introdu parola"})
+        label="Password",
+        widget=forms.PasswordInput(attrs={"placeholder": "Enter your password"})
     )
 
     def clean(self):
@@ -91,20 +91,20 @@ class EmailAuthenticationForm(forms.Form):
         password = cleaned_data.get("password")
 
         if not email or not password:
-            raise ValidationError("Te rugăm să completezi email-ul și parola 💭")
+            raise ValidationError("Please fill in both email and password 💭")
 
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            raise ValidationError("Email sau parolă incorectă 💭")
+            raise ValidationError("Incorrect email or password 💭")
 
         user = authenticate(username=user.username, password=password)
 
         if user is None:
-            raise ValidationError("Email sau parolă incorectă 💭")
+            raise ValidationError("Incorrect email or password 💭")
 
         if not user.is_active:
-            raise ValidationError("Contul nu este activ. Te rugăm să confirmi email-ul 💌")
+            raise ValidationError("Account is inactive. Please confirm your email 💌")
 
         self.user = user
         return cleaned_data
@@ -114,7 +114,7 @@ class EmailAuthenticationForm(forms.Form):
 
 
 # ===================================================
-# 👤 PROFILE FORM — DATE PERSONALE
+# 👤 PROFILE FORM — PERSONAL DATA
 # ===================================================
 class ProfileForm(forms.ModelForm):
     class Meta:
@@ -122,13 +122,13 @@ class ProfileForm(forms.ModelForm):
         fields = ["nickname", "bio"]
 
         labels = {
-            "nickname": "Cum vrei să te strig?",
-            "bio": "Câteva cuvinte despre tine",
+            "nickname": "What should we call you?",
+            "bio": "A few words about yourself",
         }
 
         help_texts = {
-            "nickname": "Poate fi un nume real, un diminutiv sau un nickname.",
-            "bio": "Nu trebuie să fie complet. Poate fi chiar o propoziție.",
+            "nickname": "Can be your real name, a nickname, or a handle.",
+            "bio": "Doesn't need to be complete. Can be just one sentence.",
         }
 
         widgets = {
@@ -139,6 +139,6 @@ class ProfileForm(forms.ModelForm):
             "bio": forms.Textarea(attrs={
                 "rows": 4,
                 "maxlength": 200,
-                "placeholder": "Cum te simți în perioada asta?"
+                "placeholder": "How have you been feeling lately?"
             }),
         }

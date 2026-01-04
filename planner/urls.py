@@ -11,12 +11,12 @@ from .views import (
     toggle_timeblock,
     delete_timeblock,
 
-    # 🎨 + 💭 Zi
+    # 🎨 + 💭 Day State
     set_day_color,
     set_day_mood,
     update_day_text,
 
-    # 🌙 Reflecție
+    # 🌙 Evening Reflection
     evening_reflection_view,
 
     # 📊 Analytics
@@ -25,12 +25,11 @@ from .views import (
     mood_chart_view,
     productivity_chart_view,
 
-    # 🔐 AUTH
+    # 🔐 Authentication
     register_view,
     login_view,
     logout_view,
     profile_view,
-
 )
 
 urlpatterns = [
@@ -40,20 +39,20 @@ urlpatterns = [
     path('', home_view, name='home'),
 
     # =========================
-    # 📅 ZIUA DE AZI
+    # 📅 TODAY
     # =========================
     path('today/', today_view, name='today'),
 
     # =========================
-    # 📆 ZI SPECIFICĂ
+    # 📆 SPECIFIC DAY
     # =========================
     path('day/<int:year>/<int:month>/<int:day>/', day_detail_view, name='day_detail'),
 
     # =========================
     # 🗓 CALENDAR
     # =========================
-    path("calendar/", calendar_view, name="calendar"),
-    path("calendar/<int:year>/<int:month>/", calendar_view, name="calendar_month"),
+    path('calendar/', calendar_view, name='calendar'),
+    path('calendar/<int:year>/<int:month>/', calendar_view, name='calendar_month'),
 
     # =========================
     # ⏰ TIMEBLOCKS
@@ -63,23 +62,16 @@ urlpatterns = [
     path('delete-timeblock/<int:block_id>/', delete_timeblock, name='delete_timeblock'),
 
     # =========================
-    # 🎨 + 💭 STARE ZI
+    # 🎨 + 💭 DAY STATE
     # =========================
     path('set-day-color/', set_day_color, name='set_day_color'),
     path('set-day-mood/', set_day_mood, name='set_day_mood'),
     path('update-day-text/', update_day_text, name='update_day_text'),
 
     # =========================
-    # 🌙 CHECK-IN SEARĂ
+    # 🌙 EVENING REFLECTION
     # =========================
-
-path('evening-reflection/', evening_reflection_view, name='evening_reflection'),
-
-# ruta cu parametri
-# urls.py
-path('evening-reflection/<int:year>/<int:month>/<int:day>/', evening_reflection_view, name='evening_reflection'),
-
-
+    path('evening-reflection/<int:year>/<int:month>/<int:day>/', evening_reflection_view, name='evening_reflection'),
 
     # =========================
     # 📊 ANALYTICS
@@ -90,12 +82,12 @@ path('evening-reflection/<int:year>/<int:month>/<int:day>/', evening_reflection_
     path('charts/productivity/', productivity_chart_view, name='productivity_chart'),
 
     # =========================
-    # 🔐 AUTH
+    # 🔐 AUTHENTICATION
     # =========================
-    path("register/", register_view, name="register"),
-    path("login/", login_view, name="login"),
-    path("logout/", logout_view, name="logout"),
-    path("profile/", profile_view, name="profile"),
+    path('register/', register_view, name='register'),
+    path('login/', login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
+    path('profile/', profile_view, name='profile'),
 ]
 
 

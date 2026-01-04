@@ -1,31 +1,31 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}✅ Productivitate & stare · Emotional Planner{% endblock %}
+{% block title %}✅ Productivity & Mood · Emotional Planner{% endblock %}
 
 {% block content %}
 <div class="productivity-card">
 
-    <h2 class="title-gradient">✅ Productivitate & Stare</h2>
+    <h2 class="title-gradient">✅ Productivity & Mood</h2>
 
     <p class="productivity-subtitle">
-        Câte lucruri ai dus la capăt <strong>indiferent de cum te-ai simțit</strong>.<br>
-        <span class="muted">Productivitatea nu anulează emoțiile.</span>
+        How many things you completed <strong>regardless of how you felt</strong>.<br>
+        <span class="muted">Productivity doesn’t cancel your emotions.</span>
     </p>
 
-    <!-- NAV SĂPTĂMÂNALĂ -->
+    <!-- WEEK NAVIGATION -->
     <div class="week-nav">
-        <a class="week-btn" href="?offset={{ offset|add:-1 }}">← Săptămâna trecută</a>
+        <a class="week-btn" href="?offset={{ offset|add:-1 }}">← Previous week</a>
         <div class="week-label">{{ start|date:"d M Y" }} – {{ end|date:"d M Y" }}</div>
-        <a class="week-btn" href="?offset={{ offset|add:1 }}">Săptămâna următoare →</a>
+        <a class="week-btn" href="?offset={{ offset|add:1 }}">Next week →</a>
     </div>
 
-    <!-- LISTĂ ZILE -->
+    <!-- DAYS LIST -->
     <div class="productivity-list">
         {% for item in data %}
         <div class="productivity-row color-{{ item.mood }}">
             <div class="prod-date">{{ item.date|date:"D, d M" }}</div>
-            <div class="prod-mood" title="Starea zilei">
+            <div class="prod-mood" title="Day's mood">
                 {% if item.mood == "very_bad" %}😞
                 {% elif item.mood == "bad" %}😕
                 {% elif item.mood == "neutral" %}😐
@@ -35,29 +35,29 @@
             </div>
             <div class="prod-value">
                 {% if item.completed == 0 %}
-                    Zi fără task-uri finalizate
+                    No completed tasks
                 {% else %}
                     {{ item.completed }} task{{ item.completed|pluralize }}
                 {% endif %}
             </div>
         </div>
         {% empty %}
-            <p class="muted">Nu există date pentru această perioadă.</p>
+            <p class="muted">No data available for this period.</p>
         {% endfor %}
     </div>
 
-    <!-- CTA -->
+    <!-- CALL TO ACTION -->
     <div class="productivity-actions">
         <a href="{% url 'calendar' %}" class="button primary">📅 Calendar</a>
-        <a href="{% url 'weekly_score' %}" class="button">← Scor săptămânal</a>
+        <a href="{% url 'weekly_score' %}" class="button">← Weekly Score</a>
     </div>
 
     <p class="productivity-final">
-        🌱 Chiar și pașii mici spun o poveste.
+        🌱 Even small steps tell a story.
     </p>
 </div>
 
-<!-- ================== STIL ================== -->
+<!-- ================== STYLES ================== -->
 <style>
 :root {
     --bg-card: #ffffff;
@@ -78,11 +78,11 @@
     transition: background 0.5s, color 0.5s;
 }
 
-/* TITLU & SUBTITLU */
+/* TITLE & SUBTITLE */
 .productivity-card h2 { text-align: center; margin-bottom: 0.5rem; }
 .productivity-subtitle { text-align: center; color: var(--text-muted); margin-bottom: 1.5rem; }
 
-/* NAV SĂPTĂMÂNALĂ */
+/* WEEK NAVIGATION */
 .week-nav {
     display: flex;
     justify-content: space-between;
@@ -93,7 +93,7 @@
 .week-btn:hover { text-decoration: underline; }
 .week-label { font-weight: 700; text-align: center; }
 
-/* LISTĂ ZILE */
+/* DAYS LIST */
 .productivity-list {
     display: flex;
     flex-direction: column;
@@ -118,14 +118,14 @@
 .prod-mood { font-size: 1.5rem; width: 10%; text-align: center; }
 .prod-value { width: 65%; font-weight: 500; text-align: right; }
 
-/* Culori mood */
+/* MOOD COLORS */
 .color-very_bad { background: #f87171; color: white; }
 .color-bad { background: #facc15; color: #111827; }
 .color-neutral { background: #9ca3af; color: white; }
 .color-good { background: #4ade80; color: #111827; }
 .color-very_good { background: #60a5fa; color: white; }
 
-/* BUTOANE */
+/* BUTTONS */
 .productivity-actions {
     display: flex;
     justify-content: center;
@@ -161,10 +161,3 @@
 }
 </style>
 {% endblock %}
-
-
-
-
-
-
-

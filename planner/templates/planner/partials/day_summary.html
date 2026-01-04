@@ -1,5 +1,5 @@
 {% if day.is_closed %}
-<!-- ================== REZUMAT ZI (READ-ONLY) ================== -->
+<!-- ================== DAY SUMMARY (READ-ONLY) ================== -->
 <div class="day-summary-card read-only" style="
     max-width:800px;
     margin:2rem auto;
@@ -18,48 +18,48 @@
         background:linear-gradient(90deg, var(--primary), var(--secondary));
         -webkit-background-clip:text;
         -webkit-text-fill-color:transparent;
-    ">🔒 Așa a arătat ziua ta</h4>
+    ">🔒 This was your day</h4>
 
     <p class="muted" style="text-align:center; color:var(--text-muted); margin-bottom:1rem;">
-        Zi închisă. Informațiile de mai jos nu mai pot fi editate.
+        Day closed. The information below can no longer be edited.
     </p>
 
-    <!-- 🎨 ENERGIA ZILEI -->
+    <!-- 🎨 ENERGY -->
     {% if day.color %}
     <div class="summary-row" style="display:flex; justify-content:space-between; margin-bottom:0.8rem; padding:0.5rem 1rem; border-radius:14px; background:rgba(255,255,255,0.8); box-shadow:0 5px 15px rgba(0,0,0,0.05);">
-        <span class="summary-label" style="font-weight:600;">🎨 Energia zilei</span>
+        <span class="summary-label" style="font-weight:600;">🎨 Energy of the day</span>
         <span class="color-label {{ day.color }}" style="font-weight:600;">
-            {% if day.color == "red" %}🔴 Scăzută
-            {% elif day.color == "yellow" %}🟡 Medie
-            {% elif day.color == "green" %}🟢 Bună
-            {% elif day.color == "blue" %}🔵 Calmă
-            {% elif day.color == "purple" %}🟣 Creativă
+            {% if day.color == "red" %}🔴 Low
+            {% elif day.color == "yellow" %}🟡 Medium
+            {% elif day.color == "green" %}🟢 Good
+            {% elif day.color == "blue" %}🔵 Calm
+            {% elif day.color == "purple" %}🟣 Creative
             {% else %}{{ day.color }}
             {% endif %}
         </span>
     </div>
     {% endif %}
 
-    <!-- 😌 STAREA EMOȚIONALĂ -->
+    <!-- 😌 MOOD -->
     {% if day.mood %}
     <div class="summary-row" style="display:flex; justify-content:space-between; margin-bottom:0.8rem; padding:0.5rem 1rem; border-radius:14px; background:rgba(255,255,255,0.8); box-shadow:0 5px 15px rgba(0,0,0,0.05);">
-        <span class="summary-label" style="font-weight:600;">😌 Starea emoțională</span>
+        <span class="summary-label" style="font-weight:600;">😌 Mood</span>
         <span class="mood-label {{ day.mood }}" style="font-weight:600;">
-            {% if day.mood == "very_bad" %}😞 Foarte greu
-            {% elif day.mood == "bad" %}😕 Greu
-            {% elif day.mood == "neutral" %}😐 Neutru
-            {% elif day.mood == "good" %}🙂 Bine
-            {% elif day.mood == "very_good" %}😄 Foarte bine
+            {% if day.mood == "very_bad" %}😞 Very hard
+            {% elif day.mood == "bad" %}😕 Hard
+            {% elif day.mood == "neutral" %}😐 Neutral
+            {% elif day.mood == "good" %}🙂 Good
+            {% elif day.mood == "very_good" %}😄 Very good
             {% else %}{{ day.mood }}
             {% endif %}
         </span>
     </div>
     {% endif %}
 
-    <!-- ✨ UN GÂND IMPORTANT -->
+    <!-- ✨ IMPORTANT THOUGHT -->
     {% if day.notes %}
     <div class="summary-box" style="margin-top:1rem;">
-        <label style="font-weight:600;">✨ Un gând important azi</label>
+        <label style="font-weight:600;">✨ Important thought today</label>
         <div class="closed-box" style="
             margin-top:0.3rem;
             padding:0.7rem 1rem;
@@ -73,10 +73,10 @@
     </div>
     {% endif %}
 
-    <!-- 🔋 CE MI-A CONSUMAT ENERGIA -->
+    <!-- 🔋 WHAT DRAINED MY ENERGY -->
     {% if reflection and reflection.drain %}
     <div class="summary-box" style="margin-top:1rem;">
-        <label style="font-weight:600;">🔋 Ce mi-a consumat energia azi?</label>
+        <label style="font-weight:600;">🔋 What drained my energy today?</label>
         <div class="closed-box" style="
             margin-top:0.3rem;
             padding:0.7rem 1rem;
@@ -93,7 +93,7 @@
     <!-- 🌸 SMALL WIN -->
     {% if reflection and reflection.small_win %}
     <div class="summary-box" style="margin-top:1rem;">
-        <label style="font-weight:600;">🌸 Un lucru mic pentru care mă pot aprecia azi</label>
+        <label style="font-weight:600;">🌸 A small win I can appreciate today</label>
         <div class="closed-box" style="
             margin-top:0.3rem;
             padding:0.7rem 1rem;
@@ -107,7 +107,7 @@
     </div>
     {% endif %}
 
-    <!-- ⏰ ORAR ZI -->
+    <!-- ⏰ DAY SCHEDULE -->
     {% if time_blocks %}
     <div class="day-summary-card" style="
         max-width:800px;
@@ -125,7 +125,7 @@
             background:linear-gradient(90deg, var(--primary), var(--secondary));
             -webkit-background-clip:text;
             -webkit-text-fill-color:transparent;
-        ">⏰ Orarul zilei</h4>
+        ">⏰ Day Schedule</h4>
 
         {% for block in time_blocks %}
         <div class="time-block-summary {% if block.completed %}done{% endif %}" style="
@@ -145,7 +145,7 @@
     </div>
     {% endif %}
 
-    <!-- 🌙 CITAT FINAL -->
+    <!-- 🌙 FINAL QUOTE -->
     {% if quote %}
     <div class="gentle-recommendation" style="
         max-width:800px;
@@ -166,7 +166,7 @@
         font-style:italic;
         color:var(--text-muted);
     ">
-        Uneori, faptul că te oprești e un progres.
+        Sometimes, just pausing is progress.
     </p>
 
 </div>

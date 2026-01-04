@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}🌿 Ziua mea · Emotional Planner{% endblock %}
+{% block title %}🌿 My Day · Emotional Planner{% endblock %}
 
 {% block content %}
 <div class="day-card {{ day.color }}" style="
@@ -14,7 +14,7 @@
     transition: background 0.5s, color 0.5s;
 ">
 
-    <!-- 📅 DATA -->
+    <!-- 📅 DATE -->
     <div class="day-date-block" style="text-align:center; font-weight:600; margin-bottom:1rem;">
         <span class="date-part">{{ day.date|date:"l" }}</span>
         <span class="date-part">{{ day.date|date:"d" }}</span>
@@ -22,7 +22,7 @@
         <span class="date-part">{{ day.date|date:"Y" }}</span>
     </div>
 
-    <!-- 😌 EMOJI STARE -->
+    <!-- 😌 MOOD EMOJI -->
     <div class="day-mood-emoji" style="font-size:3rem; text-align:center; margin-bottom:1rem; transition: transform 0.3s;">
         {% if day.mood == "very_bad" %}😞
         {% elif day.mood == "bad" %}😕
@@ -40,7 +40,7 @@
 
     {% if day.is_closed %}
         <div class="message closed-message" style="text-align:center; color: var(--text-muted); margin-bottom:1rem;">
-            🌙 Ziua este închisă. Ai făcut suficient azi.
+            🌙 The day is closed. You’ve done enough today.
         </div>
 
         {% include "planner/partials/day_summary.html" %}
@@ -52,60 +52,60 @@
         {% endif %}
 
     {% else %}
-        <!-- 🎨 ENERGIA ZILEI -->
+        <!-- 🎨 DAY ENERGY -->
         <div class="day-section" style="margin-bottom:1.8rem;">
-            <label style="font-weight:600;">🎨 Energia zilei</label>
+            <label style="font-weight:600;">🎨 Day Energy</label>
             <form method="post" action="{% url 'set_day_color' %}">
                 {% csrf_token %}
                 <input type="hidden" name="day_id" value="{{ day.id }}">
                 <select name="color" required onchange="this.form.submit()" style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
-                    <option value="">Alege energia</option>
-                    <option value="red" {% if day.color == "red" %}selected{% endif %}>🔴 Scăzută</option>
-                    <option value="yellow" {% if day.color == "yellow" %}selected{% endif %}>🟡 Medie</option>
-                    <option value="green" {% if day.color == "green" %}selected{% endif %}>🟢 Bună</option>
-                    <option value="blue" {% if day.color == "blue" %}selected{% endif %}>🔵 Calmă</option>
-                    <option value="purple" {% if day.color == "purple" %}selected{% endif %}>🟣 Creativă</option>
+                    <option value="">Choose energy</option>
+                    <option value="red" {% if day.color == "red" %}selected{% endif %}>🔴 Low</option>
+                    <option value="yellow" {% if day.color == "yellow" %}selected{% endif %}>🟡 Medium</option>
+                    <option value="green" {% if day.color == "green" %}selected{% endif %}>🟢 Good</option>
+                    <option value="blue" {% if day.color == "blue" %}selected{% endif %}>🔵 Calm</option>
+                    <option value="purple" {% if day.color == "purple" %}selected{% endif %}>🟣 Creative</option>
                 </select>
             </form>
         </div>
 
-        <!-- 😌 STAREA ZILEI -->
+        <!-- 😌 MOOD -->
         <div class="day-section" style="margin-bottom:1.8rem;">
-            <label style="font-weight:600;">😌 Starea emoțională</label>
+            <label style="font-weight:600;">😌 Mood</label>
             <form method="post" action="{% url 'set_day_mood' %}">
                 {% csrf_token %}
                 <input type="hidden" name="day_id" value="{{ day.id }}">
                 <select name="mood" required onchange="this.form.submit()" style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
-                    <option value="">Alege starea</option>
-                    <option value="very_bad" {% if day.mood == "very_bad" %}selected{% endif %}>😞 Foarte greu</option>
-                    <option value="bad" {% if day.mood == "bad" %}selected{% endif %}>😕 Greu</option>
-                    <option value="neutral" {% if day.mood == "neutral" %}selected{% endif %}>😐 Neutru</option>
-                    <option value="good" {% if day.mood == "good" %}selected{% endif %}>🙂 Bine</option>
-                    <option value="very_good" {% if day.mood == "very_good" %}selected{% endif %}>😄 Foarte bine</option>
+                    <option value="">Choose mood</option>
+                    <option value="very_bad" {% if day.mood == "very_bad" %}selected{% endif %}>😞 Very hard</option>
+                    <option value="bad" {% if day.mood == "bad" %}selected{% endif %}>😕 Hard</option>
+                    <option value="neutral" {% if day.mood == "neutral" %}selected{% endif %}>😐 Neutral</option>
+                    <option value="good" {% if day.mood == "good" %}selected{% endif %}>🙂 Good</option>
+                    <option value="very_good" {% if day.mood == "very_good" %}selected{% endif %}>😄 Very good</option>
                 </select>
             </form>
         </div>
 
-        <!-- ✨ GÂND -->
+        <!-- ✨ DAILY THOUGHT -->
         <div class="day-section" style="margin-bottom:1.8rem;">
-            <label style="font-weight:600;">✨ Un gând important azi</label>
+            <label style="font-weight:600;">✨ A thought for today</label>
             <form method="post" action="{% url 'update_day_text' %}">
                 {% csrf_token %}
                 <input type="hidden" name="day_id" value="{{ day.id }}">
-                <textarea name="notes" rows="4" style="width:100%; padding:0.5rem; border-radius:var(--radius-md);" placeholder="Un gând e suficient. Nu trebuie să fie perfect.">{{ day.notes }}</textarea>
-                <button type="submit" class="button primary" style="margin-top:0.5rem; width:100%; padding:0.7rem; border-radius:var(--radius-md); background:var(--primary); color:white;">Salvează</button>
+                <textarea name="notes" rows="4" style="width:100%; padding:0.5rem; border-radius:var(--radius-md);" placeholder="One thought is enough. It doesn’t need to be perfect.">{{ day.notes }}</textarea>
+                <button type="submit" class="button primary" style="margin-top:0.5rem; width:100%; padding:0.7rem; border-radius:var(--radius-md); background:var(--primary); color:white;">Save</button>
             </form>
         </div>
 
-        <!-- 🌙 ÎNCHIDE ZIUA -->
+        <!-- 🌙 CLOSE THE DAY -->
         <div class="day-evening" style="text-align:center; margin-bottom:1.8rem;">
-            <a href="{% url 'evening_reflection' day.date.year day.date.month day.date.day %}" class="button primary" style="padding:0.7rem 1rem; border-radius:var(--radius-md); background:var(--primary); color:white; display:inline-block;">🌙 Închide ziua cu blândețe</a>
+            <a href="{% url 'evening_reflection' day.date.year day.date.month day.date.day %}" class="button primary" style="padding:0.7rem 1rem; border-radius:var(--radius-md); background:var(--primary); color:white; display:inline-block;">🌙 Close the day gently</a>
         </div>
     {% endif %}
 
-    <!-- ⏰ ORAR -->
+    <!-- ⏰ DAILY SCHEDULE -->
     <div class="day-section" style="margin-bottom:1.8rem;">
-        <h3>⏰ Orarul zilei</h3>
+        <h3>⏰ Daily Schedule</h3>
         {% if time_blocks %}
             {% for block in time_blocks %}
                 <div class="time-block {% if block.completed %}done{% endif %}" style="display:flex; justify-content:space-between; align-items:center; padding:0.7rem; border-radius:var(--radius-md); margin-bottom:0.5rem; background:var(--bg-card); box-shadow:var(--shadow); transition:transform 0.3s;">
@@ -114,20 +114,20 @@
                     {% if not day.is_closed %}
                         <div class="actions">
                             <a href="{% url 'toggle_timeblock' block.id %}">✅</a>
-                            <a href="{% url 'delete_timeblock' block.id %}" class="delete" onclick="return confirm('Ștergi acest interval?')">🗑️</a>
+                            <a href="{% url 'delete_timeblock' block.id %}" class="delete" onclick="return confirm('Delete this block?')">🗑️</a>
                         </div>
                     {% endif %}
                 </div>
             {% endfor %}
         {% else %}
-            <p class="muted" style="color: var(--text-muted);">Nu ai adăugat încă nimic azi. Poți începe cu un singur interval.</p>
+            <p class="muted" style="color: var(--text-muted);">You haven’t added anything today yet. You can start with a single block.</p>
         {% endif %}
     </div>
 
     {% if not day.is_closed %}
-        <!-- ➕ INTERVAL -->
+        <!-- ➕ NEW TIME BLOCK -->
         <div class="day-section" style="margin-bottom:1.8rem;">
-            <h3>➕ Interval nou</h3>
+            <h3>➕ New Block</h3>
             <form method="post" action="{% url 'add_timeblock' %}">
                 {% csrf_token %}
                 <input type="hidden" name="day_id" value="{{ day.id }}">
@@ -136,16 +136,38 @@
                     <span>–</span>
                     <input type="text" name="end_time" placeholder="14:30" required style="flex:1; padding:0.5rem; border-radius:var(--radius-md);">
                 </div>
-                <input type="text" name="title" placeholder="Ce faci" required style="width:100%; padding:0.5rem; border-radius:var(--radius-md); margin-bottom:0.5rem;">
-                <button type="submit" class="button" style="width:100%; padding:0.7rem; border-radius:var(--radius-md); background:var(--secondary); color:white;">Adaugă</button>
+                <input type="text" name="title" placeholder="What you do" required style="width:100%; padding:0.5rem; border-radius:var(--radius-md); margin-bottom:0.5rem;">
+                <button type="submit" class="button" style="width:100%; padding:0.7rem; border-radius:var(--radius-md); background:var(--secondary); color:white;">Add</button>
             </form>
         </div>
     {% endif %}
 
     <!-- 🔙 BACK -->
     <div class="day-back" style="text-align:center; margin-top:2rem;">
-        <a href="{% url 'calendar' %}" style="color:var(--primary); text-decoration:none;">← Înapoi la calendar</a>
+        <a href="{% url 'calendar' %}" style="color:var(--primary); text-decoration:none;">← Back to calendar</a>
     </div>
 </div>
+
+<!-- ================= CSS LOCAL ================= -->
+<style>
+.time-block.done .block-title {
+    font-style: italic;   /* task complet = italic */
+    font-weight: bold;    /* task complet = bold */
+    opacity: 0.8;         /* puțin mai subtil */
+}
+
+.actions a {
+    cursor: pointer;
+    margin-left: 0.5rem;
+    font-size: 1.1rem;
+    text-decoration: none;
+}
+
+.actions a:hover {
+    transform: scale(1.2);
+    transition: transform 0.2s;
+}
+</style>
+
 {% endblock %}
 

@@ -7,37 +7,25 @@ import dj_database_url
 # BASE
 # ====================================================
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Încarcă variabilele de mediu din fișierul .env (doar pentru development local)
-load_dotenv()
+load_dotenv()  # pentru .env local
 
 # ====================================================
 # SECURITY
 # ====================================================
-# Cheia secretă. În producție, setați SECRET_KEY în fișierul .env
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-local-only")
 
-# DEBUG activ doar dacă variabila de mediu este True
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-# Domenii permise pentru host-uri
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",
-    "127.0.0.1,localhost,day-planner-1.onrender.com"
+    "127.0.0.1,localhost"
 ).split(",")
 
-# Domenii permise pentru CSRF (POST)
-CSRF_TRUSTED_ORIGINS = os.getenv(
-    "CSRF_TRUSTED_ORIGINS",
-    "https://day-planner-1.onrender.com"
-).split(",")
-
-# Setări suplimentare de securitate
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SESSION_COOKIE_SECURE = not DEBUG  # doar HTTPS în producție
-CSRF_COOKIE_SECURE = not DEBUG      # doar HTTPS în producție
-X_FRAME_OPTIONS = "DENY"
+CSRF_TRUSTED_ORIGINS = (
+    os.getenv("CSRF_TRUSTED_ORIGINS").split(",")
+    if os.getenv("CSRF_TRUSTED_ORIGINS")
+    else []
+)
 
 # ====================================================
 # APPLICATIONS
@@ -49,7 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "planner",  # aplicația ta principală
+    "planner",
 ]
 
 # ====================================================
@@ -57,7 +45,7 @@ INSTALLED_APPS = [
 # ====================================================
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # Servește static files în producție
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -78,8 +66,8 @@ WSGI_APPLICATION = "core.wsgi.application"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],  # folder pentru template-uri globale
-        "APP_DIRS": True,                  # caută template-uri și în aplicații
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -97,16 +85,16 @@ TEMPLATES = [
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 if DATABASE_URL:
-    # PostgreSQL / Production
+    # Railway / Production
     DATABASES = {
         "default": dj_database_url.parse(
             DATABASE_URL,
-            conn_max_age=600,   # menține conexiunile pentru performanță
-            ssl_require=True,   # necesar pe producție
+            conn_max_age=600,
+            ssl_require=True,
         )
     }
 else:
-    # Local development SQLite
+    # Local development
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -138,13 +126,11 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Doar pentru development
 if DEBUG:
     STATICFILES_DIRS = [
         BASE_DIR / "planner" / "static",
     ]
 
-# WhiteNoise pentru producție
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # ====================================================
@@ -153,22 +139,23 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # ====================================================
-# EMAIL
+# EMAIL (fără confirmare)
 # ====================================================
-# Folosește console backend în development pentru teste
-# Cheia API Brevo
-# Cheia API Brevo
-BREVO_API_KEY = os.getenv("BREVO_API_KEY", "")
-
-# Folosim backend-ul nostru custom
-EMAIL_BACKEND = "core.email_backends.BrevoBackend"
-
-# Email implicit
-DEFAULT_FROM_EMAIL = os.getenv(
-    "DEFAULT_FROM_EMAIL",
-    "Emotional Planner <emotional.planner.app@gmail.com>"
+EMAIL_BACKEND = os.getenv(
+    "EMAIL_BACKEND",
+    "django.core.mail.backends.console.EmailBackend"
 )
 
+EMAIL_HOST = os.getenv("EMAIL_HOST", "")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587")) if EMAIL_HOST else None
+EMAIL_USE_TLS = True if EMAIL_HOST else False
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+
+DEFAULT_FROM_EMAIL = os.getenv(
+    "DEFAULT_FROM_EMAIL",
+    "Emotional Planner <no-reply@example.com>"
+)
 
 
 # ====================================================

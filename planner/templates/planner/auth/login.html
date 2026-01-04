@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}💗 Autentificare · Emotional Planner{% endblock %}
+{% block title %}💗 Login · Emotional Planner{% endblock %}
 
 {% block content %}
 <div class="auth-card">
 
-    <h2 class="auth-title">💗 Autentificare</h2>
+    <h2 class="auth-title">💗 Login</h2>
 
     <p class="auth-subtitle muted">
-        Bine ai revenit. Continuă de unde ai rămas 🤍
+        Welcome back. Continue where you left off 🤍
     </p>
 
     <form method="post" class="auth-form" novalidate>
@@ -24,7 +24,7 @@
             {% endif %}
         </div>
 
-        <!-- PAROLĂ -->
+        <!-- PASSWORD -->
         <div class="form-group">
             {{ form.password.label_tag }}
             {{ form.password }}
@@ -38,18 +38,18 @@
             <div class="form-error-global">{{ form.non_field_errors.0 }}</div>
         {% endif %}
 
-        <button type="submit" class="auth-button">Revino în spațiul tău</button>
+        <button type="submit" class="auth-button">Return to your space</button>
     </form>
 
     <div class="auth-trust muted">
-        <p>🔒 Datele tale sunt protejate</p>
-        <p>🌙 Activitatea ta este privată</p>
-        <p>🕯️ Te poți deconecta oricând</p>
+        <p>🔒 Your data is protected</p>
+        <p>🌙 Your activity is private</p>
+        <p>🕯️ You can log out anytime</p>
     </div>
 
     <p class="muted auth-footer">
-        Nu ai cont?
-        <a href="{% url 'register' %}" class="accent-link">Creează unul</a>
+        Don't have an account?
+        <a href="{% url 'register' %}" class="accent-link">Create one</a>
     </p>
 </div>
 
@@ -79,13 +79,13 @@
     animation: fadeInUp 0.8s forwards;
 }
 
-/* Animatie fade-in */
+/* Fade-in animation */
 @keyframes fadeInUp {
     0% { opacity: 0; transform: translateY(20px); }
     100% { opacity: 1; transform: translateY(0); }
 }
 
-/* Titlu gradient */
+/* Title gradient */
 .auth-title {
     font-size: 2rem;
     background: linear-gradient(90deg, var(--primary), var(--secondary));
@@ -95,7 +95,7 @@
     animation: fadeInUp 0.8s forwards;
 }
 
-/* Subtitlu */
+/* Subtitle */
 .auth-subtitle {
     font-size: 1rem;
     color: var(--text-muted);

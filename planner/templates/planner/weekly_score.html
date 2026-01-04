@@ -1,27 +1,27 @@
 {% extends "base.html" %}
 
-{% block title %}💗 Scorul săptămânii · Emotional Planner{% endblock %}
+{% block title %}💗 Weekly Score · Emotional Planner{% endblock %}
 
 {% block content %}
 <div class="weekly-card">
 
-    <!-- TITLU -->
+    <!-- TITLE -->
     <div class="weekly-title title-gradient">
-        💗 Săptămâna ta
+        💗 Your Week
     </div>
 
     <div class="weekly-subtitle muted">
-        Acest scor nu te definește. Este doar o reflecție blândă.
+        This score doesn’t define you. It’s just a gentle reflection.
     </div>
 
-    <!-- NAVIGARE SĂPTĂMÂNALĂ -->
+    <!-- WEEK NAVIGATION -->
     <div class="weekly-nav">
-        <a href="?offset={{ offset|add:-1 }}" class="week-btn muted">← Săptămâna trecută</a>
+        <a href="?offset={{ offset|add:-1 }}" class="week-btn muted">← Previous week</a>
         <div class="week-label">{{ start|date:"d M Y" }} – {{ end|date:"d M Y" }}</div>
-        <a href="?offset={{ offset|add:1 }}" class="week-btn muted">Săptămâna următoare →</a>
+        <a href="?offset={{ offset|add:1 }}" class="week-btn muted">Next week →</a>
     </div>
 
-    <!-- SCOR -->
+    <!-- SCORE -->
     <div class="weekly-score-wrapper">
         <div class="weekly-score-value">{{ score }} <span>/ 100</span></div>
         <div class="weekly-progress">
@@ -29,46 +29,46 @@
         </div>
     </div>
 
-    <!-- MESAJ -->
+    <!-- MESSAGE -->
     <div class="weekly-message">
         {{ emoji }} {{ message }}
     </div>
 
     <!-- HINT -->
     <div class="weekly-hint muted">
-        Nu este competiție. Nu există scor “rău”.
+        It’s not a competition. There is no “bad” score.
     </div>
 
-    <!-- DETALII -->
+    <!-- DETAILS -->
     <div class="weekly-details">
         <div class="detail-card">
             🌿 <strong>{{ days_logged }}</strong>
-            <span class="muted">Zile notate<br><small>Fiecare contează</small></span>
+            <span class="muted">Days logged<br><small>Every day counts</small></span>
         </div>
         <div class="detail-card highlight">
             ✅ <strong>{{ completed_tasks }}</strong>
-            <span class="muted">Task-uri<br><small>Ai făcut ce ai putut</small></span>
+            <span class="muted">Tasks<br><small>You did your best</small></span>
         </div>
         <div class="detail-card">
             💭 <strong>{{ mood_days }}</strong>
-            <span class="muted">Stări notate<br><small>Conectare cu tine</small></span>
+            <span class="muted">Mood entries<br><small>Connecting with yourself</small></span>
         </div>
     </div>
 
-    <!-- SUGESTIE -->
+    <!-- SUGGESTION -->
     <div class="weekly-suggestion">
         🌱 {{ suggestion }}
     </div>
 
     <!-- CTA -->
     <div class="weekly-actions">
-        <a href="{% url 'today' %}" class="button primary">🌸 Începe azi</a>
+        <a href="{% url 'today' %}" class="button primary">🌸 Start Today</a>
         <a href="{% url 'calendar' %}" class="button">📅 Calendar</a>
     </div>
 
     <div class="weekly-actions secondary">
-        <a href="{% url 'mood_chart' %}" class="button">📈 Stările tale</a>
-        <a href="{% url 'productivity_chart' %}" class="button">✅ Productivitate</a>
+        <a href="{% url 'mood_chart' %}" class="button">📈 Your Moods</a>
+        <a href="{% url 'productivity_chart' %}" class="button">✅ Productivity</a>
     </div>
 
 </div>
@@ -95,7 +95,7 @@
     transition: background 0.5s, color 0.5s;
 }
 
-/* TITLU & SUBTITLE */
+/* TITLE & SUBTITLE */
 .weekly-title {
     font-size: 1.8rem;
     font-weight: 700;
@@ -117,7 +117,7 @@
 .week-btn:hover { color: var(--primary); }
 .week-label { font-weight: 600; }
 
-/* SCOR */
+/* SCORE */
 .weekly-score-wrapper { margin: 1rem 0; }
 .weekly-score-value { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.6rem; }
 .weekly-score-value span { font-size: 1rem; color: var(--text-muted); }
@@ -135,11 +135,11 @@
     transition: width 0.5s ease;
 }
 
-/* MESAJ & HINT */
+/* MESSAGE & HINT */
 .weekly-message { font-size: 1.1rem; margin: 1rem 0; }
 .weekly-hint { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem; }
 
-/* DETALII */
+/* DETAILS */
 .weekly-details {
     display: flex;
     justify-content: center;
@@ -156,10 +156,10 @@
 }
 .detail-card.highlight { background: var(--highlight); color: #111827; }
 
-/* SUGESTIE */
+/* SUGGESTION */
 .weekly-suggestion { font-style: italic; margin-bottom: 1.5rem; }
 
-/* BUTOANE */
+/* BUTTONS */
 .weekly-actions { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
 .button {
     padding: 0.6rem 1.2rem;

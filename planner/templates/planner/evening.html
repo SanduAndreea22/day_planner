@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}🌙 Reflecție de seară · Emotional Planner{% endblock %}
+{% block title %}🌙 Evening Reflection · Emotional Planner{% endblock %}
 
 {% block content %}
 <div class="evening-card" style="
@@ -13,7 +13,7 @@
     transition: background 0.5s, color 0.5s;
 ">
 
-    <!-- TITLU -->
+    <!-- TITLE -->
     <div class="evening-title" style="
         font-size:2rem;
         font-weight:700;
@@ -24,51 +24,51 @@
         -webkit-text-fill-color: transparent;
         animation: fadeInUp 0.8s ease forwards;
     ">
-        🌙 Reflecție de seară
+        🌙 Evening Reflection
     </div>
 
-    <!-- DATA -->
+    <!-- DATE -->
     <div class="evening-date muted" style="text-align:center; color:var(--text-muted); margin-bottom:1.5rem;">
         {{ day.date|date:"l, d F Y" }}
     </div>
 
     <!-- INTRO -->
     <div class="evening-intro" style="text-align:center; color:var(--text-muted); margin-bottom:2rem; font-style:italic;">
-        Închidem ziua blând. Fără analiză, fără presiune.
+        Closing the day gently. No analysis, no pressure.
     </div>
 
     <!-- FORM -->
     <form method="post" class="evening-form" style="display:flex; flex-direction:column; gap:1.5rem;">
         {% csrf_token %}
 
-        <!-- FOARTE IMPORTANT – păstrăm starea zilei -->
+        <!-- KEEP DAY STATE -->
         <input type="hidden" name="mood" value="{{ day.mood }}">
         <input type="hidden" name="color" value="{{ day.color }}">
         <input type="hidden" name="notes" value="{{ day.notes }}">
 
-        <!-- 🔋 DRAIN -->
+        <!-- 🔋 ENERGY DRAIN -->
         <div class="evening-section" style="display:flex; flex-direction:column;">
-            <label style="font-weight:600; margin-bottom:0.3rem;">🔋 Ce mi-a consumat energia azi?</label>
+            <label style="font-weight:600; margin-bottom:0.3rem;">🔋 What drained my energy today?</label>
             <textarea
                 name="drain"
                 rows="3"
-                placeholder="Orice, chiar și ceva mic…"
+                placeholder="Anything, even something small…"
                 style="padding:0.5rem; border-radius:14px; border:1px solid #ccc; resize:none; transition: box-shadow 0.3s;"
             >{{ reflection.drain }}</textarea>
         </div>
 
         <!-- 🌸 SMALL WIN -->
         <div class="evening-section" style="display:flex; flex-direction:column;">
-            <label style="font-weight:600; margin-bottom:0.3rem;">🌸 Un lucru mic pentru care mă pot aprecia azi</label>
+            <label style="font-weight:600; margin-bottom:0.3rem;">🌸 One small thing I can appreciate about myself today</label>
             <textarea
                 name="small_win"
                 rows="3"
-                placeholder="Un gest, un gând, o pauză…"
+                placeholder="A gesture, a thought, a break…"
                 style="padding:0.5rem; border-radius:14px; border:1px solid #ccc; resize:none; transition: box-shadow 0.3s;"
             >{{ reflection.small_win }}</textarea>
         </div>
 
-        <!-- ACTIUNI -->
+        <!-- ACTIONS -->
         <div class="evening-actions" style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-top:1rem;">
             <button type="submit" class="button primary" style="
                 padding:0.7rem 1.2rem;
@@ -80,7 +80,7 @@
                 min-width:140px;
                 transition: transform 0.2s, box-shadow 0.2s;
             " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                Închid ziua 🌙
+                Close the day 🌙
             </button>
 
             <a href="{% url 'day_detail' day.date.year day.date.month day.date.day %}" class="button" style="
@@ -95,13 +95,13 @@
                 text-decoration:none;
                 transition: transform 0.2s, box-shadow 0.2s;
             " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                Înapoi la zi
+                Back to day
             </a>
         </div>
     </form>
 </div>
 
-<!-- ANIMAȚII -->
+<!-- ANIMATIONS -->
 <style>
 @keyframes fadeInUp {
     0% { opacity:0; transform:translateY(20px); }

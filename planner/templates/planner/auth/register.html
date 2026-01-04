@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}🌸 Creează cont · Emotional Planner{% endblock %}
+{% block title %}🌸 Create Account · Emotional Planner{% endblock %}
 
 {% block content %}
 <div class="card auth-card" style="
@@ -19,10 +19,10 @@
         background: linear-gradient(90deg, var(--primary), var(--secondary));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-    ">🌸 Creează cont</h2>
+    ">🌸 Create Account</h2>
 
     <p class="auth-subtitle muted" style="text-align:center; color: var(--text-muted); margin-bottom:1.5rem;">
-        Creează un spațiu doar al tău. Blând. Sigur. Fără presiune.
+        Create a space that’s yours alone. Gentle. Secure. No pressure.
     </p>
 
     <form method="post" class="auth-form" novalidate>
@@ -37,19 +37,19 @@
             {% endif %}
         </div>
 
-        <!-- PAROLĂ -->
+        <!-- PASSWORD -->
         <div class="form-group" style="margin-bottom:1rem;">
             {{ form.password1.label_tag }}
             {{ form.password1 }}
             <small class="password-rules muted" style="display:block; color: var(--text-muted); font-size:0.8rem; margin-top:0.3rem;">
-                Minimum 8 caractere · o literă mare · o cifră
+                Minimum 8 characters · 1 uppercase letter · 1 number
             </small>
             {% if form.password1.errors %}
                 <div class="field-error" style="color:red; font-size:0.85rem;">{{ form.password1.errors.0 }}</div>
             {% endif %}
         </div>
 
-        <!-- CONFIRMĂ PAROLĂ -->
+        <!-- CONFIRM PASSWORD -->
         <div class="form-group" style="margin-bottom:1rem;">
             {{ form.password2.label_tag }}
             {{ form.password2 }}
@@ -74,21 +74,21 @@
             color:white;
             transition: background 0.3s;
         ">
-            Începe cu blândețe
+            Start Gently
         </button>
     </form>
 
     <!-- 🔒 Reassurance -->
     <div class="auth-trust muted" style="text-align:center; color: var(--text-muted); margin-top:1.5rem;">
-        <p>🔒 Datele tale sunt private</p>
-        <p>🌱 Nu trimitem spam</p>
-        <p>🕯️ Poți șterge contul oricând</p>
+        <p>🔒 Your data is private</p>
+        <p>🌱 We don’t send spam</p>
+        <p>🕯️ You can delete your account anytime</p>
     </div>
 
     <!-- Secondary navigation -->
     <p class="muted auth-footer" style="text-align:center; color: var(--text-muted); margin-top:1rem;">
-        Ai deja cont?
-        <a href="{% url 'login' %}" style="color: var(--primary); text-decoration:none;"><strong>Autentifică-te</strong></a>
+        Already have an account?
+        <a href="{% url 'login' %}" style="color: var(--primary); text-decoration:none;"><strong>Log in</strong></a>
     </p>
 </div>
 {% endblock %}

@@ -1,34 +1,32 @@
 {% extends "base.html" %}
-{% load static %}
-
-{% block title %}💭 Starea emoțională · Emotional Planner{% endblock %}
+{% block title %}💭 Mood · Emotional Planner{% endblock %}
 
 {% block content %}
 <div class="mood-card">
 
     <div class="mood-header">
-        <h2 class="title-gradient">💭 Starea emoțională</h2>
+        <h2 class="title-gradient">💭 Mood</h2>
         <div class="mood-period muted">{{ month_name }} {{ year }}</div>
         <div class="mood-nav">
-            <a href="?month={{ month|add:'-1' }}&year={{ year }}">← Luna trecută</a>
-            <a href="?month={{ month|add:'1' }}&year={{ year }}">Luna viitoare →</a>
+            <a href="?month={{ month|add:'-1' }}&year={{ year }}">← Previous month</a>
+            <a href="?month={{ month|add:'1' }}&year={{ year }}">Next month →</a>
         </div>
     </div>
 
     <p class="mood-subtitle">
-        Observare blândă, nu judecată.<br>
-        <em>Faptul că te uiți deja spune ceva bun.</em>
+        Observe gently, without judgment.<br>
+        <em>Just looking is already a good start.</em>
     </p>
 
     {% if most_common_mood %}
     <div class="mood-summary">
-        Majoritatea zilelor notate au fost
+        Most logged days were
         <strong>
-            {% if most_common_mood == "very_bad" %}foarte dificile
-            {% elif most_common_mood == "bad" %}mai grele
-            {% elif most_common_mood == "neutral" %}neutre
-            {% elif most_common_mood == "good" %}bune
-            {% elif most_common_mood == "very_good" %}foarte bune
+            {% if most_common_mood == "very_bad" %}very difficult
+            {% elif most_common_mood == "bad" %}hard
+            {% elif most_common_mood == "neutral" %}neutral
+            {% elif most_common_mood == "good" %}good
+            {% elif most_common_mood == "very_good" %}very good
             {% endif %}
         </strong>.
     </div>
@@ -38,7 +36,7 @@
         {% for day in days %}
         <a href="{% url 'day_detail' day.date.year day.date.month day.date.day %}"
            class="mood-row mood-{{ day.mood|default:'none' }}"
-           title="Vezi ziua completă">
+           title="View full day">
 
             <span class="mood-date">{{ day.date|date:"d M" }}</span>
 
@@ -53,30 +51,31 @@
             </span>
 
             <span class="mood-text">
-                {% if day.mood == "very_bad" %}Foarte greu
-                {% elif day.mood == "bad" %}Greu
-                {% elif day.mood == "neutral" %}Neutru
-                {% elif day.mood == "good" %}Bine
-                {% elif day.mood == "very_good" %}Foarte bine
-                {% else %}Zi fără notițe emoționale
+                {% if day.mood == "very_bad" %}Very difficult
+                {% elif day.mood == "bad" %}Hard
+                {% elif day.mood == "neutral" %}Neutral
+                {% elif day.mood == "good" %}Good
+                {% elif day.mood == "very_good" %}Very good
+                {% else %}No mood notes
                 {% endif %}
             </span>
 
         </a>
         {% empty %}
-            <p class="muted">Nu există zile notate în această perioadă.</p>
+            <p class="muted">No days logged this period.</p>
         {% endfor %}
     </div>
 
-    <p class="mood-footer">🌿 Faptul că observi deja e un prim pas.</p>
+    <p class="mood-footer">🌿 Observing is already a first step.</p>
 
     <div class="mood-actions">
         <a href="{% url 'calendar' %}" class="button primary">📅 Calendar</a>
-        <a href="{% url 'monthly_overview' %}?month={{ month }}&year={{ year }}" class="button">← Overview lunar</a>
+        <a href="{% url 'monthly_overview' %}?month={{ month }}&year={{ year }}" class="button">← Monthly Overview</a>
     </div>
 
 </div>
 
+<!-- ================= STYLE ================= -->
 <style>
 :root {
     --bg-card: #ffffff;
@@ -84,79 +83,116 @@
     --text-muted: #6b7280;
     --primary: #7dd3a7;
     --secondary: #a5b4fc;
+    --mood-very_bad: #f87171;
+    --mood-bad: #fbbf24;
+    --mood-neutral: #9ca3af;
+    --mood-good: #34d399;
+    --mood-very_good: #a78bfa;
 }
 
-/* CARD GENERAL */
+/* CARD PRINCIPAL */
 .mood-card {
-    max-width: 900px;
+    max-width: 720px;
     margin: 2rem auto;
     padding: 2rem;
     border-radius: 24px;
     background: var(--bg-card);
     box-shadow: 0 15px 35px rgba(0,0,0,0.12);
-    transition: all 0.3s ease;
-    text-align: center;
 }
 
-.title-gradient {
+/* HEADER */
+.mood-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.mood-header h2 {
     font-size: 1.8rem;
     font-weight: 700;
     background: linear-gradient(90deg, var(--primary), var(--secondary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    margin: 0.2rem 0;
+}
+.mood-period {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+.mood-nav a {
+    text-decoration: none;
+    color: var(--primary);
+    margin: 0 0.5rem;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+.mood-nav a:hover { color: var(--secondary); }
+
+/* SUBTITLE */
+.mood-subtitle {
+    text-align: center;
+    margin: 1rem 0;
+    color: var(--text-muted);
 }
 
-.mood-period { color: var(--text-muted); margin-bottom: 0.5rem; }
-.mood-subtitle { margin-bottom: 1rem; font-size: 1rem; color: var(--text-muted); }
-.mood-nav { display: flex; justify-content: space-between; margin-bottom: 1rem; }
-.mood-nav a { text-decoration: none; font-weight: 500; color: var(--text-muted); }
-.mood-nav a:hover { color: var(--primary); }
+/* SUMMARY */
+.mood-summary {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
 
-.mood-summary { font-weight: 600; margin-bottom: 1rem; font-size: 1.1rem; }
-
-/* LISTĂ ZILE */
-.mood-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1rem; }
-
+/* LISTA ZILELOR */
+.mood-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
 .mood-row {
     display: flex;
     align-items: center;
-    padding: 0.8rem 1.2rem;
-    border-radius: 16px;
+    justify-content: space-between;
+    padding: 0.6rem 1rem;
+    border-radius: 12px;
+    background: rgba(229, 231, 235, 0.6);
     text-decoration: none;
     color: var(--text-primary);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-    transition: all 0.3s ease, transform 0.2s ease;
+    transition: background 0.3s ease;
 }
+.mood-row:hover { background: rgba(229, 231, 235, 0.9); }
 
-.mood-row:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0,0,0,0.15); }
+.mood-row .mood-date { font-weight: 600; width: 80px; }
+.mood-row .mood-emoji { font-size: 1.2rem; width: 40px; text-align: center; }
+.mood-row .mood-text { flex: 1; padding-left: 0.5rem; }
 
-.mood-date { width: 80px; font-weight: 600; text-align: left; }
-.mood-emoji { width: 40px; font-size: 1.5rem; text-align: center; }
-.mood-text { flex: 1; text-align: left; font-weight: 500; }
+/* CULORI MOOD */
+.mood-very_bad { background-color: var(--mood-very_bad); color: white; }
+.mood-bad { background-color: var(--mood-bad); color: white; }
+.mood-neutral { background-color: var(--mood-neutral); color: white; }
+.mood-good { background-color: var(--mood-good); color: white; }
+.mood-very_good { background-color: var(--mood-very_good); color: white; }
 
-/* CULOARE STARE */
-.mood-very_bad { background-color: #f87171; color: #fff; } /* roșu */
-.mood-bad { background-color: #fbbf24; color: #fff; } /* galben-portocaliu */
-.mood-neutral { background-color: #f3f4f6; color: #111827; } /* gri deschis */
-.mood-good { background-color: #34d399; color: #fff; } /* verde */
-.mood-very_good { background-color: #60a5fa; color: #fff; } /* albastru */
-.mood-none { background-color: #e5e7eb; color: #111827; } /* fără stare */
-
-/* FOOTER & ACTIONS */
-.mood-footer { margin-top: 1rem; font-style: italic; color: var(--text-muted); }
-.mood-actions { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+/* FOOTER & BUTOANE */
+.mood-footer { text-align: center; color: var(--text-muted); margin-top: 1.5rem; }
+.mood-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
 .button {
     padding: 0.6rem 1.2rem;
-    border-radius: 12px;
-    text-decoration: none;
-    font-weight: 600;
+    border-radius: 8px;
     background: #e5e7eb;
     color: var(--text-primary);
-    transition: all 0.3s ease;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s ease;
 }
 .button:hover { background: #d1d5db; }
-.button.primary { background: var(--primary); color: #fff; }
-.button.primary:hover { background: #5fd1a0; color: #fff; }
+.button.primary { background: var(--primary); color: white; }
+.button.primary:hover { background: #5fd1a0; }
 
 /* DARK MODE */
 @media (prefers-color-scheme: dark) {
@@ -164,15 +200,14 @@
         --bg-card: #1f2937;
         --text-primary: #f4f7fb;
         --text-muted: #9ca3af;
-        --primary: #7dd3a7;
-        --secondary: #a5b4fc;
     }
-    .mood-card { background: var(--bg-card); color: var(--text-primary); }
-    .mood-row { box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
-    .mood-none { background-color: #4b5563; color: #f4f7fb; }
+    .mood-card, .mood-row {
+        background: #374151 !important;
+        color: #f4f7fb;
+    }
 }
 </style>
-
 {% endblock %}
+
 
 

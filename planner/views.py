@@ -1,142 +1,132 @@
 from datetime import date, timedelta
-from calendar import monthrange
+from calendar import monthrange, month_name
+from collections import Counter
 from random import choice
 
-from django.conf.global_settings import DEFAULT_FROM_EMAIL
-from django.contrib.auth import login, logout
+from django.conf import settings
+from django.contrib.auth import login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db.models import Q
+from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from django.contrib.sites.shortcuts import get_current_site
-from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
-from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import EmailMessage, send_mail
+from django.core.mail import EmailMessage
+from django.http import HttpResponse
 
 from .models import Day, TimeBlock, Quote, EveningReflection, UserProfile
 from .forms import RegisterForm, EmailAuthenticationForm
-from datetime import date, timedelta
-from django.conf import settings
-from django.contrib.auth import login, logout
-from django.contrib.auth.models import User
-from django.contrib.auth.tokens import default_token_generator
-from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import EmailMessage
-from django.shortcuts import render, redirect
-from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
-from .forms import RegisterForm, EmailAuthenticationForm
 
-# ================================================
-# 🔹 Înregistrare cu confirmare email (API Brevo)
-# ================================================
-import requests
-from django.shortcuts import render, redirect
-from django.contrib.auth import login
-from django.contrib.auth.models import User
-from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.contrib.auth.tokens import default_token_generator
-from .forms import RegisterForm
-from django.conf import settings
+# ===================================================
+# 🔹 HELPERS
+# ===================================================
 
+def redirect_to_day(day):
+    return redirect("day_detail", year=day.date.year, month=day.date.month, day=day.date.day)
+
+
+def assign_closing_quote(day_obj):
+    if day_obj.closing_quote:
+        return
+    quotes = Quote.objects.filter(active=True)
+    if day_obj.mood:
+        mood_quotes = quotes.filter(mood=day_obj.mood)
+        if mood_quotes.exists():
+            quotes = mood_quotes
+    if quotes.exists():
+        day_obj.closing_quote = choice(list(quotes))
+
+
+def get_month_year(request):
+    today = date.today()
+    year = int(request.GET.get("year", today.year))
+    month = int(request.GET.get("month", today.month))
+    return year, month
+
+
+def get_week_range(request):
+    today = date.today()
+    offset = int(request.GET.get("offset", 0))
+    start = today - timedelta(days=today.weekday()) + timedelta(weeks=offset)
+    end = start + timedelta(days=6)
+    return start, end, offset
+
+
+# ===================================================
+# 🔹 AUTHENTICATION
+# ===================================================
 def register_view(request):
     if request.user.is_authenticated:
         return redirect("today")
 
     form = RegisterForm(request.POST or None)
-
     if request.method == "POST" and form.is_valid():
         user = form.save(commit=False)
-        user.is_active = True  # cont activ imediat
+        user.is_active = True
         user.save()
-        login(request, user)  # loghează automat utilizatorul
+        login(request, user)
         return redirect("today")
 
     return render(request, "planner/auth/register.html", {"form": form})
 
-
-# ================================================
-# 🔹 Login
-# ================================================
 def login_view(request):
     if request.user.is_authenticated:
         return redirect("today")
 
     form = EmailAuthenticationForm(request.POST or None)
-
     if request.method == "POST" and form.is_valid():
         login(request, form.get_user())
         return redirect("today")
 
     return render(request, "planner/auth/login.html", {"form": form})
 
-# ================================================
-# 🔹 Logout
-# ================================================
 def logout_view(request):
     logout(request)
     return redirect("home")
-
 
 @login_required
 def profile_view(request):
     profile, _ = UserProfile.objects.get_or_create(user=request.user)
     saved = False
-
     if request.method == "POST":
         profile.nickname = request.POST.get("nickname", "")
         profile.bio = request.POST.get("bio", "")
         profile.save()
         saved = True
+    return render(request, "planner/auth/profile.html", {"profile": profile, "saved": saved})
 
-    return render(request, "planner/auth/profile.html", {
-        "profile": profile,
-        "saved": saved,
-    })
-
+# ===================================================
+# 🔹 HOME / TODAY
+# ===================================================
 def home_view(request):
     if request.user.is_authenticated:
         return redirect("today")
 
     quote = Quote.objects.filter(active=True).order_by("?").first()
+    return render(request, "planner/home.html", {"quote": quote, "today": date.today()})
 
-    return render(request, "planner/home.html", {
-        "quote": quote,
-        "today": date.today(),
-    })
 
 @login_required
 def today_view(request):
     today = date.today()
-    return redirect(
-        "day_detail",
-        year=today.year,
-        month=today.month,
-        day=today.day
-    )
+    return redirect("day_detail", year=today.year, month=today.month, day=today.day)
 
-from .models import EveningReflection
+# ===================================================
+# 🔹 DAY DETAIL & EVENING REFLECTION
+# ===================================================
 
 @login_required
 def day_detail_view(request, year, month, day):
     selected_date = date(year, month, day)
-
-    day_obj, _ = Day.objects.get_or_create(
-        user=request.user,
-        date=selected_date
-    )
+    day_obj, _ = Day.objects.get_or_create(user=request.user, date=selected_date)
 
     message = None
     if selected_date < date.today():
-        message = "Zi din trecut. Poți reflecta în ritmul tău 🤍"
+        message = "Past day. You can reflect at your own pace 🤍"
     elif selected_date > date.today():
-        message = "Zi din viitor. Nu trebuie încă să fie clară ✨"
+        message = "Future day. It doesn't need to be clear yet ✨"
 
     reflection = EveningReflection.objects.filter(day=day_obj).first()
 
@@ -144,243 +134,147 @@ def day_detail_view(request, year, month, day):
         "day": day_obj,
         "time_blocks": day_obj.time_blocks.all(),
         "message": message,
-        "quote": day_obj.closing_quote,  # ✅ CITAT
-        "reflection": reflection,         # ✅ ca să afișezi ce-ai completat seara
+        "quote": day_obj.closing_quote,
+        "reflection": reflection,
     })
 
 
+@login_required
+def evening_reflection_view(request, year, month, day):
+    selected_date = date(year, month, day)
+    day_obj = get_object_or_404(Day, user=request.user, date=selected_date)
+    reflection, _ = EveningReflection.objects.get_or_create(day=day_obj)
 
+    if request.method == "POST":
+        day_obj.mood = request.POST.get("mood") or day_obj.mood
+        day_obj.color = request.POST.get("color") or day_obj.color
+        day_obj.notes = request.POST.get("notes", day_obj.notes)
+        day_obj.save(update_fields=["mood", "color", "notes"])
+
+        reflection.drain = request.POST.get("drain", "")
+        reflection.small_win = request.POST.get("small_win", "")
+        reflection.save()
+
+        assign_closing_quote(day_obj)
+
+        day_obj.is_closed = True
+        day_obj.closed_at = timezone.now()
+        day_obj.save(update_fields=["is_closed", "closed_at", "closing_quote"])
+
+        return redirect_to_day(day_obj)
+
+    return render(request, "planner/evening.html", {"day": day_obj, "reflection": reflection})
+
+
+# ===================================================
+# 🔹 UPDATE DAY / TIMEBLOCK
+# ===================================================
 
 @login_required
 def set_day_color(request):
     if request.method != "POST":
         return redirect("today")
-
-    day = get_object_or_404(
-        Day,
-        id=request.POST.get("day_id"),
-        user=request.user
-    )
-
-    # 🔒 zi închisă → nu mai permitem modificări
-    if day.is_closed:
-        return redirect(
-            "day_detail",
-            year=day.date.year,
-            month=day.date.month,
-            day=day.date.day
-        )
-
-    color = request.POST.get("color")
-    if color:
-        day.color = color
-        day.save(update_fields=["color"])
-
-    return redirect(
-        "day_detail",
-        year=day.date.year,
-        month=day.date.month,
-        day=day.date.day
-    )
+    day = get_object_or_404(Day, id=request.POST.get("day_id"), user=request.user)
+    if not day.is_closed:
+        color = request.POST.get("color")
+        if color:
+            day.color = color
+            day.save(update_fields=["color"])
+    return redirect_to_day(day)
 
 
 @login_required
 def set_day_mood(request):
     if request.method != "POST":
         return redirect("today")
-
-    day = get_object_or_404(
-        Day,
-        id=request.POST.get("day_id"),
-        user=request.user
-    )
-
-    # 🔒 zi închisă → nu mai permitem modificări
-    if day.is_closed:
-        return redirect(
-            "day_detail",
-            year=day.date.year,
-            month=day.date.month,
-            day=day.date.day
-        )
-
-    mood = request.POST.get("mood")
-    if mood:
-        day.mood = mood
-        day.save(update_fields=["mood"])
-
-    return redirect(
-        "day_detail",
-        year=day.date.year,
-        month=day.date.month,
-        day=day.date.day
-    )
+    day = get_object_or_404(Day, id=request.POST.get("day_id"), user=request.user)
+    if not day.is_closed:
+        mood = request.POST.get("mood")
+        if mood:
+            day.mood = mood
+            day.save(update_fields=["mood"])
+    return redirect_to_day(day)
 
 
 @login_required
 def update_day_text(request):
-    day = get_object_or_404(
-        Day,
-        id=request.POST.get("day_id"),
-        user=request.user
-    )
-
+    day = get_object_or_404(Day, id=request.POST.get("day_id"), user=request.user)
     day.notes = request.POST.get("notes", "")
     day.save(update_fields=["notes"])
+    return redirect_to_day(day)
 
-    return redirect(
-        "day_detail",
-        year=day.date.year,
-        month=day.date.month,
-        day=day.date.day
-    )
 
 @login_required
 def add_timeblock(request):
-    day = get_object_or_404(
-        Day,
-        id=request.POST.get("day_id"),
-        user=request.user
-    )
-
+    day = get_object_or_404(Day, id=request.POST.get("day_id"), user=request.user)
     TimeBlock.objects.create(
         day=day,
         title=request.POST.get("title"),
         start_time=request.POST.get("start_time"),
         end_time=request.POST.get("end_time"),
     )
+    return redirect_to_day(day)
 
-    return redirect(
-        "day_detail",
-        year=day.date.year,
-        month=day.date.month,
-        day=day.date.day
-    )
 
 @login_required
 def toggle_timeblock(request, block_id):
-    block = get_object_or_404(
-        TimeBlock,
-        id=block_id,
-        day__user=request.user
-    )
-
+    block = get_object_or_404(TimeBlock, id=block_id, day__user=request.user)
     block.completed = not block.completed
     block.save(update_fields=["completed"])
+    return redirect_to_day(block.day)
 
-    day = block.day
-    return redirect(
-        "day_detail",
-        year=day.date.year,
-        month=day.date.month,
-        day=day.date.day
-    )
 
 @login_required
 def delete_timeblock(request, block_id):
-    block = get_object_or_404(
-        TimeBlock,
-        id=block_id,
-        day__user=request.user
-    )
-
+    block = get_object_or_404(TimeBlock, id=block_id, day__user=request.user)
     day = block.day
     block.delete()
-
-    return redirect(
-        "day_detail",
-        year=day.date.year,
-        month=day.date.month,
-        day=day.date.day
-    )
-
-@login_required
-def evening_reflection_view(request, year, month, day):
-    selected_date = date(year, month, day)
-
-    day_obj = get_object_or_404(
-        Day,
-        user=request.user,
-        date=selected_date
-    )
-
-    reflection, _ = EveningReflection.objects.get_or_create(day=day_obj)
-
-    if request.method == "POST":
-        # ✅ SALVEAZĂ STAREA ZILEI (NU SE PIERDE)
-        day_obj.mood = request.POST.get("mood") or day_obj.mood
-        day_obj.color = request.POST.get("color") or day_obj.color
-        day_obj.notes = request.POST.get("notes", day_obj.notes)
-
-        day_obj.save(update_fields=["mood", "color", "notes"])
-
-        # ✅ REFLECȚIA DE SEARĂ
-        reflection.drain = request.POST.get("drain", "")
-        reflection.small_win = request.POST.get("small_win", "")
-        reflection.save()
-
-        # ✅ CITAT FINAL (în funcție de stare)
-        if not day_obj.closing_quote:
-            quotes = Quote.objects.filter(active=True)
-
-            if day_obj.mood:
-                mood_quotes = quotes.filter(mood=day_obj.mood)
-                if mood_quotes.exists():
-                    quotes = mood_quotes
-
-            if quotes.exists():
-                day_obj.closing_quote = choice(list(quotes))
-
-        # ✅ ÎNCHIDE ZIUA
-        day_obj.is_closed = True
-        day_obj.closed_at = timezone.now()
-        day_obj.save(update_fields=["is_closed", "closed_at", "closing_quote"])
-
-        return redirect(
-            "day_detail",
-            year=year,
-            month=month,
-            day=day
-        )
-
-    return render(request, "planner/evening.html", {
-        "day": day_obj,
-        "reflection": reflection
-    })
+    return redirect_to_day(day)
 
 
 from datetime import date
 from calendar import monthrange
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from .models import Day
 
 
 @login_required
 def calendar_view(request, year=None, month=None):
     today = date.today()
-
-    # dacă nu primim lună → luna curentă
-    if not year or not month:
-        year = today.year
-        month = today.month
-
-    year = int(year)
-    month = int(month)
+    year = int(year or today.year)
+    month = int(month or today.month)
 
     # limită minimă (noiembrie 2025)
     if year < 2025 or (year == 2025 and month < 11):
         year, month = 2025, 11
 
-    days = []
-    total_days = monthrange(year, month)[1]
+    first_weekday, total_days = monthrange(year, month)  # first_weekday: Monday=0
+    # transformăm ca Sunday=0
+    start_day = (first_weekday + 1) % 7
 
-    for d in range(1, total_days + 1):
-        current = date(year, month, d)
-        day_obj = Day.objects.filter(
-            user=request.user,
-            date=current
-        ).first()
+    # preluăm toate Day existente pentru luna respectivă
+    existing_days = {d.date: d for d in Day.objects.filter(user=request.user, date__year=year, date__month=month)}
+
+    days = []
+
+    # adăugăm zile goale pentru offset
+    for _ in range(start_day):
+        days.append({
+            "date": None,
+            "day": None,
+            "is_today": False,
+            "is_future": False,
+        })
+
+    # adăugăm zilele reale
+    for day_num in range(1, total_days + 1):
+        current = date(year, month, day_num)
+        day_obj = existing_days.get(current)
+        if not day_obj:
+            # stub pentru zile goale
+            day_obj = type("DayStub", (), {})()
+            day_obj.mood = None
+            day_obj.notes = ""
+            day_obj.color = None
 
         days.append({
             "date": current,
@@ -389,15 +283,14 @@ def calendar_view(request, year=None, month=None):
             "is_future": current > today,
         })
 
-    # navigație
-    prev_month = month - 1
-    prev_year = year
+    # luna precedentă
+    prev_month, prev_year = month - 1, year
     if prev_month == 0:
         prev_month = 12
         prev_year -= 1
 
-    next_month = month + 1
-    next_year = year
+    # luna următoare
+    next_month, next_year = month + 1, year
     if next_month == 13:
         next_month = 1
         next_year += 1
@@ -414,80 +307,35 @@ def calendar_view(request, year=None, month=None):
     })
 
 
-from datetime import date, timedelta
-from calendar import month_name
-from collections import Counter
-
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-
-from .models import Day, TimeBlock
 
 
 # ===================================================
-# 🧠 HELPERS
-# ===================================================
-
-def get_month_year(request):
-    today = date.today()
-    year = int(request.GET.get("year", today.year))
-    month = int(request.GET.get("month", today.month))
-    return year, month
-
-
-def get_week_range(request):
-    today = date.today()
-    offset = int(request.GET.get("offset", 0))
-
-    start = today - timedelta(days=today.weekday()) + timedelta(weeks=offset)
-    end = start + timedelta(days=6)
-
-    return start, end, offset
-
-
-# ===================================================
-# 💗 WEEKLY SCORE
+# 🔹 WEEKLY & MONTHLY ANALYTICS
 # ===================================================
 
 @login_required
 def weekly_balance_score_view(request):
     start, end, offset = get_week_range(request)
-
-    days = Day.objects.filter(
-        user=request.user,
-        date__range=[start, end]
-    )
-
+    days = Day.objects.filter(user=request.user, date__range=[start, end])
     days_logged = days.count()
     mood_days = sum(bool(d.mood) for d in days)
-    completed_tasks = TimeBlock.objects.filter(
-        day__in=days,
-        completed=True
-    ).count()
+    completed_tasks = TimeBlock.objects.filter(day__in=days, completed=True).count()
 
-    score = min(
-        days_logged * 10 +
-        mood_days * 8 +
-        completed_tasks * 2,
-        100
-    )
+    score = min(days_logged * 10 + mood_days * 8 + completed_tasks * 2, 100)
 
     if score < 30:
-        message = "A fost greu. E suficient că ai fost aici."
-        emoji = "🫶"
+        message, emoji = "It was tough. It's enough that you were here.", "🫶"
     elif score < 70:
-        message = "Ai avut momente de echilibru. Este ok."
-        emoji = "🌿"
+        message, emoji = "You had some balanced moments. It's okay.", "🌿"
     else:
-        message = "Săptămână cu resurse bune."
-        emoji = "💗"
+        message, emoji = "A week with good resources.", "💗"
 
     if days_logged == 0:
-        suggestion = "Poate săptămâna viitoare începe cu o singură zi notată."
+        suggestion = "Maybe next week starts with just one logged day."
     elif days_logged < 3:
-        suggestion = "Poate data viitoare adaugi un gând mic."
+        suggestion = "Next time, add a small thought."
     else:
-        suggestion = "Continuă în ritmul tău."
+        suggestion = "Keep going at your own pace."
 
     return render(request, "planner/weekly_score.html", {
         "score": score,
@@ -502,35 +350,44 @@ def weekly_balance_score_view(request):
         "offset": offset,
     })
 
+from collections import Counter
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .models import Day
 
-# ===================================================
-# 📊 MONTHLY OVERVIEW
-# ===================================================
+month_name = {
+    1: "January",
+    2: "February",
+    3: "March",
+    4: "April",
+    5: "May",
+    6: "June",
+    7: "July",
+    8: "August",
+    9: "September",
+    10: "October",
+    11: "November",
+    12: "December",
+}
 
 @login_required
 def monthly_overview_view(request):
     year, month = get_month_year(request)
-
-    days = Day.objects.filter(
-        user=request.user,
-        date__year=year,
-        date__month=month
-    ).order_by("date")
-
+    days = Day.objects.filter(user=request.user, date__year=year, date__month=month).order_by("date")
     moods = [d.mood for d in days if d.mood]
-    counter = Counter(moods)
-    dominant_mood = counter.most_common(1)[0][0] if counter else None
+    dominant_mood = Counter(moods).most_common(1)[0][0] if moods else None
 
     interpretation_map = {
-        "very_bad": ("🌧️", "Luna a fost solicitantă."),
-        "bad": ("🌥️", "Au fost mai multe zile dificile."),
-        "neutral": ("🌤️", "O lună stabilă, fără extreme."),
-        "good": ("🌱", "Ai avut mai multe zile bune."),
-        "very_good": ("🌸", "O lună cu resurse emoționale frumoase."),
-        None: ("🌙", "Fiecare zi contează, chiar și cele nescrise."),
+        "very_bad": ("🌧️", "The month was challenging."),
+        "bad": ("🌥️", "There were several tough days."),
+        "neutral": ("🌤️", "A stable month, no extremes."),
+        "good": ("🌱", "You had several good days."),
+        "very_good": ("🌸", "A month with nice emotional resources."),
+        None: ("🌙", "Every day counts, even the unwritten ones."),
     }
 
-    icon, interpretation = interpretation_map[dominant_mood]
+    # Folosim .get() pentru siguranță
+    icon, interpretation = interpretation_map.get(dominant_mood, ("🌙", "Every day counts, even the unwritten ones."))
 
     return render(request, "planner/monthly_overview.html", {
         "days": days,
@@ -540,23 +397,15 @@ def monthly_overview_view(request):
         "dominant_mood": dominant_mood,
         "icon": icon,
         "interpretation": interpretation,
+        "total_days": days.count(),
     })
 
 
-# ===================================================
-# 📈 MOOD CHART
-# ===================================================
 
 @login_required
 def mood_chart_view(request):
     year, month = get_month_year(request)
-
-    days = Day.objects.filter(
-        user=request.user,
-        date__year=year,
-        date__month=month
-    ).order_by("date")
-
+    days = Day.objects.filter(user=request.user, date__year=year, date__month=month).order_by("date")
     moods = [d.mood for d in days if d.mood]
     most_common_mood = Counter(moods).most_common(1)[0][0] if moods else None
 
@@ -571,49 +420,26 @@ def mood_chart_view(request):
 
 @login_required
 def productivity_chart_view(request):
-    # offset = 0 (săptămâna curentă)
-    # offset = -1 (săptămâna trecută)
-    # offset = +1 (săptămâna viitoare)
     offset = int(request.GET.get("offset", 0))
-
     today = date.today()
     start_of_week = today - timedelta(days=today.weekday())
     start = start_of_week + timedelta(weeks=offset)
     end = start + timedelta(days=6)
 
-    days = Day.objects.filter(
-        user=request.user,
-        date__range=(start, end)
-    ).order_by("date")
+    days = Day.objects.filter(user=request.user, date__range=(start, end)).order_by("date")
+    data = [{"date": d.date.strftime("%d %b"), "completed": d.time_blocks.filter(completed=True).count(), "mood": d.mood or "none"} for d in days]
 
-    data = []
-    for d in days:
-        data.append({
-            "date": d.date.strftime("%d %b"),
-            "completed": d.time_blocks.filter(completed=True).count(),
-            "mood": d.mood or "none",
-        })
+    return render(request, "planner/chart/productivity.html", {"data": data, "start": start, "end": end, "offset": offset})
 
-    return render(request, "planner/chart/productivity.html", {
-        "data": data,
-        "start": start,
-        "end": end,
-        "offset": offset,
-    })
 
-from django.contrib.auth import get_user_model
-from django.http import HttpResponse
+# ===================================================
+# 🔹 ADMIN HELPERS
+# ===================================================
 
-def creeaza_superuser(request):
+def create_superuser(request):
     User = get_user_model()
     if not User.objects.filter(username="admin").exists():
-        User.objects.create_superuser(
-            username="admin",
-            email="admin@planner.com",
-            password="ParolaTare123!!"
-        )
-        return HttpResponse("✅ Superuser creat cu succes.")
+        User.objects.create_superuser(username="admin", email="admin@planner.com", password="StrongPassword123!!")
+        return HttpResponse("✅ Superuser created successfully.")
     else:
-        return HttpResponse("⚠️ Superuserul există deja.")
-
-
+        return HttpResponse("⚠️ Superuser already exists.")

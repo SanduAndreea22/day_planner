@@ -4,13 +4,13 @@ from django.db import models
 
 
 # ===================================================
-# 👤 PROFIL UTILIZATOR
+# 👤 USER PROFILE
 # ===================================================
 
 class UserProfile(models.Model):
     PRONOUN_CHOICES = [
-        ("ea", "ea / ei"),
-        ("el", "el / lui"),
+        ("she", "she / her"),
+        ("he", "he / him"),
         ("they", "they"),
     ]
 
@@ -31,7 +31,8 @@ class UserProfile(models.Model):
 
     evening_reminder_time = models.TimeField(
         null=True,
-        blank=True
+        blank=True,
+        help_text="Optional daily reminder time for evening reflection."
     )
 
     def __str__(self):
@@ -39,13 +40,13 @@ class UserProfile(models.Model):
 
 
 # ===================================================
-# 💬 CITATE (administrate din Admin)
+# 💬 QUOTES (managed via Admin)
 # ===================================================
 
 class Quote(models.Model):
     text = models.TextField()
 
-    # opțional: asociat cu mood
+    # optional: associated with a mood
     mood = models.CharField(
         max_length=20,
         blank=True,
@@ -59,7 +60,7 @@ class Quote(models.Model):
 
 
 # ===================================================
-# 📅 ZI
+# 📅 DAY
 # ===================================================
 
 class Day(models.Model):
@@ -78,24 +79,24 @@ class Day(models.Model):
         null=True
     )
 
-    # 🎨 Energie / culoare
+    # 🎨 Energy / Color
     color = models.CharField(
         max_length=20,
         blank=True,
         null=True
     )
 
-    # 📝 Note / gând
+    # 📝 Notes / Thoughts
     notes = models.TextField(blank=True)
 
-    # 🌱 Zi de refacere
+    # 🌱 Rest day
     rest_day = models.BooleanField(default=False)
 
-    # 🌙 Zi închisă
+    # 🌙 Day closed
     is_closed = models.BooleanField(default=False)
     closed_at = models.DateTimeField(blank=True, null=True)
 
-    # 🌙 Citat final (ales la închidere)
+    # 🌙 Closing quote (assigned when closing the day)
     closing_quote = models.ForeignKey(
         Quote,
         on_delete=models.SET_NULL,
@@ -109,14 +110,14 @@ class Day(models.Model):
 
     class Meta:
         ordering = ["date"]
-        unique_together = ("user", "date")  # ✅ FOARTE IMPORTANT
+        unique_together = ("user", "date")  # ✅ VERY IMPORTANT
 
     def __str__(self):
         return f"{self.user.email} – {self.date}"
 
 
 # ===================================================
-# ⏰ INTERVAL ORAR (TASK)
+# ⏰ TIME BLOCK (TASK)
 # ===================================================
 
 class TimeBlock(models.Model):
@@ -140,7 +141,7 @@ class TimeBlock(models.Model):
     def clean(self):
         if self.end_time <= self.start_time:
             raise ValidationError(
-                "Ora de sfârșit trebuie să fie după ora de început."
+                "End time must be after start time."
             )
 
     def __str__(self):
@@ -148,7 +149,7 @@ class TimeBlock(models.Model):
 
 
 # ===================================================
-# 🌙 REFLECȚIE DE SEARĂ
+# 🌙 EVENING REFLECTION
 # ===================================================
 
 class EveningReflection(models.Model):

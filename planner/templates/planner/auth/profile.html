@@ -1,20 +1,20 @@
 {% extends "base.html" %}
-{% block title %}👤 Profil · Emotional Planner{% endblock %}
+{% block title %}👤 Profile · Emotional Planner{% endblock %}
 
 {% block content %}
 <div class="profile-card">
 
     <h2 class="title-gradient profile-title">
-        👤 Profilul meu
+        👤 My Profile
     </h2>
 
     <p class="muted profile-subtitle">
-        Acesta este spațiul tău. Poți schimba oricând aceste informații.
+        This is your personal space. You can change this information anytime.
     </p>
 
     {% if saved %}
         <div class="profile-toast">
-            ✅ Profil actualizat 🤍
+            ✅ Profile updated 🤍
         </div>
     {% endif %}
 
@@ -23,37 +23,37 @@
 
         <!-- NICKNAME -->
         <div class="form-group">
-            <label for="nickname">Cum vrei să te strig?</label>
+            <label for="nickname">What should we call you?</label>
             <input
                 type="text"
                 id="nickname"
                 name="nickname"
                 value="{{ profile.nickname }}"
                 maxlength="20"
-                placeholder="ex: Andi, Lu, eu 🌱"
+                placeholder="ex: Andi, Lu, me 🌱"
                 class="profile-input"
             >
             <small class="form-hint">
-                Poate fi un nume real, un diminutiv sau un nickname.
+                Can be a real name, diminutive, or nickname.
             </small>
             <div class="nickname-preview muted">
-                Ex: Bună, <span id="namePreview">{{ profile.nickname|default:"Andi" }}</span> 🌱
+                Ex: Hi, <span id="namePreview">{{ profile.nickname|default:"Andi" }}</span> 🌱
             </div>
         </div>
 
         <!-- BIO -->
         <div class="form-group">
-            <label for="bio">Câteva cuvinte despre tine</label>
+            <label for="bio">A few words about yourself</label>
             <textarea
                 id="bio"
                 name="bio"
                 rows="4"
                 maxlength="200"
                 class="profile-textarea"
-                placeholder="Cum te simți în perioada asta, ce e important pentru tine..."
+                placeholder="How you’re feeling lately, what’s important to you..."
             >{{ profile.bio }}</textarea>
             <small class="form-hint">
-                Nu trebuie să fie complet. Poate fi chiar o propoziție.
+                Doesn’t have to be complete. Can be just a sentence.
             </small>
             <div class="char-counter muted">
                 <span id="bioCount">{{ profile.bio|length }}</span> / 200
@@ -63,20 +63,20 @@
         <!-- ACTIONS -->
         <div class="profile-actions">
             <button type="submit" class="button primary profile-button">
-                Salvează 💾
+                Save 💾
             </button>
             <a href="{% url 'today' %}" class="button secondary">
-                ← Înapoi
+                ← Back
             </a>
         </div>
     </form>
 
     <p class="profile-ending muted">
-        Acest spațiu e doar pentru tine.
+        This space is just for you.
     </p>
 </div>
 
-<!-- ================== STIL ================== -->
+<!-- ================== STYLES ================== -->
 <style>
 :root {
     --bg-card: #ffffff;
@@ -88,7 +88,7 @@
     --toast-text: #065f46;
 }
 
-/* CARD PRINCIPAL */
+/* MAIN CARD */
 .profile-card {
     max-width: 600px;
     margin: 2rem auto;
@@ -100,7 +100,7 @@
     font-family: 'Inter', sans-serif;
 }
 
-/* TITLU */
+/* TITLE */
 .profile-title {
     font-size: 1.8rem;
     font-weight: 700;

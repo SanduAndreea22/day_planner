@@ -12,19 +12,21 @@
     <a href="{% url 'calendar_month' next_year next_month %}" class="nav-arrow">→</a>
   </div>
 
-  <!-- GRID ZILE -->
+  <!-- DAYS OF WEEK -->
+  <div class="calendar-weekdays">
+    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+  </div>
+
+  <!-- GRID DAYS -->
   <div class="calendar-grid">
     {% for item in days %}
+      {% if item.day %}
       <a href="{% url 'day_detail' item.date.year item.date.month item.date.day %}"
          class="calendar-day
-           {% if item.day and item.day.color %}color-{{ item.day.color }}{% endif %}
-           {% if item.is_today %}today{% endif %}
-           {% if item.is_future %}future{% endif %}"
+           {% if item.day.color %}color-{{ item.day.color }}{% endif %}
+           {% if item.is_today %}today{% endif %}"
          {% if item.day.notes %}data-notes="{{ item.day.notes|escape }}" {% endif %}>
-
         <div class="day-number">{{ item.date.day }}</div>
-
-        {% if item.day and item.day.mood %}
         <div class="day-mood">
           {% if item.day.mood == "very_bad" %}😞
           {% elif item.day.mood == "bad" %}😕
@@ -33,22 +35,21 @@
           {% elif item.day.mood == "very_good" %}😄
           {% endif %}
         </div>
-        {% elif not item.day %}
-        <span class="add">+</span>
-        {% endif %}
-
       </a>
+      {% else %}
+        <!-- empty slot for alignment -->
+        <div class="calendar-day empty"></div>
+      {% endif %}
     {% endfor %}
   </div>
 
-  <!-- LEGENDĂ -->
+  <!-- LEGEND -->
   <div class="calendar-legend muted">
-    😊 zi completată · ⚪ zi goală · ➕ adaugă zi
+    😊 filled day · ⚪ empty day · ➕ add a day
   </div>
 
 </div>
 
-<!-- ================== STIL ================== -->
 <style>
 :root {
     --bg-card: #ffffff;
@@ -74,7 +75,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 .nav-arrow {
     font-size: 1.5rem;
@@ -93,6 +94,16 @@
     -webkit-text-fill-color: transparent;
 }
 
+/* WEEKDAYS */
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
 /* GRID */
 .calendar-grid {
     display: grid;
@@ -100,14 +111,14 @@
     gap: 0.5rem;
 }
 
-/* ZILE */
+/* DAYS */
 .calendar-day {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0.8rem;
+    padding: 0.6rem;
     border-radius: 16px;
     background: rgba(255,255,255,0.9);
     box-shadow: 0 5px 15px rgba(0,0,0,0.05);
@@ -122,29 +133,26 @@
     box-shadow: 0 12px 25px rgba(0,0,0,0.2);
 }
 
+.empty { background: transparent; box-shadow: none; }
+
+/* DAY NUMBER & MOOD */
 .day-number { font-size: 1rem; margin-bottom: 0.2rem; }
 .day-mood { font-size: 1.5rem; }
 
-/* Culori zi - gradient */
+/* COLORS */
 .color-red { background: linear-gradient(145deg, #f87171, #fca5a5); color: white; }
 .color-yellow { background: linear-gradient(145deg, #facc15, #fde68a); color: #111827; }
 .color-green { background: linear-gradient(145deg, #4ade80, #a7f3d0); color: #111827; }
 .color-blue { background: linear-gradient(145deg, #60a5fa, #93c5fd); color: white; }
 .color-purple { background: linear-gradient(145deg, #c084fc, #e9d5ff); color: #111827; }
 
-/* Ziua curentă */
+/* TODAY */
 .today {
     box-shadow: 0 0 0 3px var(--primary), 0 4px 12px rgba(0,0,0,0.2);
     transform: scale(1.05);
 }
 
-/* Zile viitoare */
-.future { opacity: 0.6; }
-
-/* Adaugă zi */
-.add { font-size: 1.5rem; color: var(--primary); }
-
-/* TOOLTIP NOTE */
+/* TOOLTIP NOTES */
 .calendar-day[data-notes]:hover::after {
     content: attr(data-notes);
     position: absolute;
@@ -164,7 +172,7 @@
     font-size: 0.85rem;
 }
 
-/* LEGENDĂ */
+/* LEGEND */
 .calendar-legend {
     margin-top: 1rem;
     text-align: center;
@@ -192,6 +200,5 @@
 }
 </style>
 {% endblock %}
-
 
 

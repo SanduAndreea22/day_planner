@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html lang="en">
 <head>
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Emotional Planner - Monitorizează-ți starea emoțională și planifică-ți bunăstarea.">
+    <meta name="description" content="Emotional Planner - Track your emotions and plan your well-being.">
 
-    <title>{% block title %}Acasă{% endblock %} | 🌸 Emotional Planner</title>
+    <title>{% block title %}Home{% endblock %} | 🌸 Emotional Planner</title>
 
-    <!-- Font Google Inter -->
+    <!-- Google Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    <!-- CSS Inline -->
+    <!-- Inline CSS -->
     <style>
         :root {
             --primary: #7dd3a7;
@@ -55,7 +55,7 @@
         /* Navbar modern */
         .nav-container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
         .nav-menu { display: flex; gap: 1rem; flex-wrap: wrap; }
-        .nav-item { padding: 0.5rem 1rem; border-radius: var(--radius-md); transition: 0.3s; }
+        .nav-item { padding: 0.5rem 1rem; border-radius: var(--radius-md); transition: 0.3s; text-align: center; }
         .nav-item.highlight { background: linear-gradient(90deg, var(--primary), var(--secondary)); color: white; font-weight: 600; }
         .nav-item.dark-toggle { background: none; color: var(--text-main); cursor: pointer; border: none; font-size: 1.2rem; }
 
@@ -65,7 +65,7 @@
             border-radius: var(--radius-md);
             padding: 1.5rem;
             box-shadow: var(--shadow);
-            transition: all 0.3s ease;
+            transition: background-color 0.5s ease, color 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .preview-card:hover {
@@ -102,6 +102,14 @@
         .footer-card.highlight { background: linear-gradient(90deg, var(--primary), var(--secondary)); color: white; }
 
         .footer-meta { color: var(--text-muted); font-size: 0.8rem; text-align: center; }
+
+        /* Responsive Mobile */
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; gap: 1rem; }
+            .nav-menu { flex-direction: column; width: 100%; }
+            .nav-item { width: 100%; }
+            .home-preview { flex-direction: column; gap: 1rem; }
+        }
     </style>
 
     {% block extra_head %}{% endblock %}
@@ -112,17 +120,17 @@
             <a href="{% url 'home' %}" class="nav-logo">🌸 <span>Emotional Planner</span></a>
             <nav class="nav-menu">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'today' %}" class="nav-item">🌤 Azi</a>
+                    <a href="{% url 'today' %}" class="nav-item">🌤 Today</a>
                     <a href="{% url 'calendar' %}" class="nav-item">📅 Calendar</a>
-                    <a href="{% url 'weekly_score' %}" class="nav-item">📈 Săptămână</a>
-                    <a href="{% url 'monthly_overview' %}" class="nav-item">🧭 Lună</a>
-                    <a href="{% url 'profile' %}" class="nav-item">👤 Profil</a>
+                    <a href="{% url 'weekly_score' %}" class="nav-item">📈 Week</a>
+                    <a href="{% url 'monthly_overview' %}" class="nav-item">🧭 Month</a>
+                    <a href="{% url 'profile' %}" class="nav-item">👤 Profile</a>
                     <a href="{% url 'logout' %}" class="nav-item logout">Logout</a>
                 {% else %}
-                    <a href="{% url 'login' %}" class="nav-item">💗 Autentificare</a>
-                    <a href="{% url 'register' %}" class="nav-item highlight">🌸 Creează cont</a>
+                    <a href="{% url 'login' %}" class="nav-item">💗 Login</a>
+                    <a href="{% url 'register' %}" class="nav-item highlight">🌸 Sign Up</a>
                 {% endif %}
-                <button type="button" id="theme-toggle" class="nav-item dark-toggle">🌙</button>
+                <button type="button" id="theme-toggle" class="nav-item dark-toggle" aria-label="Toggle dark mode" title="Toggle Dark / Light Mode">🌙</button>
             </nav>
         </div>
     </header>
@@ -133,26 +141,34 @@
 
     <footer>
         <div class="footer-cards">
-            <div class="footer-card">🌸 Ai făcut suficient azi.</div>
-            <div class="footer-card highlight">💗 Odihna e productivă.</div>
-            <div class="footer-card">✨ Mâine e o nouă zi.</div>
+            <div class="footer-card">🌸 You've done enough today.</div>
+            <div class="footer-card highlight">💗 Rest is productive.</div>
+            <div class="footer-card">✨ Tomorrow is a new day.</div>
         </div>
-        <div class="footer-meta muted">© Emotional Planner · privat · fără comparații</div>
+        <div class="footer-meta muted">© Emotional Planner · private · no comparisons</div>
     </footer>
 
     <script>
         const toggle = document.getElementById('theme-toggle');
 
+        function applyTheme(theme) {
+            if(theme === 'dark') {
+                document.body.classList.add('dark');
+                toggle.textContent = '☀️';
+            } else {
+                document.body.classList.remove('dark');
+                toggle.textContent = '🌙';
+            }
+            localStorage.setItem('theme', theme);
+        }
+
         toggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark');
-            toggle.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
-            localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+            const isDark = document.body.classList.contains('dark');
+            applyTheme(isDark ? 'light' : 'dark');
         });
 
-        if(localStorage.getItem('theme') === 'dark'){
-            document.body.classList.add('dark');
-            toggle.textContent = '☀️';
-        }
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        applyTheme(savedTheme);
     </script>
 </body>
 </html>
