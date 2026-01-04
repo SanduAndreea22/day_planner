@@ -115,7 +115,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # ====================================================
 # I18N / TIME
 # ====================================================
-LANGUAGE_CODE = "ro"
+LANGUAGE_CODE = "en"
 TIME_ZONE = "Europe/Bucharest"
 USE_I18N = True
 USE_TZ = True
