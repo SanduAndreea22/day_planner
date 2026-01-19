@@ -37,6 +37,9 @@ def get_week_range(request):
     start = today - timedelta(days=today.weekday()) + timedelta(weeks=offset)
     end = start + timedelta(days=6)
 
+    return start, end, offset
+
+
 def register_view(request):
     if request.user.is_authenticated:
         return redirect("today")
