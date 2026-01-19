@@ -28,7 +28,6 @@
     <form method="post" class="auth-form" novalidate>
         {% csrf_token %}
 
-        <!-- EMAIL -->
         <div class="form-group" style="margin-bottom:1rem;">
             {{ form.email.label_tag }}
             {{ form.email }}
@@ -37,7 +36,6 @@
             {% endif %}
         </div>
 
-        <!-- PASSWORD -->
         <div class="form-group" style="margin-bottom:1rem;">
             {{ form.password1.label_tag }}
             {{ form.password1 }}
@@ -49,7 +47,6 @@
             {% endif %}
         </div>
 
-        <!-- CONFIRM PASSWORD -->
         <div class="form-group" style="margin-bottom:1rem;">
             {{ form.password2.label_tag }}
             {{ form.password2 }}
@@ -58,7 +55,6 @@
             {% endif %}
         </div>
 
-        <!-- NON FIELD ERRORS -->
         {% if form.non_field_errors %}
             <div class="form-error-global" style="color:red; margin-bottom:1rem;">
                 {{ form.non_field_errors.0 }}
@@ -78,14 +74,12 @@
         </button>
     </form>
 
-    <!-- 🔒 Reassurance -->
     <div class="auth-trust muted" style="text-align:center; color: var(--text-muted); margin-top:1.5rem;">
         <p>🔒 Your data is private</p>
         <p>🌱 We don’t send spam</p>
         <p>🕯️ You can delete your account anytime</p>
     </div>
 
-    <!-- Secondary navigation -->
     <p class="muted auth-footer" style="text-align:center; color: var(--text-muted); margin-top:1rem;">
         Already have an account?
         <a href="{% url 'login' %}" style="color: var(--primary); text-decoration:none;"><strong>Log in</strong></a>

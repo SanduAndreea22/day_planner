@@ -3,15 +3,9 @@ import os
 from dotenv import load_dotenv
 import dj_database_url
 
-# ====================================================
-# BASE
-# ====================================================
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()  # pentru .env local
 
-# ====================================================
-# SECURITY
-# ====================================================
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-local-only")
 
 DEBUG = os.getenv("DEBUG", "False") == "True"
@@ -27,9 +21,6 @@ CSRF_TRUSTED_ORIGINS = (
     else []
 )
 
-# ====================================================
-# APPLICATIONS
-# ====================================================
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -40,9 +31,6 @@ INSTALLED_APPS = [
     "planner",
 ]
 
-# ====================================================
-# MIDDLEWARE
-# ====================================================
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -54,15 +42,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# ====================================================
-# URL / WSGI
-# ====================================================
 ROOT_URLCONF = "core.urls"
 WSGI_APPLICATION = "core.wsgi.application"
 
-# ====================================================
-# TEMPLATES
-# ====================================================
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -79,13 +61,10 @@ TEMPLATES = [
     },
 ]
 
-# ====================================================
-# DATABASE
-# ====================================================
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 if DATABASE_URL:
-    # Railway / Production
+
     DATABASES = {
         "default": dj_database_url.parse(
             DATABASE_URL,
@@ -94,7 +73,7 @@ if DATABASE_URL:
         )
     }
 else:
-    # Local development
+
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -102,9 +81,6 @@ else:
         }
     }
 
-# ====================================================
-# PASSWORD VALIDATION
-# ====================================================
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -112,17 +88,11 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# ====================================================
-# I18N / TIME
-# ====================================================
 LANGUAGE_CODE = "en"
 TIME_ZONE = "Europe/Bucharest"
 USE_I18N = True
 USE_TZ = True
 
-# ====================================================
-# STATIC FILES
-# ====================================================
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
@@ -133,14 +103,8 @@ if DEBUG:
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# ====================================================
-# DEFAULT FIELD
-# ====================================================
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# ====================================================
-# EMAIL (fără confirmare)
-# ====================================================
 EMAIL_BACKEND = os.getenv(
     "EMAIL_BACKEND",
     "django.core.mail.backends.console.EmailBackend"
@@ -157,10 +121,6 @@ DEFAULT_FROM_EMAIL = os.getenv(
     "Emotional Planner <no-reply@example.com>"
 )
 
-
-# ====================================================
-# AUTH
-# ====================================================
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "today"
 LOGOUT_REDIRECT_URL = "home"

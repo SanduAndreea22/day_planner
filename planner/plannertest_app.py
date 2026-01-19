@@ -1,11 +1,9 @@
 from datetime import date as date_cls
-
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
@@ -18,11 +16,8 @@ from planner.models import Day, Quote, EveningReflection, TimeBlock
     ALLOWED_HOSTS=["testserver", "localhost", "127.0.0.1"],
 )
 class AuthFlowTests(TestCase):
-    """✅ TESTE FLOW AUTENTIFICARE"""
-
     def setUp(self):
         self.client = Client()
-
     def test_register_sends_confirmation_email(self):
         response = self.client.post(
             reverse("register"),
@@ -69,7 +64,6 @@ class AuthFlowTests(TestCase):
             is_active=True,
         )
 
-        # 🔐 LOGIN
         response = self.client.post(
             reverse("login"),
             {
@@ -80,22 +74,18 @@ class AuthFlowTests(TestCase):
 
         self.assertRedirects(response, reverse("today"))
 
-        # ✅ user e autentificat
         response = self.client.get(reverse("today"))
         self.assertEqual(response.status_code, 200)
 
-        # 🚪 LOGOUT
         response = self.client.get(reverse("logout"))
         self.assertRedirects(response, reverse("home"))
 
-        # 🔒 acces protejat → redirect la login
         response = self.client.get(reverse("today"))
         self.assertRedirects(response, reverse("login") + "?next=/today/")
 
 
 @override_settings(ALLOWED_HOSTS=["testserver", "localhost", "127.0.0.1"])
 class DayFlowTests(TestCase):
-    """✅ TESTE ZI / TASKURI / ÎNCHIDERE"""
 
     def setUp(self):
         self.client = Client()
@@ -191,7 +181,6 @@ class DayFlowTests(TestCase):
 
 
 class ClosingQuoteTests(TestCase):
-    """✅ TEST CRITIC – CITAT FINAL FIX"""
 
     def setUp(self):
         self.client = Client()
@@ -238,7 +227,6 @@ class ClosingQuoteTests(TestCase):
 
         self.assertIsNotNone(first_quote)
 
-        # refresh zi (simulăm reload)
         response = self.client.get(
             reverse(
                 "day_detail",
@@ -256,7 +244,6 @@ class ClosingQuoteTests(TestCase):
 
 
 class ChartsTests(TestCase):
-    """✅ TESTE PENTRU GRAFICE"""
 
     def setUp(self):
         self.client = Client()

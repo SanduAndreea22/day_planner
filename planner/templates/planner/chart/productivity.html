@@ -13,14 +13,12 @@
         <span class="muted">Productivity doesn’t cancel your emotions.</span>
     </p>
 
-    <!-- WEEK NAVIGATION -->
     <div class="week-nav">
         <a class="week-btn" href="?offset={{ offset|add:-1 }}">← Previous week</a>
         <div class="week-label">{{ start|date:"d M Y" }} – {{ end|date:"d M Y" }}</div>
         <a class="week-btn" href="?offset={{ offset|add:1 }}">Next week →</a>
     </div>
 
-    <!-- DAYS LIST -->
     <div class="productivity-list">
         {% for item in data %}
         <div class="productivity-row color-{{ item.mood }}">
@@ -46,7 +44,6 @@
         {% endfor %}
     </div>
 
-    <!-- CALL TO ACTION -->
     <div class="productivity-actions">
         <a href="{% url 'calendar' %}" class="button primary">📅 Calendar</a>
         <a href="{% url 'weekly_score' %}" class="button">← Weekly Score</a>
@@ -57,7 +54,6 @@
     </p>
 </div>
 
-<!-- ================== STYLES ================== -->
 <style>
 :root {
     --bg-card: #ffffff;
@@ -67,7 +63,6 @@
     --secondary: #a5b4fc;
 }
 
-/* CARD */
 .productivity-card {
     max-width: 900px;
     margin: 2rem auto;
@@ -78,11 +73,9 @@
     transition: background 0.5s, color 0.5s;
 }
 
-/* TITLE & SUBTITLE */
 .productivity-card h2 { text-align: center; margin-bottom: 0.5rem; }
 .productivity-subtitle { text-align: center; color: var(--text-muted); margin-bottom: 1.5rem; }
 
-/* WEEK NAVIGATION */
 .week-nav {
     display: flex;
     justify-content: space-between;
@@ -93,7 +86,6 @@
 .week-btn:hover { text-decoration: underline; }
 .week-label { font-weight: 700; text-align: center; }
 
-/* DAYS LIST */
 .productivity-list {
     display: flex;
     flex-direction: column;
@@ -118,14 +110,12 @@
 .prod-mood { font-size: 1.5rem; width: 10%; text-align: center; }
 .prod-value { width: 65%; font-weight: 500; text-align: right; }
 
-/* MOOD COLORS */
 .color-very_bad { background: #f87171; color: white; }
 .color-bad { background: #facc15; color: #111827; }
 .color-neutral { background: #9ca3af; color: white; }
 .color-good { background: #4ade80; color: #111827; }
 .color-very_good { background: #60a5fa; color: white; }
 
-/* BUTTONS */
 .productivity-actions {
     display: flex;
     justify-content: center;
@@ -145,10 +135,8 @@
 .button.primary { background: var(--primary); color: white; }
 .button.primary:hover { background: #5fd1a0; }
 
-/* FOOTER */
 .productivity-final { text-align: center; font-style: italic; color: var(--text-muted); }
 
-/* DARK MODE */
 @media (prefers-color-scheme: dark) {
     :root {
         --bg-card: #1f2937;

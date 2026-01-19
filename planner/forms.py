@@ -3,13 +3,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-
 from .models import UserProfile
 
-
-# ===================================================
-# 🌸 REGISTER FORM — EMAIL + PASSWORD (SAFE, WITH EMAIL CONFIRMATION)
-# ===================================================
 class RegisterForm(forms.ModelForm):
     password1 = forms.CharField(
         label="Password",
@@ -54,27 +49,16 @@ class RegisterForm(forms.ModelForm):
         return cleaned_data
 
     def save(self, commit=True):
-        """
-        ✅ Creates an inactive user (until email is confirmed)
-        ✅ Generates a unique username automatically
-        """
         user = super().save(commit=False)
         email = self.cleaned_data["email"].lower()
         user.username = f"user_{User.objects.count() + 1}"
         user.email = email
         user.set_password(self.cleaned_data["password1"])
-
-        # Inactive until email confirmation
         user.is_active = False
-
         if commit:
             user.save()
         return user
 
-
-# ===================================================
-# 🔑 LOGIN FORM — AUTHENTICATION WITH EMAIL
-# ===================================================
 class EmailAuthenticationForm(forms.Form):
     email = forms.EmailField(
         label="Email",
@@ -112,10 +96,6 @@ class EmailAuthenticationForm(forms.Form):
     def get_user(self):
         return self.user
 
-
-# ===================================================
-# 👤 PROFILE FORM — PERSONAL DATA
-# ===================================================
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile

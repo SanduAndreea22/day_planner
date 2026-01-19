@@ -1,5 +1,5 @@
 {% if day.is_closed %}
-<!-- ================== DAY SUMMARY (READ-ONLY) ================== -->
+
 <div class="day-summary-card read-only" style="
     max-width:800px;
     margin:2rem auto;
@@ -24,7 +24,6 @@
         Day closed. The information below can no longer be edited.
     </p>
 
-    <!-- 🎨 ENERGY -->
     {% if day.color %}
     <div class="summary-row" style="display:flex; justify-content:space-between; margin-bottom:0.8rem; padding:0.5rem 1rem; border-radius:14px; background:rgba(255,255,255,0.8); box-shadow:0 5px 15px rgba(0,0,0,0.05);">
         <span class="summary-label" style="font-weight:600;">🎨 Energy of the day</span>
@@ -40,7 +39,6 @@
     </div>
     {% endif %}
 
-    <!-- 😌 MOOD -->
     {% if day.mood %}
     <div class="summary-row" style="display:flex; justify-content:space-between; margin-bottom:0.8rem; padding:0.5rem 1rem; border-radius:14px; background:rgba(255,255,255,0.8); box-shadow:0 5px 15px rgba(0,0,0,0.05);">
         <span class="summary-label" style="font-weight:600;">😌 Mood</span>
@@ -56,7 +54,6 @@
     </div>
     {% endif %}
 
-    <!-- ✨ IMPORTANT THOUGHT -->
     {% if day.notes %}
     <div class="summary-box" style="margin-top:1rem;">
         <label style="font-weight:600;">✨ Important thought today</label>
@@ -73,7 +70,6 @@
     </div>
     {% endif %}
 
-    <!-- 🔋 WHAT DRAINED MY ENERGY -->
     {% if reflection and reflection.drain %}
     <div class="summary-box" style="margin-top:1rem;">
         <label style="font-weight:600;">🔋 What drained my energy today?</label>
@@ -90,7 +86,6 @@
     </div>
     {% endif %}
 
-    <!-- 🌸 SMALL WIN -->
     {% if reflection and reflection.small_win %}
     <div class="summary-box" style="margin-top:1rem;">
         <label style="font-weight:600;">🌸 A small win I can appreciate today</label>
@@ -107,7 +102,6 @@
     </div>
     {% endif %}
 
-    <!-- ⏰ DAY SCHEDULE -->
     {% if time_blocks %}
     <div class="day-summary-card" style="
         max-width:800px;
@@ -144,8 +138,7 @@
         {% endfor %}
     </div>
     {% endif %}
-
-    <!-- 🌙 FINAL QUOTE -->
+>
     {% if quote %}
     <div class="gentle-recommendation" style="
         max-width:800px;

@@ -5,13 +5,11 @@
 {% block content %}
 <div class="home-container">
 
-    <!-- 🌿 Greeting & Date -->
     <header class="home-header">
         <h1 class="home-title">Hello 🌿</h1>
         <p class="home-date">{{ today|date:"l, d F Y" }}</p>
     </header>
 
-    <!-- 💭 Quote -->
     <section class="home-quote">
         {% if quote %}
             “{{ quote.text }}”
@@ -20,19 +18,16 @@
         {% endif %}
     </section>
 
-    <!-- 🧠 Description -->
     <section class="home-description">
         <p><strong>Emotional Planner</strong> helps you organize your days, track your emotions, and monitor your emotional progress.</p>
         <p>No pressure, no comparisons – just your pace. 🌸</p>
         <p>Take care of yourself every day and see how your well-being evolves. 💛</p>
     </section>
 
-    <!-- 🌱 Onboarding -->
     <section class="home-onboarding">
         🌱 Your first day starts simple. You don’t need to fill everything in. Just note what you feel and what matters to you.
     </section>
 
-    <!-- 🔍 Preview Cards -->
     <section class="home-preview">
         {% for card in preview_cards %}
         <div class="preview-card">
@@ -43,25 +38,21 @@
         {% endfor %}
     </section>
 
-    <!-- 📖 History -->
     <section class="history-hint">
         📖 Your entries are saved over time and can be revisited whenever you like. See how you’ve progressed this week or last month.
     </section>
 
-    <!-- 🔒 Trust -->
     <section class="home-trust">
         <p>🔒 Everything you write stays private.</p>
         <p>No one else sees your notes. Everything is just for you. 100% confidentiality guaranteed.</p>
     </section>
 
-    <!-- 💬 Messages -->
     <section class="home-messages">
         💬 Messages change depending on the day, your mood, and your emotional progress. Try to fill in daily for personalized recommendations.
     </section>
 
 </div>
 
-<!-- CSS inline for home -->
 <style>
 :root {
     --primary: #7dd3a7;
@@ -75,7 +66,7 @@
     --shadow: 0 20px 40px rgba(0,0,0,.12);
 }
 
-/* Dark Mode */
+
 body.dark, @media (prefers-color-scheme: dark) {
     :root {
         --bg-main: #1f2937;
@@ -85,7 +76,6 @@ body.dark, @media (prefers-color-scheme: dark) {
     }
 }
 
-/* Global */
 body {
     background-color: var(--bg-main);
     color: var(--text-main);
@@ -95,14 +85,12 @@ body {
     transition: background-color 0.5s ease, color 0.5s ease;
 }
 
-/* Container */
 .home-container {
     max-width: 900px;
     margin: 0 auto;
     padding: 2rem;
 }
 
-/* Header */
 .home-header { text-align: center; margin-bottom: 2rem; }
 .home-title {
     font-size: 2.5rem;
@@ -113,7 +101,6 @@ body {
 }
 .home-date { font-size: 1rem; color: var(--text-muted); }
 
-/* Quote */
 .home-quote {
     font-style: italic;
     text-align: center;
@@ -125,14 +112,12 @@ body {
     -webkit-text-fill-color: transparent;
 }
 
-/* Description & Onboarding */
 .home-description, .home-onboarding {
     text-align: center;
     margin-bottom: 2rem;
     color: var(--text-muted);
 }
 
-/* Preview Cards */
 .home-preview {
     display: flex;
     gap: 1rem;
@@ -183,7 +168,6 @@ body {
 .card-title { font-size: 1.2rem; margin-bottom: 0.5rem; }
 .card-desc { font-size: 0.95rem; color: var(--text-muted); }
 
-/* History, Trust & Messages */
 .history-hint, .home-trust, .home-messages {
     text-align: center;
     margin-bottom: 1.5rem;
@@ -192,7 +176,6 @@ body {
 .home-trust p { margin: 0.3rem 0; }
 .history-hint:hover, .home-trust:hover { background: rgba(125,211,167,0.1); border-radius: var(--radius-md); transition: background 0.3s ease; }
 
-/* Fade-in Animations */
 .home-container > section,
 .home-header {
     opacity: 0;
@@ -213,11 +196,9 @@ body {
     100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Responsive */
 @media (max-width: 600px) { .preview-card { width: 100%; } }
 </style>
 
-<!-- JS Dark Mode Toggle -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const toggle = document.querySelector('.dark-toggle');

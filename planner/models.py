@@ -2,11 +2,6 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 
-
-# ===================================================
-# 👤 USER PROFILE
-# ===================================================
-
 class UserProfile(models.Model):
     PRONOUN_CHOICES = [
         ("she", "she / her"),
@@ -38,15 +33,9 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.nickname or self.user.email
 
-
-# ===================================================
-# 💬 QUOTES (managed via Admin)
-# ===================================================
-
 class Quote(models.Model):
     text = models.TextField()
 
-    # optional: associated with a mood
     mood = models.CharField(
         max_length=20,
         blank=True,
@@ -58,11 +47,6 @@ class Quote(models.Model):
     def __str__(self):
         return self.text[:60]
 
-
-# ===================================================
-# 📅 DAY
-# ===================================================
-
 class Day(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -72,31 +56,25 @@ class Day(models.Model):
 
     date = models.DateField()
 
-    # 💭 Mood
     mood = models.CharField(
         max_length=20,
         blank=True,
         null=True
     )
 
-    # 🎨 Energy / Color
     color = models.CharField(
         max_length=20,
         blank=True,
         null=True
     )
 
-    # 📝 Notes / Thoughts
     notes = models.TextField(blank=True)
 
-    # 🌱 Rest day
     rest_day = models.BooleanField(default=False)
 
-    # 🌙 Day closed
     is_closed = models.BooleanField(default=False)
     closed_at = models.DateTimeField(blank=True, null=True)
 
-    # 🌙 Closing quote (assigned when closing the day)
     closing_quote = models.ForeignKey(
         Quote,
         on_delete=models.SET_NULL,
@@ -114,11 +92,6 @@ class Day(models.Model):
 
     def __str__(self):
         return f"{self.user.email} – {self.date}"
-
-
-# ===================================================
-# ⏰ TIME BLOCK (TASK)
-# ===================================================
 
 class TimeBlock(models.Model):
     day = models.ForeignKey(
@@ -146,11 +119,6 @@ class TimeBlock(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.start_time}–{self.end_time})"
-
-
-# ===================================================
-# 🌙 EVENING REFLECTION
-# ===================================================
 
 class EveningReflection(models.Model):
     day = models.OneToOneField(

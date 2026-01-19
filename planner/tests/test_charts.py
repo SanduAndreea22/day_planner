@@ -20,7 +20,6 @@ def test_productivity_chart_view(client, django_user_model):
     client.force_login(user)
     day = Day.objects.create(user=user, date=date.today())
 
-    # start_time și end_time sunt necesare
     TimeBlock.objects.create(day=day, title="Task", start_time=time(9, 0), end_time=time(10, 0), completed=True)
 
     url = reverse("productivity_chart")

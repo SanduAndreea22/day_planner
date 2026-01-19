@@ -15,7 +15,6 @@
     <form method="post" class="auth-form" novalidate>
         {% csrf_token %}
 
-        <!-- EMAIL -->
         <div class="form-group">
             {{ form.email.label_tag }}
             {{ form.email }}
@@ -24,7 +23,6 @@
             {% endif %}
         </div>
 
-        <!-- PASSWORD -->
         <div class="form-group">
             {{ form.password.label_tag }}
             {{ form.password }}
@@ -65,7 +63,6 @@
     --shadow: 0 20px 40px rgba(0,0,0,0.15);
 }
 
-/* Card */
 .auth-card {
     max-width: 400px;
     margin: 3rem auto;
@@ -79,13 +76,11 @@
     animation: fadeInUp 0.8s forwards;
 }
 
-/* Fade-in animation */
 @keyframes fadeInUp {
     0% { opacity: 0; transform: translateY(20px); }
     100% { opacity: 1; transform: translateY(0); }
 }
 
-/* Title gradient */
 .auth-title {
     font-size: 2rem;
     background: linear-gradient(90deg, var(--primary), var(--secondary));
@@ -95,7 +90,6 @@
     animation: fadeInUp 0.8s forwards;
 }
 
-/* Subtitle */
 .auth-subtitle {
     font-size: 1rem;
     color: var(--text-muted);
@@ -104,10 +98,8 @@
     animation-delay: 0.1s;
 }
 
-/* Form */
 .auth-form { text-align: left; }
 
-/* Form group */
 .form-group { margin-bottom: 1rem; }
 .form-group input {
     width: 100%;
@@ -123,11 +115,9 @@
     outline: none;
 }
 
-/* Error messages */
 .field-error { color: #f87171; font-size: 0.85rem; margin-top: 0.3rem; }
 .form-error-global { color: #f87171; font-size: 0.9rem; margin-bottom: 1rem; }
 
-/* Forgot link */
 .forgot-link {
     display: inline-block;
     font-size: 0.85rem;
@@ -137,7 +127,6 @@
 }
 .forgot-link:hover { color: var(--primary); transform: translateX(2px); }
 
-/* Button */
 .auth-button {
     width: 100%;
     padding: 0.6rem;
@@ -154,7 +143,6 @@
     transform: translateY(-2px) scale(1.02);
 }
 
-/* Trust section */
 .auth-trust {
     margin-top: 1.5rem;
     font-size: 0.85rem;
@@ -163,7 +151,6 @@
     animation-delay: 0.2s;
 }
 
-/* Footer */
 .auth-footer {
     margin-top: 1rem;
     font-size: 0.85rem;

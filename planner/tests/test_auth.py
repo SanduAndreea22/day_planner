@@ -12,14 +12,11 @@ def test_register_view(client):
     }
     response = client.post(url, data)
 
-    # Redirect după post
     assert response.status_code == 302
 
-    # User creat
     user = User.objects.filter(email="test@example.com").first()
     assert user is not None
     assert user.username.startswith("user_")
-    # Cont activ imediat conform view
     assert user.is_active is True
 
 @pytest.mark.django_db
@@ -34,11 +31,9 @@ def test_login_logout(client):
     login_url = reverse("login")
     logout_url = reverse("logout")
 
-    # Login cu email și parolă
     response = client.post(login_url, {"email": "user1@example.com", "password": "ParolaTare123!"})
     assert response.status_code == 302
 
-    # Logout
     response = client.get(logout_url)
     assert response.status_code == 302
 
@@ -54,4 +49,4 @@ def test_profile_view(client):
     url = reverse("profile")
     response = client.get(url)
     assert response.status_code == 200
-    assert b"profile" in response.content  # verifica că template conține 'profile'
+    assert b"profile" in response.content

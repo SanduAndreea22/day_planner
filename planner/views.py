@@ -1,31 +1,18 @@
-from datetime import date, timedelta
-from calendar import monthrange, month_name
-from collections import Counter
+from datetime import timedelta
+from calendar import month_name
 from random import choice
-
-from django.conf import settings
 from django.contrib.auth import login, logout, get_user_model
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.contrib.auth.tokens import default_token_generator
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404
 from django.utils import timezone
-from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.core.mail import EmailMessage
 from django.http import HttpResponse
-
 from .models import Day, TimeBlock, Quote, EveningReflection, UserProfile
 from .forms import RegisterForm, EmailAuthenticationForm
-
-
-# ===================================================
-# 🔹 HELPERS
-# ===================================================
+from datetime import date
+from calendar import monthrange
+from django.contrib.auth.decorators import login_required
 
 def redirect_to_day(day):
     return redirect("day_detail", year=day.date.year, month=day.date.month, day=day.date.day)
-
 
 def assign_closing_quote(day_obj):
     if day_obj.closing_quote:
@@ -38,25 +25,18 @@ def assign_closing_quote(day_obj):
     if quotes.exists():
         day_obj.closing_quote = choice(list(quotes))
 
-
 def get_month_year(request):
     today = date.today()
     year = int(request.GET.get("year", today.year))
     month = int(request.GET.get("month", today.month))
     return year, month
 
-
 def get_week_range(request):
     today = date.today()
     offset = int(request.GET.get("offset", 0))
     start = today - timedelta(days=today.weekday()) + timedelta(weeks=offset)
     end = start + timedelta(days=6)
-    return start, end, offset
 
-
-# ===================================================
-# 🔹 AUTHENTICATION
-# ===================================================
 def register_view(request):
     if request.user.is_authenticated:
         return redirect("today")
@@ -97,9 +77,6 @@ def profile_view(request):
         saved = True
     return render(request, "planner/auth/profile.html", {"profile": profile, "saved": saved})
 
-# ===================================================
-# 🔹 HOME / TODAY
-# ===================================================
 def home_view(request):
     if request.user.is_authenticated:
         return redirect("today")
@@ -107,15 +84,10 @@ def home_view(request):
     quote = Quote.objects.filter(active=True).order_by("?").first()
     return render(request, "planner/home.html", {"quote": quote, "today": date.today()})
 
-
 @login_required
 def today_view(request):
     today = date.today()
     return redirect("day_detail", year=today.year, month=today.month, day=today.day)
-
-# ===================================================
-# 🔹 DAY DETAIL & EVENING REFLECTION
-# ===================================================
 
 @login_required
 def day_detail_view(request, year, month, day):
@@ -137,7 +109,6 @@ def day_detail_view(request, year, month, day):
         "quote": day_obj.closing_quote,
         "reflection": reflection,
     })
-
 
 @login_required
 def evening_reflection_view(request, year, month, day):
@@ -164,11 +135,6 @@ def evening_reflection_view(request, year, month, day):
         return redirect_to_day(day_obj)
 
     return render(request, "planner/evening.html", {"day": day_obj, "reflection": reflection})
-
-
-# ===================================================
-# 🔹 UPDATE DAY / TIMEBLOCK
-# ===================================================
 
 @login_required
 def set_day_color(request):
@@ -231,32 +197,20 @@ def delete_timeblock(request, block_id):
     block.delete()
     return redirect_to_day(day)
 
-
-from datetime import date
-from calendar import monthrange
-from django.contrib.auth.decorators import login_required
-
-
 @login_required
 def calendar_view(request, year=None, month=None):
     today = date.today()
     year = int(year or today.year)
     month = int(month or today.month)
 
-    # limită minimă (noiembrie 2025)
     if year < 2025 or (year == 2025 and month < 11):
         year, month = 2025, 11
 
-    first_weekday, total_days = monthrange(year, month)  # first_weekday: Monday=0
-    # transformăm ca Sunday=0
+    first_weekday, total_days = monthrange(year, month)
     start_day = (first_weekday + 1) % 7
-
-    # preluăm toate Day existente pentru luna respectivă
     existing_days = {d.date: d for d in Day.objects.filter(user=request.user, date__year=year, date__month=month)}
 
     days = []
-
-    # adăugăm zile goale pentru offset
     for _ in range(start_day):
         days.append({
             "date": None,
@@ -265,12 +219,10 @@ def calendar_view(request, year=None, month=None):
             "is_future": False,
         })
 
-    # adăugăm zilele reale
     for day_num in range(1, total_days + 1):
         current = date(year, month, day_num)
         day_obj = existing_days.get(current)
         if not day_obj:
-            # stub pentru zile goale
             day_obj = type("DayStub", (), {})()
             day_obj.mood = None
             day_obj.notes = ""
@@ -283,13 +235,11 @@ def calendar_view(request, year=None, month=None):
             "is_future": current > today,
         })
 
-    # luna precedentă
     prev_month, prev_year = month - 1, year
     if prev_month == 0:
         prev_month = 12
         prev_year -= 1
 
-    # luna următoare
     next_month, next_year = month + 1, year
     if next_month == 13:
         next_month = 1
@@ -305,13 +255,6 @@ def calendar_view(request, year=None, month=None):
         "next_year": next_year,
         "today": today,
     })
-
-
-
-
-# ===================================================
-# 🔹 WEEKLY & MONTHLY ANALYTICS
-# ===================================================
 
 @login_required
 def weekly_balance_score_view(request):
@@ -386,7 +329,6 @@ def monthly_overview_view(request):
         None: ("🌙", "Every day counts, even the unwritten ones."),
     }
 
-    # Folosim .get() pentru siguranță
     icon, interpretation = interpretation_map.get(dominant_mood, ("🌙", "Every day counts, even the unwritten ones."))
 
     return render(request, "planner/monthly_overview.html", {
@@ -431,10 +373,6 @@ def productivity_chart_view(request):
 
     return render(request, "planner/chart/productivity.html", {"data": data, "start": start, "end": end, "offset": offset})
 
-
-# ===================================================
-# 🔹 ADMIN HELPERS
-# ===================================================
 
 def create_superuser(request):
     User = get_user_model()

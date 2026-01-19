@@ -14,7 +14,6 @@
     transition: background 0.5s, color 0.5s;
 ">
 
-    <!-- 📅 DATE -->
     <div class="day-date-block" style="text-align:center; font-weight:600; margin-bottom:1rem;">
         <span class="date-part">{{ day.date|date:"l" }}</span>
         <span class="date-part">{{ day.date|date:"d" }}</span>
@@ -22,7 +21,6 @@
         <span class="date-part">{{ day.date|date:"Y" }}</span>
     </div>
 
-    <!-- 😌 MOOD EMOJI -->
     <div class="day-mood-emoji" style="font-size:3rem; text-align:center; margin-bottom:1rem; transition: transform 0.3s;">
         {% if day.mood == "very_bad" %}😞
         {% elif day.mood == "bad" %}😕
@@ -52,8 +50,7 @@
         {% endif %}
 
     {% else %}
-        <!-- 🎨 DAY ENERGY -->
-        <div class="day-section" style="margin-bottom:1.8rem;">
+         <div class="day-section" style="margin-bottom:1.8rem;">
             <label style="font-weight:600;">🎨 Day Energy</label>
             <form method="post" action="{% url 'set_day_color' %}">
                 {% csrf_token %}
@@ -69,7 +66,6 @@
             </form>
         </div>
 
-        <!-- 😌 MOOD -->
         <div class="day-section" style="margin-bottom:1.8rem;">
             <label style="font-weight:600;">😌 Mood</label>
             <form method="post" action="{% url 'set_day_mood' %}">
@@ -86,7 +82,6 @@
             </form>
         </div>
 
-        <!-- ✨ DAILY THOUGHT -->
         <div class="day-section" style="margin-bottom:1.8rem;">
             <label style="font-weight:600;">✨ A thought for today</label>
             <form method="post" action="{% url 'update_day_text' %}">
@@ -97,13 +92,11 @@
             </form>
         </div>
 
-        <!-- 🌙 CLOSE THE DAY -->
         <div class="day-evening" style="text-align:center; margin-bottom:1.8rem;">
             <a href="{% url 'evening_reflection' day.date.year day.date.month day.date.day %}" class="button primary" style="padding:0.7rem 1rem; border-radius:var(--radius-md); background:var(--primary); color:white; display:inline-block;">🌙 Close the day gently</a>
         </div>
     {% endif %}
 
-    <!-- ⏰ DAILY SCHEDULE -->
     <div class="day-section" style="margin-bottom:1.8rem;">
         <h3>⏰ Daily Schedule</h3>
         {% if time_blocks %}
@@ -125,7 +118,6 @@
     </div>
 
     {% if not day.is_closed %}
-        <!-- ➕ NEW TIME BLOCK -->
         <div class="day-section" style="margin-bottom:1.8rem;">
             <h3>➕ New Block</h3>
             <form method="post" action="{% url 'add_timeblock' %}">
@@ -142,18 +134,16 @@
         </div>
     {% endif %}
 
-    <!-- 🔙 BACK -->
     <div class="day-back" style="text-align:center; margin-top:2rem;">
         <a href="{% url 'calendar' %}" style="color:var(--primary); text-decoration:none;">← Back to calendar</a>
     </div>
 </div>
 
-<!-- ================= CSS LOCAL ================= -->
 <style>
 .time-block.done .block-title {
-    font-style: italic;   /* task complet = italic */
-    font-weight: bold;    /* task complet = bold */
-    opacity: 0.8;         /* puțin mai subtil */
+    font-style: italic;
+    font-weight: bold;
+    opacity: 0.8;
 }
 
 .actions a {

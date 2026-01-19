@@ -7,11 +7,7 @@
     <meta name="description" content="Emotional Planner - Track your emotions and plan your well-being.">
 
     <title>{% block title %}Home{% endblock %} | 🌸 Emotional Planner</title>
-
-    <!-- Google Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-    <!-- Inline CSS -->
     <style>
         :root {
             --primary: #7dd3a7;
@@ -52,14 +48,12 @@
 
         .main-container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
 
-        /* Navbar modern */
         .nav-container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
         .nav-menu { display: flex; gap: 1rem; flex-wrap: wrap; }
         .nav-item { padding: 0.5rem 1rem; border-radius: var(--radius-md); transition: 0.3s; text-align: center; }
         .nav-item.highlight { background: linear-gradient(90deg, var(--primary), var(--secondary)); color: white; font-weight: 600; }
         .nav-item.dark-toggle { background: none; color: var(--text-main); cursor: pointer; border: none; font-size: 1.2rem; }
 
-        /* Card design modern */
         .home-container, .preview-card, .footer-card {
             background: var(--bg-card);
             border-radius: var(--radius-md);

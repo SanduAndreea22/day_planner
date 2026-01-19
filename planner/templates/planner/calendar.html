@@ -5,19 +5,16 @@
 {% block content %}
 <div class="calendar-card">
 
-  <!-- HEADER -->
   <div class="calendar-header">
     <a href="{% url 'calendar_month' prev_year prev_month %}" class="nav-arrow">←</a>
     <div class="calendar-title title-gradient">{{ month }} / {{ year }}</div>
     <a href="{% url 'calendar_month' next_year next_month %}" class="nav-arrow">→</a>
   </div>
 
-  <!-- DAYS OF WEEK -->
   <div class="calendar-weekdays">
     <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
   </div>
 
-  <!-- GRID DAYS -->
   <div class="calendar-grid">
     {% for item in days %}
       {% if item.day %}
@@ -37,13 +34,12 @@
         </div>
       </a>
       {% else %}
-        <!-- empty slot for alignment -->
+
         <div class="calendar-day empty"></div>
       {% endif %}
     {% endfor %}
   </div>
 
-  <!-- LEGEND -->
   <div class="calendar-legend muted">
     😊 filled day · ⚪ empty day · ➕ add a day
   </div>
@@ -59,7 +55,6 @@
     --secondary: #a5b4fc;
 }
 
-/* CARD */
 .calendar-card {
     max-width: 950px;
     margin: 2rem auto;
@@ -70,7 +65,6 @@
     transition: background 0.5s, color 0.5s;
 }
 
-/* HEADER */
 .calendar-header {
     display: flex;
     justify-content: space-between;
@@ -94,7 +88,6 @@
     -webkit-text-fill-color: transparent;
 }
 
-/* WEEKDAYS */
 .calendar-weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -104,14 +97,12 @@
     margin-bottom: 0.5rem;
 }
 
-/* GRID */
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 0.5rem;
 }
 
-/* DAYS */
 .calendar-day {
     position: relative;
     display: flex;
@@ -135,24 +126,20 @@
 
 .empty { background: transparent; box-shadow: none; }
 
-/* DAY NUMBER & MOOD */
 .day-number { font-size: 1rem; margin-bottom: 0.2rem; }
 .day-mood { font-size: 1.5rem; }
 
-/* COLORS */
 .color-red { background: linear-gradient(145deg, #f87171, #fca5a5); color: white; }
 .color-yellow { background: linear-gradient(145deg, #facc15, #fde68a); color: #111827; }
 .color-green { background: linear-gradient(145deg, #4ade80, #a7f3d0); color: #111827; }
 .color-blue { background: linear-gradient(145deg, #60a5fa, #93c5fd); color: white; }
 .color-purple { background: linear-gradient(145deg, #c084fc, #e9d5ff); color: #111827; }
 
-/* TODAY */
 .today {
     box-shadow: 0 0 0 3px var(--primary), 0 4px 12px rgba(0,0,0,0.2);
     transform: scale(1.05);
 }
 
-/* TOOLTIP NOTES */
 .calendar-day[data-notes]:hover::after {
     content: attr(data-notes);
     position: absolute;
@@ -172,7 +159,6 @@
     font-size: 0.85rem;
 }
 
-/* LEGEND */
 .calendar-legend {
     margin-top: 1rem;
     text-align: center;
@@ -180,7 +166,6 @@
     color: var(--text-muted);
 }
 
-/* DARK MODE */
 @media (prefers-color-scheme: dark) {
     :root {
         --bg-card: #1f2937;

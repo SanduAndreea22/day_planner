@@ -1,7 +1,7 @@
 import pytest
 from django.urls import reverse
 from datetime import date
-from planner.models import Day
+
 
 @pytest.mark.django_db
 def test_calendar_view(client, django_user_model):
@@ -12,7 +12,6 @@ def test_calendar_view(client, django_user_model):
     response = client.get(url)
     assert response.status_code == 200
 
-    # verificăm că toate zilele din lună sunt generate
     today = date.today()
     days_in_month = response.context["days"]
-    assert len(days_in_month) >= 28  # cel puțin 28 de zile
+    assert len(days_in_month) >= 28

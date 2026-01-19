@@ -5,20 +5,17 @@
 {% block content %}
 <div class="month-overview-card">
 
-    <!-- MONTH NAV -->
     <div class="month-nav">
         <a class="month-btn" href="?year={{ year }}&month={{ month|add:'-1' }}">←</a>
         <div class="month-label title-gradient">{{ month_name }} {{ year }}</div>
         <a class="month-btn" href="?year={{ year }}&month={{ month|add:'1' }}">→</a>
     </div>
 
-    <!-- WEEKDAYS -->
     <div class="weekdays">
         <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div>
         <div>Thu</div><div>Fri</div><div>Sat</div>
     </div>
 
-    <!-- DAY GRID -->
     <div class="month-grid">
         {% for day in days %}
         <div class="day-card
@@ -42,13 +39,11 @@
         {% endfor %}
     </div>
 
-    <!-- SUMMARY -->
     <div class="overview-summary">
         <p>You have recorded <strong>{{ total_days }}</strong> days this month.</p>
         <p class="muted">{{ interpretation }}</p>
     </div>
 
-    <!-- CTA -->
     <div class="overview-actions">
         <a href="{% url 'calendar' %}" class="button">← Calendar</a>
         <a href="{% url 'today' %}" class="button primary">🌱 Today</a>
@@ -56,7 +51,6 @@
 
 </div>
 
-<!-- ================= STYLES ================= -->
 <style>
 :root {
     --bg-card: #ffffff;
@@ -71,7 +65,6 @@
     --color-purple: #a78bfa;
 }
 
-/* MAIN CARD */
 .month-overview-card {
     max-width: 960px;
     margin: 2rem auto;
@@ -81,7 +74,6 @@
     box-shadow: 0 15px 35px rgba(0,0,0,0.12);
 }
 
-/* MONTH NAVIGATION */
 .month-nav {
     display: flex;
     justify-content: space-between;
@@ -103,7 +95,6 @@
     -webkit-text-fill-color: transparent;
 }
 
-/* WEEKDAYS */
 .weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -113,7 +104,6 @@
     margin-bottom: 0.5rem;
 }
 
-/* DAY GRID */
 .month-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -140,14 +130,12 @@
 .day-emoji { font-size: 1.4rem; margin-top: 0.2rem; }
 .empty { opacity: 0.4; }
 
-/* ENERGY COLORS */
 .color-red { background-color: var(--color-red); color: white; }
 .color-yellow { background-color: var(--color-yellow); color: white; }
 .color-green { background-color: var(--color-green); color: white; }
 .color-blue { background-color: var(--color-blue); color: white; }
 .color-purple { background-color: var(--color-purple); color: white; }
 
-/* SUMMARY & BUTTONS */
 .overview-summary { text-align: center; margin-bottom: 1rem; }
 .overview-summary .muted { color: var(--text-muted); }
 .overview-actions { display: flex; justify-content: center; gap: 1rem; }
@@ -164,7 +152,6 @@
 .button.primary { background: var(--primary); color: white; }
 .button.primary:hover { background: #5fd1a0; }
 
-/* DARK MODE */
 @media (prefers-color-scheme: dark) {
     :root {
         --bg-card: #1f2937;

@@ -21,7 +21,6 @@
     <form method="post" class="profile-form">
         {% csrf_token %}
 
-        <!-- NICKNAME -->
         <div class="form-group">
             <label for="nickname">What should we call you?</label>
             <input
@@ -41,7 +40,6 @@
             </div>
         </div>
 
-        <!-- BIO -->
         <div class="form-group">
             <label for="bio">A few words about yourself</label>
             <textarea
@@ -60,7 +58,6 @@
             </div>
         </div>
 
-        <!-- ACTIONS -->
         <div class="profile-actions">
             <button type="submit" class="button primary profile-button">
                 Save 💾
@@ -76,7 +73,6 @@
     </p>
 </div>
 
-<!-- ================== STYLES ================== -->
 <style>
 :root {
     --bg-card: #ffffff;
@@ -88,7 +84,6 @@
     --toast-text: #065f46;
 }
 
-/* MAIN CARD */
 .profile-card {
     max-width: 600px;
     margin: 2rem auto;
@@ -100,7 +95,6 @@
     font-family: 'Inter', sans-serif;
 }
 
-/* TITLE */
 .profile-title {
     font-size: 1.8rem;
     font-weight: 700;
@@ -114,14 +108,12 @@
     -webkit-text-fill-color: transparent;
 }
 
-/* SUBTITLE */
 .profile-subtitle {
     text-align: center;
     color: var(--text-muted);
     margin-bottom: 1.5rem;
 }
 
-/* TOAST */
 .profile-toast {
     background: var(--toast-bg);
     color: var(--toast-text);
@@ -139,7 +131,6 @@
     100% { opacity: 1; transform: translateY(0); }
 }
 
-/* FORM */
 .profile-form .form-group {
     margin-bottom: 1.5rem;
 }
@@ -165,7 +156,6 @@
     outline: none;
 }
 
-/* HINT & COUNTER */
 .form-hint, .nickname-preview, .char-counter {
     display: block;
     font-size: 0.85rem;
@@ -173,12 +163,10 @@
     margin-top: 0.3rem;
 }
 
-/* CHAR COUNTER */
 .char-counter {
     text-align: right;
 }
 
-/* ACTIONS */
 .profile-actions {
     display: flex;
     gap: 1rem;
@@ -214,7 +202,6 @@
     transform: translateY(-2px);
 }
 
-/* FOOTER */
 .profile-ending {
     text-align: center;
     margin-top: 2rem;
@@ -222,7 +209,6 @@
     color: var(--text-muted);
 }
 
-/* DARK MODE */
 @media (prefers-color-scheme: dark) {
     :root {
         --bg-card: #1f2937;
@@ -242,7 +228,6 @@
 </style>
 
 <script>
-    // Preview live nickname
     const nicknameInput = document.getElementById('nickname');
     const namePreview = document.getElementById('namePreview');
 
@@ -250,7 +235,6 @@
         namePreview.textContent = nicknameInput.value || 'Andi';
     });
 
-    // Live char counter for bio
     const bioInput = document.getElementById('bio');
     const bioCount = document.getElementById('bioCount');
     bioInput.addEventListener('input', () => {

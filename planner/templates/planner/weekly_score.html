@@ -5,7 +5,6 @@
 {% block content %}
 <div class="weekly-card">
 
-    <!-- TITLE -->
     <div class="weekly-title title-gradient">
         💗 Your Week
     </div>
@@ -14,14 +13,12 @@
         This score doesn’t define you. It’s just a gentle reflection.
     </div>
 
-    <!-- WEEK NAVIGATION -->
     <div class="weekly-nav">
         <a href="?offset={{ offset|add:-1 }}" class="week-btn muted">← Previous week</a>
         <div class="week-label">{{ start|date:"d M Y" }} – {{ end|date:"d M Y" }}</div>
         <a href="?offset={{ offset|add:1 }}" class="week-btn muted">Next week →</a>
     </div>
 
-    <!-- SCORE -->
     <div class="weekly-score-wrapper">
         <div class="weekly-score-value">{{ score }} <span>/ 100</span></div>
         <div class="weekly-progress">
@@ -29,17 +26,14 @@
         </div>
     </div>
 
-    <!-- MESSAGE -->
     <div class="weekly-message">
         {{ emoji }} {{ message }}
     </div>
 
-    <!-- HINT -->
     <div class="weekly-hint muted">
         It’s not a competition. There is no “bad” score.
     </div>
 
-    <!-- DETAILS -->
     <div class="weekly-details">
         <div class="detail-card">
             🌿 <strong>{{ days_logged }}</strong>
@@ -55,12 +49,10 @@
         </div>
     </div>
 
-    <!-- SUGGESTION -->
     <div class="weekly-suggestion">
         🌱 {{ suggestion }}
     </div>
 
-    <!-- CTA -->
     <div class="weekly-actions">
         <a href="{% url 'today' %}" class="button primary">🌸 Start Today</a>
         <a href="{% url 'calendar' %}" class="button">📅 Calendar</a>
@@ -83,7 +75,6 @@
     --highlight: #fbbf24;
 }
 
-/* CARD */
 .weekly-card {
     max-width: 900px;
     margin: 2rem auto;
@@ -95,7 +86,6 @@
     transition: background 0.5s, color 0.5s;
 }
 
-/* TITLE & SUBTITLE */
 .weekly-title {
     font-size: 1.8rem;
     font-weight: 700;
@@ -106,7 +96,6 @@
 }
 .weekly-subtitle { color: var(--text-muted); margin-bottom: 1rem; }
 
-/* NAV */
 .weekly-nav {
     display: flex;
     justify-content: space-between;
@@ -117,7 +106,6 @@
 .week-btn:hover { color: var(--primary); }
 .week-label { font-weight: 600; }
 
-/* SCORE */
 .weekly-score-wrapper { margin: 1rem 0; }
 .weekly-score-value { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.6rem; }
 .weekly-score-value span { font-size: 1rem; color: var(--text-muted); }
@@ -135,11 +123,9 @@
     transition: width 0.5s ease;
 }
 
-/* MESSAGE & HINT */
 .weekly-message { font-size: 1.1rem; margin: 1rem 0; }
 .weekly-hint { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem; }
 
-/* DETAILS */
 .weekly-details {
     display: flex;
     justify-content: center;
@@ -156,10 +142,8 @@
 }
 .detail-card.highlight { background: var(--highlight); color: #111827; }
 
-/* SUGGESTION */
 .weekly-suggestion { font-style: italic; margin-bottom: 1.5rem; }
 
-/* BUTTONS */
 .weekly-actions { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
 .button {
     padding: 0.6rem 1.2rem;
@@ -174,7 +158,6 @@
 .button.primary { background: var(--primary); color: #fff; }
 .button.primary:hover { background: #5fd1a0; }
 
-/* DARK MODE */
 @media (prefers-color-scheme: dark) {
     :root {
         --bg-card: #1f2937;

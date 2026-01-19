@@ -13,7 +13,6 @@
     transition: background 0.5s, color 0.5s;
 ">
 
-    <!-- TITLE -->
     <div class="evening-title" style="
         font-size:2rem;
         font-weight:700;
@@ -27,26 +26,21 @@
         🌙 Evening Reflection
     </div>
 
-    <!-- DATE -->
     <div class="evening-date muted" style="text-align:center; color:var(--text-muted); margin-bottom:1.5rem;">
         {{ day.date|date:"l, d F Y" }}
     </div>
 
-    <!-- INTRO -->
     <div class="evening-intro" style="text-align:center; color:var(--text-muted); margin-bottom:2rem; font-style:italic;">
         Closing the day gently. No analysis, no pressure.
     </div>
 
-    <!-- FORM -->
     <form method="post" class="evening-form" style="display:flex; flex-direction:column; gap:1.5rem;">
         {% csrf_token %}
 
-        <!-- KEEP DAY STATE -->
         <input type="hidden" name="mood" value="{{ day.mood }}">
         <input type="hidden" name="color" value="{{ day.color }}">
         <input type="hidden" name="notes" value="{{ day.notes }}">
 
-        <!-- 🔋 ENERGY DRAIN -->
         <div class="evening-section" style="display:flex; flex-direction:column;">
             <label style="font-weight:600; margin-bottom:0.3rem;">🔋 What drained my energy today?</label>
             <textarea
@@ -57,7 +51,6 @@
             >{{ reflection.drain }}</textarea>
         </div>
 
-        <!-- 🌸 SMALL WIN -->
         <div class="evening-section" style="display:flex; flex-direction:column;">
             <label style="font-weight:600; margin-bottom:0.3rem;">🌸 One small thing I can appreciate about myself today</label>
             <textarea
@@ -68,7 +61,6 @@
             >{{ reflection.small_win }}</textarea>
         </div>
 
-        <!-- ACTIONS -->
         <div class="evening-actions" style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-top:1rem;">
             <button type="submit" class="button primary" style="
                 padding:0.7rem 1.2rem;
@@ -101,14 +93,13 @@
     </form>
 </div>
 
-<!-- ANIMATIONS -->
 <style>
 @keyframes fadeInUp {
     0% { opacity:0; transform:translateY(20px); }
     100% { opacity:1; transform:translateY(0); }
 }
 
-/* Dark mode */
+
 @media (prefers-color-scheme: dark) {
     :root {
         --bg-card: #1f2937;
