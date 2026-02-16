@@ -27,4 +27,4 @@ jobs:
           context: .
           push: true
           # Aici se creează pachetul tău oficial
-          tags: ghcr.io/${{ github.repository_owner }}/day-planner:latest
+          tags: ghcr.io/sanduandreea22/day-planner:latest
