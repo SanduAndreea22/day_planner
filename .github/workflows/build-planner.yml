@@ -1,0 +1,30 @@
+name: Build Day Planner Package
+
+on:
+  push:
+    branches: [ "main" ] # Verifică dacă ramura ta se numește main sau master
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          # Aici se creează pachetul tău oficial
+          tags: ghcr.io/${{ github.repository_owner }}/day-planner:latest
