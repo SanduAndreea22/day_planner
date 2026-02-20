@@ -35,7 +35,7 @@
 
 ## 🚀 Live Demo
 
-🌐 [Check out the demo]([day-planner-e2sv.onrender.com/](https://day-planner-e2sv.onrender.com))
+🌐 [Check out the demo](https://day-planner-e2sv.onrender.com)
 
 ---
 
