@@ -27,7 +27,7 @@
 | Frontend    | HTML, CSS                                     |
 | Database    | SQLite (local) / PostgreSQL (production)     |
 | Auth        | Django built-in authentication (email login) |
-| Deploy      | Railway                                       |
+| Deploy      | Render                                       |
 | Static files| WhiteNoise                                    |
 | Python      | 3.x                                           |
 
