@@ -52,15 +52,5 @@ LinkedIn: https://linkedin.com/in/andreealuizasandu
 
 ✨ Made with calm & a lot of debugging. ✨
 
-## ⚙️ Running Locally
-
-```bash
-git clone https://github.com/SanduAndreea22/day_planner.git
-cd day_planner
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py runserver
 
 
