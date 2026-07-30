@@ -1,0 +1,18 @@
+name: Send Evening Reminders
+
+on:
+  schedule:
+    # every 15 minutes
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call reminder endpoint
+        run: |
+          curl -sS -X POST \
+            -H "Authorization: Bearer ${{ secrets.TASK_SECRET }}" \
+            --fail \
+            https://day-planner-e2sv.onrender.com/tasks/send-evening-reminders/

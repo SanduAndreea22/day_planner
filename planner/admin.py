@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Quote, Day, TimeBlock
+from .models import Quote, Day, TimeBlock, UserProfile, EveningReflection
 
 @admin.register(Quote)
 class QuoteAdmin(admin.ModelAdmin):
@@ -20,5 +20,14 @@ class DayAdmin(admin.ModelAdmin):
 @admin.register(TimeBlock)
 class TimeBlockAdmin(admin.ModelAdmin):
     list_display = ("title", "day", "start_time", "end_time", "completed")
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ("user", "nickname", "pronoun")
+    search_fields = ("user__email", "nickname")
+
+@admin.register(EveningReflection)
+class EveningReflectionAdmin(admin.ModelAdmin):
+    list_display = ("day", "created_at")
 
 

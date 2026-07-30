@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}🔍 Search · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="legal-card">
+    <h1 class="title-gradient">🔍 Search your days</h1>
+    <p class="updated-date">Look back through what you've written, gently — no scoring, just finding.</p>
+
+    <form method="get" style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem;">
+        <input
+            type="text"
+            name="q"
+            value="{{ query }}"
+            placeholder="Search your notes..."
+            style="flex:1; min-width:200px; padding:0.6rem 0.8rem; border-radius:var(--radius-md); border:1px solid #ccc;"
+        >
+        <select name="mood" style="padding:0.6rem 0.8rem; border-radius:var(--radius-md); border:1px solid #ccc;">
+            <option value="">Any mood</option>
+            <option value="very_bad" {% if mood_filter == "very_bad" %}selected{% endif %}>😞 Very hard</option>
+            <option value="bad" {% if mood_filter == "bad" %}selected{% endif %}>😕 Hard</option>
+            <option value="neutral" {% if mood_filter == "neutral" %}selected{% endif %}>😐 Neutral</option>
+            <option value="good" {% if mood_filter == "good" %}selected{% endif %}>🙂 Good</option>
+            <option value="very_good" {% if mood_filter == "very_good" %}selected{% endif %}>😄 Very good</option>
+        </select>
+        <button type="submit" class="button primary">Search</button>
+    </form>
+
+    {% if query or mood_filter %}
+        <p class="updated-date">{{ days|length }} day{{ days|length|pluralize }} found</p>
+    {% endif %}
+
+    {% if days %}
+        <div style="display:flex; flex-direction:column; gap:0.5rem;">
+            {% for day in days %}
+                <a href="{% url 'day_detail' day.date.year day.date.month day.date.day %}"
+                   style="display:flex; justify-content:space-between; gap:1rem; padding:0.7rem 1rem; border-radius:14px; background:rgba(125,211,167,0.08); text-decoration:none; color:var(--text-main);">
+                    <span style="font-weight:600; white-space:nowrap;">{{ day.date|date:"d M Y" }}</span>
+                    <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text-muted);">
+                        {{ day.notes|default:"—"|truncatechars:80 }}
+                    </span>
+                </a>
+            {% endfor %}
+        </div>
+    {% elif query or mood_filter %}
+        <p class="updated-date">Nothing matched. Maybe try a different word.</p>
+    {% else %}
+        <p class="updated-date">Type something above, or pick a mood, to look back through your days.</p>
+    {% endif %}
+</div>
+{% endblock %}

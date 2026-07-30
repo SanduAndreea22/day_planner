@@ -1,16 +1,25 @@
+import csv
+import hmac
+import io
+import zipfile
 from collections import Counter
 from datetime import date, timedelta
 from calendar import monthrange
 from random import choice
 from types import SimpleNamespace
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
 from django.shortcuts import redirect, render, get_object_or_404
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseForbidden
+from django.urls import reverse
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from .models import Day, TimeBlock, Quote, EveningReflection, UserProfile
-from .forms import RegisterForm, EmailAuthenticationForm, TimeBlockForm
+from .forms import RegisterForm, EmailAuthenticationForm, TimeBlockForm, ProfileForm
 
 MONTH_NAMES = {
     1: "January",
@@ -90,11 +99,13 @@ def profile_view(request):
     profile, _ = UserProfile.objects.get_or_create(user=request.user)
     saved = False
     if request.method == "POST":
-        profile.nickname = request.POST.get("nickname", "")
-        profile.bio = request.POST.get("bio", "")
-        profile.save()
-        saved = True
-    return render(request, "planner/auth/profile.html", {"profile": profile, "saved": saved})
+        form = ProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            saved = True
+    else:
+        form = ProfileForm(instance=profile)
+    return render(request, "planner/auth/profile.html", {"profile": profile, "form": form, "saved": saved})
 
 @login_required
 def delete_account_view(request):
@@ -395,6 +406,97 @@ def productivity_chart_view(request):
     data = [{"date": d.date.strftime("%d %b"), "completed": d.time_blocks.filter(completed=True).count(), "mood": d.mood or "none"} for d in days]
 
     return render(request, "planner/chart/productivity.html", {"data": data, "start": start, "end": end, "offset": offset})
+
+
+@login_required
+def search_view(request):
+    query = request.GET.get("q", "").strip()
+    mood_filter = request.GET.get("mood", "")
+
+    days = Day.objects.filter(user=request.user)
+    if query:
+        days = days.filter(notes__icontains=query)
+    if mood_filter:
+        days = days.filter(mood=mood_filter)
+    days = days.order_by("-date")[:100]
+
+    return render(request, "planner/search.html", {
+        "days": days,
+        "query": query,
+        "mood_filter": mood_filter,
+    })
+
+
+@login_required
+def export_data_view(request):
+    user = request.user
+
+    days_csv = io.StringIO()
+    writer = csv.writer(days_csv)
+    writer.writerow(["date", "mood", "color", "notes", "rest_day", "is_closed", "closed_at"])
+    for d in Day.objects.filter(user=user).order_by("date"):
+        writer.writerow([d.date, d.mood, d.color, d.notes, d.rest_day, d.is_closed, d.closed_at])
+
+    blocks_csv = io.StringIO()
+    writer = csv.writer(blocks_csv)
+    writer.writerow(["date", "title", "start_time", "end_time", "completed"])
+    for block in TimeBlock.objects.filter(day__user=user).select_related("day").order_by("day__date", "start_time"):
+        writer.writerow([block.day.date, block.title, block.start_time, block.end_time, block.completed])
+
+    reflections_csv = io.StringIO()
+    writer = csv.writer(reflections_csv)
+    writer.writerow(["date", "drain", "small_win"])
+    for r in EveningReflection.objects.filter(day__user=user).select_related("day").order_by("day__date"):
+        writer.writerow([r.day.date, r.drain, r.small_win])
+
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w") as zf:
+        zf.writestr("days.csv", days_csv.getvalue())
+        zf.writestr("time_blocks.csv", blocks_csv.getvalue())
+        zf.writestr("reflections.csv", reflections_csv.getvalue())
+
+    response = HttpResponse(buffer.getvalue(), content_type="application/zip")
+    response["Content-Disposition"] = 'attachment; filename="emotional_planner_export.zip"'
+    return response
+
+
+@csrf_exempt
+@require_POST
+def send_evening_reminders_view(request):
+    expected = f"Bearer {settings.TASK_SECRET}"
+    provided = request.META.get("HTTP_AUTHORIZATION", "")
+    if not settings.TASK_SECRET or not hmac.compare_digest(provided, expected):
+        return HttpResponseForbidden("Forbidden")
+
+    now_local = timezone.localtime()
+    window_start = (now_local - timedelta(minutes=15)).time()
+    window_end = now_local.time()
+    today = timezone.localdate()
+
+    sent = 0
+    profiles = UserProfile.objects.exclude(evening_reminder_time__isnull=True).select_related("user")
+    for profile in profiles:
+        reminder_time = profile.evening_reminder_time
+        if not (window_start <= reminder_time <= window_end):
+            continue
+
+        day = Day.objects.filter(user=profile.user, date=today).first()
+        if day and day.is_closed:
+            continue
+
+        send_mail(
+            subject="🌙 A gentle nudge for your evening reflection",
+            message=(
+                "No pressure — whenever you're ready, your day is waiting for you.\n\n"
+                + request.build_absolute_uri(reverse("today"))
+            ),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[profile.user.email],
+            fail_silently=True,
+        )
+        sent += 1
+
+    return HttpResponse(f"Sent {sent} reminder(s).")
 
 
 def create_superuser(request):

@@ -131,6 +131,11 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 BREVO_API_KEY = os.getenv("BREVO_API_KEY", "")
 
+# Shared secret for the /tasks/send-evening-reminders/ endpoint, called by an
+# external scheduler (e.g. a GitHub Actions cron workflow) since free hosting
+# tiers don't reliably support background cron jobs.
+TASK_SECRET = os.getenv("TASK_SECRET", "")
+
 DEFAULT_FROM_EMAIL = os.getenv(
     "DEFAULT_FROM_EMAIL",
     "Emotional Planner <no-reply@example.com>"
@@ -151,5 +156,21 @@ LOGGING = {
         "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
     },
 }
+
+# Error monitoring — a no-op until SENTRY_DSN is set (e.g. once a free
+# Sentry account exists), so this is safe to leave in place either way.
+SENTRY_DSN = os.getenv("SENTRY_DSN", "")
+
+if SENTRY_DSN:
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration()],
+        send_default_pii=False,
+        environment="production" if DATABASE_URL else "development",
+        traces_sample_rate=0.1,
+    )
 
 

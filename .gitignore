@@ -11,6 +11,9 @@ __pycache__/
 # 🧪 Virtual env
 venv/
 
+# 📊 Coverage
+.coverage
+
 # 🧰 Editors / OS
 .idea/
 .vscode/

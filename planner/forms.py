@@ -99,27 +99,38 @@ class EmailAuthenticationForm(forms.Form):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ["nickname", "bio"]
+        fields = ["nickname", "bio", "evening_reminder_time"]
 
         labels = {
             "nickname": "What should we call you?",
             "bio": "A few words about yourself",
+            "evening_reminder_time": "Evening reminder",
         }
 
         help_texts = {
             "nickname": "Can be your real name, a nickname, or a handle.",
             "bio": "Doesn't need to be complete. Can be just one sentence.",
+            "evening_reminder_time": "Optional. We'll email you around this time if you haven't closed the day yet.",
         }
 
         widgets = {
             "nickname": forms.TextInput(attrs={
+                "id": "nickname",
+                "class": "profile-input",
                 "maxlength": 20,
                 "placeholder": "Andi",
             }),
             "bio": forms.Textarea(attrs={
+                "id": "bio",
+                "class": "profile-textarea",
                 "rows": 4,
                 "maxlength": 200,
                 "placeholder": "How have you been feeling lately?"
+            }),
+            "evening_reminder_time": forms.TimeInput(attrs={
+                "id": "evening_reminder_time",
+                "class": "profile-input",
+                "type": "time",
             }),
         }
 

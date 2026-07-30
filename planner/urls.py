@@ -22,6 +22,9 @@ from .views import (
     logout_view,
     profile_view,
     delete_account_view,
+    search_view,
+    export_data_view,
+    send_evening_reminders_view,
 )
 
 urlpatterns = [
@@ -46,6 +49,9 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('profile/', profile_view, name='profile'),
     path('delete-account/', delete_account_view, name='delete_account'),
+    path('search/', search_view, name='search'),
+    path('export-data/', export_data_view, name='export_data'),
+    path('tasks/send-evening-reminders/', send_evening_reminders_view, name='send_evening_reminders'),
 
     path('password-reset/', auth_views.PasswordResetView.as_view(
         template_name='planner/auth/password_reset.html',
