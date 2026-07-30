@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from .models import UserProfile
+from .models import UserProfile, TimeBlock
 
 class RegisterForm(forms.ModelForm):
     password1 = forms.CharField(
@@ -122,3 +122,8 @@ class ProfileForm(forms.ModelForm):
                 "placeholder": "How have you been feeling lately?"
             }),
         }
+
+class TimeBlockForm(forms.ModelForm):
+    class Meta:
+        model = TimeBlock
+        fields = ["title", "start_time", "end_time"]

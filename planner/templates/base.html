@@ -130,6 +130,13 @@
     </header>
 
     <main class="app-main">
+        {% if messages %}
+            <div class="app-messages" style="max-width:900px; margin:0 auto 1rem; padding:0 2rem;">
+                {% for message in messages %}
+                    <div class="app-message {{ message.tags }}" style="padding:0.75rem 1rem; border-radius:var(--radius-md); margin-bottom:0.5rem; background:var(--bg-card); box-shadow:var(--shadow); color: var(--text-main);">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
         {% block content %}{% endblock %}
     </main>
 

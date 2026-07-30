@@ -81,6 +81,17 @@ else:
         }
     }
 
+# DATABASE_URL is only set in the deployed (Heroku) environment, so it also
+# doubles as the signal for "are we running in production" for these settings.
+if DATABASE_URL:
+    SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -124,5 +135,17 @@ DEFAULT_FROM_EMAIL = os.getenv(
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "today"
 LOGOUT_REDIRECT_URL = "home"
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
+    },
+}
 
 

@@ -1,15 +1,31 @@
-from datetime import timedelta
-from calendar import month_name
-from random import choice
-from django.contrib.auth import login, logout, get_user_model
-from django.shortcuts import redirect, get_object_or_404
-from django.utils import timezone
-from django.http import HttpResponse
-from .models import Day, TimeBlock, Quote, EveningReflection, UserProfile
-from .forms import RegisterForm, EmailAuthenticationForm
-from datetime import date
+from collections import Counter
+from datetime import date, timedelta
 from calendar import monthrange
+from random import choice
+from types import SimpleNamespace
+from django.contrib import messages
+from django.contrib.auth import login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render, get_object_or_404
+from django.http import Http404, HttpResponse
+from django.utils import timezone
+from .models import Day, TimeBlock, Quote, EveningReflection, UserProfile
+from .forms import RegisterForm, EmailAuthenticationForm, TimeBlockForm
+
+MONTH_NAMES = {
+    1: "January",
+    2: "February",
+    3: "March",
+    4: "April",
+    5: "May",
+    6: "June",
+    7: "July",
+    8: "August",
+    9: "September",
+    10: "October",
+    11: "November",
+    12: "December",
+}
 
 def redirect_to_day(day):
     return redirect("day_detail", year=day.date.year, month=day.date.month, day=day.date.day)
@@ -94,7 +110,10 @@ def today_view(request):
 
 @login_required
 def day_detail_view(request, year, month, day):
-    selected_date = date(year, month, day)
+    try:
+        selected_date = date(year, month, day)
+    except ValueError:
+        raise Http404("Invalid date")
     day_obj, _ = Day.objects.get_or_create(user=request.user, date=selected_date)
 
     message = None
@@ -115,7 +134,10 @@ def day_detail_view(request, year, month, day):
 
 @login_required
 def evening_reflection_view(request, year, month, day):
-    selected_date = date(year, month, day)
+    try:
+        selected_date = date(year, month, day)
+    except ValueError:
+        raise Http404("Invalid date")
     day_obj = get_object_or_404(Day, user=request.user, date=selected_date)
     reflection, _ = EveningReflection.objects.get_or_create(day=day_obj)
 
@@ -176,12 +198,19 @@ def update_day_text(request):
 @login_required
 def add_timeblock(request):
     day = get_object_or_404(Day, id=request.POST.get("day_id"), user=request.user)
-    TimeBlock.objects.create(
-        day=day,
-        title=request.POST.get("title"),
-        start_time=request.POST.get("start_time"),
-        end_time=request.POST.get("end_time"),
-    )
+    form = TimeBlockForm(request.POST)
+    if form.is_valid():
+        block = form.save(commit=False)
+        block.day = day
+        block.save()
+    else:
+        for error in form.non_field_errors():
+            messages.error(request, error)
+        for field, errors in form.errors.items():
+            if field == "__all__":
+                continue
+            for error in errors:
+                messages.error(request, f"{field}: {error}")
     return redirect_to_day(day)
 
 
@@ -226,10 +255,7 @@ def calendar_view(request, year=None, month=None):
         current = date(year, month, day_num)
         day_obj = existing_days.get(current)
         if not day_obj:
-            day_obj = type("DayStub", (), {})()
-            day_obj.mood = None
-            day_obj.notes = ""
-            day_obj.color = None
+            day_obj = SimpleNamespace(mood=None, notes="", color=None)
 
         days.append({
             "date": current,
@@ -296,26 +322,6 @@ def weekly_balance_score_view(request):
         "offset": offset,
     })
 
-from collections import Counter
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from .models import Day
-
-month_name = {
-    1: "January",
-    2: "February",
-    3: "March",
-    4: "April",
-    5: "May",
-    6: "June",
-    7: "July",
-    8: "August",
-    9: "September",
-    10: "October",
-    11: "November",
-    12: "December",
-}
-
 @login_required
 def monthly_overview_view(request):
     year, month = get_month_year(request)
@@ -338,7 +344,7 @@ def monthly_overview_view(request):
         "days": days,
         "year": year,
         "month": month,
-        "month_name": month_name[month],
+        "month_name": MONTH_NAMES[month],
         "dominant_mood": dominant_mood,
         "icon": icon,
         "interpretation": interpretation,
@@ -358,7 +364,7 @@ def mood_chart_view(request):
         "days": days,
         "year": year,
         "month": month,
-        "month_name": month_name[month],
+        "month_name": MONTH_NAMES[month],
         "most_common_mood": most_common_mood,
     })
 
