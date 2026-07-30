@@ -54,37 +54,6 @@
 </div>
 
 <style>
-:root {
-    --primary: #7dd3a7;
-    --secondary: #a5b4fc;
-    --bg-main: #f4f7fb;
-    --bg-card: rgba(255,255,255,0.9);
-    --text-main: #1f2937;
-    --text-muted: #6b7280;
-    --radius-lg: 24px;
-    --radius-md: 14px;
-    --shadow: 0 20px 40px rgba(0,0,0,.12);
-}
-
-
-body.dark, @media (prefers-color-scheme: dark) {
-    :root {
-        --bg-main: #1f2937;
-        --bg-card: rgba(31, 41, 55, 0.9);
-        --text-main: #f4f7fb;
-        --text-muted: #9ca3af;
-    }
-}
-
-body {
-    background-color: var(--bg-main);
-    color: var(--text-main);
-    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    line-height: 1.6;
-    transition: background-color 0.5s ease, color 0.5s ease;
-}
-
 .home-container {
     max-width: 900px;
     margin: 0 auto;
@@ -198,21 +167,6 @@ body {
 
 @media (max-width: 600px) { .preview-card { width: 100%; } }
 </style>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const toggle = document.querySelector('.dark-toggle');
-    toggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark');
-        toggle.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
-        localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-    });
-    if(localStorage.getItem('theme') === 'dark') {
-        document.body.classList.add('dark');
-        toggle.textContent = '☀️';
-    }
-});
-</script>
 
 {% endblock %}
 

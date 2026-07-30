@@ -8,38 +8,8 @@
 
     <title>{% block title %}Home{% endblock %} | 🌸 Emotional Planner</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'planner/style.css' %}">
     <style>
-        :root {
-            --primary: #7dd3a7;
-            --secondary: #a5b4fc;
-
-            --bg-main: #f4f7fb;
-            --bg-card: rgba(255,255,255,0.9);
-
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-
-            --radius-lg: 24px;
-            --radius-md: 14px;
-            --shadow: 0 20px 40px rgba(0,0,0,.12);
-        }
-
-        body.dark {
-            --bg-main: #1f2937;
-            --bg-card: rgba(31, 41, 55, 0.9);
-            --text-main: #f4f7fb;
-            --text-muted: #9ca3af;
-        }
-
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            line-height: 1.6;
-            transition: background-color 0.5s ease, color 0.5s ease;
-        }
-
         a { color: var(--primary); text-decoration: none; transition: color 0.3s; }
         a:hover { color: var(--secondary); }
 
@@ -147,6 +117,9 @@
             <div class="footer-card">✨ Tomorrow is a new day.</div>
         </div>
         <div class="footer-meta muted">© Emotional Planner · private · no comparisons</div>
+        <div class="footer-meta muted">
+            <a href="{% url 'privacy_policy' %}">Privacy Policy</a> · <a href="{% url 'terms' %}">Terms of Service</a>
+        </div>
     </footer>
 
     <script>
@@ -168,8 +141,9 @@
             applyTheme(isDark ? 'light' : 'dark');
         });
 
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        applyTheme(savedTheme);
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        applyTheme(savedTheme || (systemPrefersDark ? 'dark' : 'light'));
     </script>
 </body>
 </html>

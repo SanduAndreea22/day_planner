@@ -77,11 +77,6 @@
 
 <style>
 :root {
-    --bg-card: #ffffff;
-    --text-primary: #111827;
-    --text-muted: #6b7280;
-    --primary: #7dd3a7;
-    --secondary: #a5b4fc;
     --mood-very_bad: #f87171;
     --mood-bad: #fbbf24;
     --mood-neutral: #9ca3af;
@@ -173,30 +168,8 @@
     gap: 1rem;
     margin-top: 1rem;
 }
-.button {
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    background: #e5e7eb;
-    color: var(--text-primary);
-    text-decoration: none;
-    font-weight: 600;
-    transition: background 0.3s ease;
-}
-.button:hover { background: #d1d5db; }
-.button.primary { background: var(--primary); color: white; }
-.button.primary:hover { background: #5fd1a0; }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg-card: #1f2937;
-        --text-primary: #f4f7fb;
-        --text-muted: #9ca3af;
-    }
-    .mood-card, .mood-row {
-        background: #374151 !important;
-        color: #f4f7fb;
-    }
-}
+body.dark .mood-row { background: rgba(55, 65, 81, 0.6); }
 </style>
 {% endblock %}
 

@@ -71,19 +71,13 @@
     <p class="profile-ending muted">
         This space is just for you.
     </p>
+
+    <p class="profile-ending">
+        <a href="{% url 'delete_account' %}" class="danger-link">Delete my account</a>
+    </p>
 </div>
 
 <style>
-:root {
-    --bg-card: #ffffff;
-    --text-primary: #111827;
-    --text-muted: #6b7280;
-    --primary: #7dd3a7;
-    --secondary: #a5b4fc;
-    --toast-bg: #d1fae5;
-    --toast-text: #065f46;
-}
-
 .profile-card {
     max-width: 600px;
     margin: 2rem auto;
@@ -174,34 +168,6 @@
     margin-top: 1rem;
 }
 
-.button {
-    padding: 0.6rem 1.2rem;
-    border-radius: 10px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    border: none;
-}
-
-.button.primary {
-    background: var(--primary);
-    color: white;
-}
-.button.primary:hover {
-    background: #5fd1a0;
-    transform: translateY(-2px);
-}
-
-.button.secondary {
-    background: #e5e7eb;
-    color: var(--text-primary);
-}
-.button.secondary:hover {
-    background: #d1d5db;
-    transform: translateY(-2px);
-}
-
 .profile-ending {
     text-align: center;
     margin-top: 2rem;
@@ -209,21 +175,10 @@
     color: var(--text-muted);
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg-card: #1f2937;
-        --text-primary: #f4f7fb;
-        --text-muted: #9ca3af;
-        --primary: #7dd3a7;
-        --secondary: #a5b4fc;
-        --toast-bg: #065f46;
-        --toast-text: #d1fae5;
-    }
-    .profile-card, .profile-input, .profile-textarea {
-        background: #374151;
-        color: #f4f7fb;
-        border-color: #4b5563;
-    }
+body.dark .profile-input, body.dark .profile-textarea {
+    background: #374151;
+    color: #f4f7fb;
+    border-color: #4b5563;
 }
 </style>
 

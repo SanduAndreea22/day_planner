@@ -47,14 +47,6 @@
 </div>
 
 <style>
-:root {
-    --bg-card: #ffffff;
-    --text-primary: #111827;
-    --text-muted: #6b7280;
-    --primary: #7dd3a7;
-    --secondary: #a5b4fc;
-}
-
 .calendar-card {
     max-width: 950px;
     margin: 2rem auto;
@@ -111,7 +103,7 @@
     justify-content: center;
     padding: 0.6rem;
     border-radius: 16px;
-    background: rgba(255,255,255,0.9);
+    background: var(--bg-card);
     box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     text-decoration: none;
     color: var(--text-primary);
@@ -166,23 +158,6 @@
     color: var(--text-muted);
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg-card: #1f2937;
-        --text-primary: #f4f7fb;
-        --text-muted: #9ca3af;
-        --primary: #7dd3a7;
-        --secondary: #a5b4fc;
-    }
-    .calendar-card, .calendar-day {
-        background: #374151 !important;
-        color: #f4f7fb;
-    }
-    .calendar-day[data-notes]:hover::after {
-        background: #1f2937;
-        color: #f4f7fb;
-    }
-}
 </style>
 {% endblock %}
 

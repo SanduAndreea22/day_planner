@@ -55,14 +55,6 @@
 </div>
 
 <style>
-:root {
-    --bg-card: #ffffff;
-    --text-primary: #111827;
-    --text-muted: #6b7280;
-    --primary: #7dd3a7;
-    --secondary: #a5b4fc;
-}
-
 .productivity-card {
     max-width: 900px;
     margin: 2rem auto;
@@ -98,7 +90,7 @@
     justify-content: space-between;
     padding: 0.8rem 1rem;
     border-radius: 16px;
-    background: rgba(255,255,255,0.9);
+    background: var(--bg-card);
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
@@ -122,30 +114,7 @@
     gap: 1rem;
     margin-bottom: 1rem;
 }
-.button {
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    background: #e5e7eb;
-    color: var(--text-primary);
-    text-decoration: none;
-    font-weight: 600;
-    transition: background 0.3s ease;
-}
-.button:hover { background: #d1d5db; }
-.button.primary { background: var(--primary); color: white; }
-.button.primary:hover { background: #5fd1a0; }
 
 .productivity-final { text-align: center; font-style: italic; color: var(--text-muted); }
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg-card: #1f2937;
-        --text-primary: #f4f7fb;
-        --text-muted: #9ca3af;
-        --primary: #7dd3a7;
-        --secondary: #a5b4fc;
-    }
-    .productivity-card, .productivity-row { background: #374151 !important; color: #f4f7fb; }
-}
 </style>
 {% endblock %}

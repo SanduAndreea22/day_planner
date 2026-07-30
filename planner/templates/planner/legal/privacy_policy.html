@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}🔒 Privacy Policy · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="legal-card">
+    <h1 class="title-gradient">🔒 Privacy Policy</h1>
+    <p class="updated-date">Last updated: 30 July 2026</p>
+
+    <p>
+        Emotional Planner ("we", "us", "the app") is operated by Andreea Sandu, an individual
+        based in Romania, not a registered company. This policy explains what personal data we
+        collect, why, and what rights you have over it, in line with the EU General Data
+        Protection Regulation (GDPR).
+    </p>
+
+    <h2>1. Who is responsible for your data</h2>
+    <p>
+        Andreea Sandu is the data controller for Emotional Planner. For any question or request
+        about your data, contact <a href="mailto:lexu22deea@gmail.com">lexu22deea@gmail.com</a>.
+    </p>
+
+    <h2>2. What data we collect</h2>
+    <ul>
+        <li><strong>Account data:</strong> your email address and a securely hashed password.</li>
+        <li><strong>Profile data (optional):</strong> a nickname and a short bio, if you choose to add them.</li>
+        <li><strong>Journal data:</strong> the days you log, your mood, an "energy" color, free-text notes,
+            daily schedule entries, and evening reflections (what drained your energy, a small win) —
+            whatever you choose to write.</li>
+        <li><strong>Technical data:</strong> standard web server logs (IP address, browser type, request
+            timestamps) kept temporarily by our hosting provider for security and reliability, not used
+            for tracking or profiling.</li>
+    </ul>
+    <p>
+        We do not use analytics or advertising trackers, and we do not sell or rent your data to
+        anyone, ever.
+    </p>
+
+    <h2>3. Why we process your data</h2>
+    <p>
+        We process your data to provide the service you signed up for (storing and showing you your
+        own journal entries), to authenticate you, and to send you account-related emails such as
+        password resets. The legal basis is performance of the contract formed when you create an
+        account, and your consent for the optional profile fields.
+    </p>
+
+    <h2>4. Who else sees your data</h2>
+    <p>
+        We use a small number of service providers to run the app. They only process data on our
+        behalf and are not permitted to use it for their own purposes:
+    </p>
+    <ul>
+        <li><strong>Render</strong> — hosts the application itself.</li>
+        <li><strong>Neon</strong> — hosts our Postgres database, where your journal data is stored.</li>
+        <li><strong>Brevo</strong> — sends transactional emails (such as password reset links) on our behalf.</li>
+        <li><strong>Google Fonts</strong> — loading the app's font may cause your browser to request
+            it directly from Google's servers, which can see your IP address at that moment. No
+            account data is shared with Google.</li>
+    </ul>
+
+    <h2>5. Cookies and local storage</h2>
+    <p>
+        We only use strictly necessary cookies: a session cookie to keep you logged in, and a CSRF
+        cookie to protect your account against cross-site request forgery. We also store your
+        light/dark theme preference in your browser's local storage. None of these are used for
+        tracking or advertising, so no cookie-consent banner is required.
+    </p>
+
+    <h2>6. How long we keep your data</h2>
+    <p>
+        We keep your data for as long as your account exists. You can permanently delete your
+        account and everything in it at any time from your
+        <a href="{% url 'profile' %}">profile page</a> — this is immediate and cannot be undone.
+    </p>
+
+    <h2>7. Your rights</h2>
+    <p>Under GDPR, you have the right to:</p>
+    <ul>
+        <li>Access the personal data we hold about you.</li>
+        <li>Correct inaccurate data (via your profile page).</li>
+        <li>Erase your data (self-service account deletion, or by contacting us).</li>
+        <li>Object to or restrict certain processing.</li>
+        <li>Receive a copy of your data in a portable format.</li>
+        <li>Lodge a complaint with a supervisory authority — in Romania, the
+            <a href="https://www.dataprotection.ro/" target="_blank" rel="noopener">ANSPDCP</a>.</li>
+    </ul>
+
+    <h2>8. Age requirement</h2>
+    <p>
+        Emotional Planner is intended for people aged 16 and over. We do not knowingly collect data
+        from children under 16.
+    </p>
+
+    <h2>9. Changes to this policy</h2>
+    <p>
+        If we make material changes to this policy, we'll update the "last updated" date above.
+        Continued use of the app after changes means you accept the updated policy.
+    </p>
+
+    <h2>10. Not medical advice</h2>
+    <p>
+        Emotional Planner is a personal journaling tool, not a medical or mental health service.
+        If you're in crisis or need professional support, please contact a qualified professional
+        or emergency services in your country.
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}⚠️ Delete Account · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+
+    <h2 class="auth-title">⚠️ Delete your account</h2>
+
+    <p class="auth-subtitle muted">
+        This will permanently delete your account and everything in it — every day,
+        note, and reflection you've logged. This cannot be undone.
+    </p>
+
+    <form method="post" class="auth-form" novalidate>
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="password">Confirm your password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        </div>
+
+        <button type="submit" class="auth-button button-danger">
+            Permanently delete my account
+        </button>
+    </form>
+
+    <p class="muted auth-footer">
+        <a href="{% url 'profile' %}" class="accent-link">Cancel, keep my account</a>
+    </p>
+</div>
+{% endblock %}

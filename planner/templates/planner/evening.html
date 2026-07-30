@@ -100,22 +100,10 @@
 }
 
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg-card: #1f2937;
-        --text-muted: #9ca3af;
-        --primary: #7dd3a7;
-        --secondary: #a5b4fc;
-    }
-    .evening-card {
-        background: var(--bg-card);
-        color: #f4f7fb;
-    }
-    textarea {
-        background: #374151;
-        color: #f4f7fb;
-        border:1px solid #4b5563;
-    }
+body.dark textarea {
+    background: #374151;
+    color: #f4f7fb;
+    border: 1px solid #4b5563;
 }
 </style>
 {% endblock %}

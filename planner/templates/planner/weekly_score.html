@@ -66,15 +66,6 @@
 </div>
 
 <style>
-:root {
-    --bg-card: #ffffff;
-    --text-primary: #111827;
-    --text-muted: #6b7280;
-    --primary: #7dd3a7;
-    --secondary: #a5b4fc;
-    --highlight: #fbbf24;
-}
-
 .weekly-card {
     max-width: 900px;
     margin: 2rem auto;
@@ -134,7 +125,7 @@
     margin-bottom: 1.5rem;
 }
 .detail-card {
-    background: rgba(255,255,255,0.9);
+    background: var(--bg-card);
     padding: 1rem 1.2rem;
     border-radius: 16px;
     min-width: 100px;
@@ -145,33 +136,6 @@
 .weekly-suggestion { font-style: italic; margin-bottom: 1.5rem; }
 
 .weekly-actions { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
-.button {
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    background: #e5e7eb;
-    color: var(--text-primary);
-    transition: background 0.3s ease;
-}
-.button:hover { background: #d1d5db; }
-.button.primary { background: var(--primary); color: #fff; }
-.button.primary:hover { background: #5fd1a0; }
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg-card: #1f2937;
-        --text-primary: #f4f7fb;
-        --text-muted: #9ca3af;
-        --primary: #7dd3a7;
-        --secondary: #a5b4fc;
-        --highlight: #fbbf24;
-    }
-    .weekly-card, .detail-card {
-        background: #374151 !important;
-        color: #f4f7fb;
-    }
-}
 </style>
 {% endblock %}
 

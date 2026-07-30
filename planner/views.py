@@ -96,6 +96,20 @@ def profile_view(request):
         saved = True
     return render(request, "planner/auth/profile.html", {"profile": profile, "saved": saved})
 
+@login_required
+def delete_account_view(request):
+    if request.method == "POST":
+        password = request.POST.get("password", "")
+        if request.user.check_password(password):
+            user = request.user
+            logout(request)
+            user.delete()
+            messages.success(request, "Your account and all your data have been permanently deleted. Take care 🤍")
+            return redirect("home")
+        messages.error(request, "Incorrect password — your account was not deleted.")
+        return redirect("delete_account")
+    return render(request, "planner/auth/delete_account.html")
+
 def home_view(request):
     if request.user.is_authenticated:
         return redirect("today")

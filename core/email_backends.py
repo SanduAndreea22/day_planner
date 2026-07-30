@@ -15,17 +15,22 @@ class BrevoBackend(BaseEmailBackend):
         sent_count = 0
 
         for message in email_messages:
+            html_body = message.body
+            for content, mimetype in getattr(message, "alternatives", []):
+                if mimetype == "text/html":
+                    html_body = content
+                    break
             try:
                 email = SendSmtpEmail(
-                    to=[{"email": message.to[0]}],
-                    sender={"email": settings.DEFAULT_FROM_EMAIL.split("<")[-1].replace(">", ""),
+                    to=[{"email": recipient} for recipient in message.to],
+                    sender={"email": settings.DEFAULT_FROM_EMAIL.split("<")[-1].replace(">", "").strip(),
                             "name": settings.DEFAULT_FROM_EMAIL.split("<")[0].strip()},
                     subject=message.subject,
-                    html_content=message.body
+                    html_content=html_body
                 )
                 api_instance.send_transac_email(email)
                 sent_count += 1
-            except Exception as e:
+            except Exception:
                 if not self.fail_silently:
-                    raise e
+                    raise
         return sent_count
