@@ -13,9 +13,9 @@
             name="q"
             value="{{ query }}"
             placeholder="Search your notes..."
-            style="flex:1; min-width:200px; padding:0.6rem 0.8rem; border-radius:var(--radius-md); border:1px solid #ccc;"
+            style="flex:1; min-width:200px; padding:0.6rem 0.8rem; border-radius:var(--radius-md); border:1px solid var(--text-muted); background:var(--bg-card); color:var(--text-main);"
         >
-        <select name="mood" style="padding:0.6rem 0.8rem; border-radius:var(--radius-md); border:1px solid #ccc;">
+        <select name="mood" style="padding:0.6rem 0.8rem; border-radius:var(--radius-md); border:1px solid var(--text-muted); background:var(--bg-card); color:var(--text-main);">
             <option value="">Any mood</option>
             <option value="very_bad" {% if mood_filter == "very_bad" %}selected{% endif %}>😞 Very hard</option>
             <option value="bad" {% if mood_filter == "bad" %}selected{% endif %}>😕 Hard</option>

@@ -173,6 +173,22 @@ body {
 .button-danger { background-color: #f87171; }
 .button-danger:hover { background-color: #ef4444; }
 
+/* Makes a <button> inside a small inline form look like the plain-text
+   links it replaces (e.g. per-timeblock actions), so mutating actions can
+   use POST + CSRF instead of a bare GET <a href>. */
+.link-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: var(--primary);
+    cursor: pointer;
+    text-decoration: none;
+}
+.link-button:hover { color: var(--secondary); }
+.link-button.delete { color: inherit; }
+
 /* Shared long-form legal pages (privacy policy, terms) */
 .legal-card {
     max-width: 800px;

@@ -1,4 +1,5 @@
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+from unittest.mock import patch
 
 import pytest
 from django.contrib.auth.models import User
@@ -64,3 +65,40 @@ def test_reminder_not_sent_when_time_does_not_match(client):
     response = client.post(reverse(URL_NAME), HTTP_AUTHORIZATION="Bearer test-secret")
     assert response.status_code == 200
     assert len(mail.outbox) == 0
+
+
+@pytest.mark.django_db
+@override_settings(TASK_SECRET="test-secret")
+def test_reminder_sent_when_window_spans_midnight(client):
+    user = User.objects.create_user(username="r4", email="r4@example.com", password="pass12345")
+    UserProfile.objects.create(user=user, evening_reminder_time=datetime.strptime("23:55", "%H:%M").time())
+
+    now = timezone.localtime()
+    fake_now = timezone.make_aware(datetime.combine(now.date(), datetime.strptime("00:05", "%H:%M").time()), now.tzinfo)
+    Day.objects.create(user=user, date=fake_now.date(), is_closed=False)
+
+    with patch("planner.views.timezone.localtime", return_value=fake_now):
+        response = client.post(reverse(URL_NAME), HTTP_AUTHORIZATION="Bearer test-secret")
+
+    assert response.status_code == 200
+    assert len(mail.outbox) == 1
+
+
+@pytest.mark.django_db
+@override_settings(TASK_SECRET="test-secret")
+def test_reminder_not_sent_twice_across_adjacent_windows(client):
+    user = User.objects.create_user(username="r5", email="r5@example.com", password="pass12345")
+    reminder_time = datetime.strptime("20:00", "%H:%M").time()
+    UserProfile.objects.create(user=user, evening_reminder_time=reminder_time)
+
+    now = timezone.localtime()
+    first_run = timezone.make_aware(datetime.combine(now.date(), reminder_time), now.tzinfo)
+    second_run = first_run + timedelta(minutes=15)
+    Day.objects.create(user=user, date=first_run.date(), is_closed=False)
+
+    with patch("planner.views.timezone.localtime", return_value=first_run):
+        client.post(reverse(URL_NAME), HTTP_AUTHORIZATION="Bearer test-secret")
+    with patch("planner.views.timezone.localtime", return_value=second_run):
+        client.post(reverse(URL_NAME), HTTP_AUTHORIZATION="Bearer test-secret")
+
+    assert len(mail.outbox) == 1

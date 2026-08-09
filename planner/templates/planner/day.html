@@ -106,8 +106,14 @@
                     <div class="block-title">{{ block.title }}</div>
                     {% if not day.is_closed %}
                         <div class="actions">
-                            <a href="{% url 'toggle_timeblock' block.id %}">✅</a>
-                            <a href="{% url 'delete_timeblock' block.id %}" class="delete" onclick="return confirm('Delete this block?')">🗑️</a>
+                            <form method="post" action="{% url 'toggle_timeblock' block.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="link-button">✅</button>
+                            </form>
+                            <form method="post" action="{% url 'delete_timeblock' block.id %}" style="display:inline;" onsubmit="return confirm('Delete this block?')">
+                                {% csrf_token %}
+                                <button type="submit" class="link-button delete">🗑️</button>
+                            </form>
                         </div>
                     {% endif %}
                 </div>

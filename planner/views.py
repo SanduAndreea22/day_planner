@@ -3,7 +3,7 @@ import hmac
 import io
 import zipfile
 from collections import Counter
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from calendar import monthrange
 from random import choice
 from types import SimpleNamespace
@@ -240,6 +240,7 @@ def add_timeblock(request):
 
 
 @login_required
+@require_POST
 def toggle_timeblock(request, block_id):
     block = get_object_or_404(TimeBlock, id=block_id, day__user=request.user)
     block.completed = not block.completed
@@ -248,6 +249,7 @@ def toggle_timeblock(request, block_id):
 
 
 @login_required
+@require_POST
 def delete_timeblock(request, block_id):
     block = get_object_or_404(TimeBlock, id=block_id, day__user=request.user)
     day = block.day
@@ -427,33 +429,47 @@ def search_view(request):
     })
 
 
+def _rows_to_csv(header, rows):
+    csv_file = io.StringIO()
+    writer = csv.writer(csv_file)
+    writer.writerow(header)
+    writer.writerows(rows)
+    return csv_file.getvalue()
+
+
 @login_required
 def export_data_view(request):
     user = request.user
 
-    days_csv = io.StringIO()
-    writer = csv.writer(days_csv)
-    writer.writerow(["date", "mood", "color", "notes", "rest_day", "is_closed", "closed_at"])
-    for d in Day.objects.filter(user=user).order_by("date"):
-        writer.writerow([d.date, d.mood, d.color, d.notes, d.rest_day, d.is_closed, d.closed_at])
+    days_csv = _rows_to_csv(
+        ["date", "mood", "color", "notes", "rest_day", "is_closed", "closed_at"],
+        (
+            [d.date, d.mood, d.color, d.notes, d.rest_day, d.is_closed, d.closed_at]
+            for d in Day.objects.filter(user=user).order_by("date")
+        ),
+    )
 
-    blocks_csv = io.StringIO()
-    writer = csv.writer(blocks_csv)
-    writer.writerow(["date", "title", "start_time", "end_time", "completed"])
-    for block in TimeBlock.objects.filter(day__user=user).select_related("day").order_by("day__date", "start_time"):
-        writer.writerow([block.day.date, block.title, block.start_time, block.end_time, block.completed])
+    blocks_csv = _rows_to_csv(
+        ["date", "title", "start_time", "end_time", "completed"],
+        (
+            [block.day.date, block.title, block.start_time, block.end_time, block.completed]
+            for block in TimeBlock.objects.filter(day__user=user).select_related("day").order_by("day__date", "start_time")
+        ),
+    )
 
-    reflections_csv = io.StringIO()
-    writer = csv.writer(reflections_csv)
-    writer.writerow(["date", "drain", "small_win"])
-    for r in EveningReflection.objects.filter(day__user=user).select_related("day").order_by("day__date"):
-        writer.writerow([r.day.date, r.drain, r.small_win])
+    reflections_csv = _rows_to_csv(
+        ["date", "drain", "small_win"],
+        (
+            [r.day.date, r.drain, r.small_win]
+            for r in EveningReflection.objects.filter(day__user=user).select_related("day").order_by("day__date")
+        ),
+    )
 
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, "w") as zf:
-        zf.writestr("days.csv", days_csv.getvalue())
-        zf.writestr("time_blocks.csv", blocks_csv.getvalue())
-        zf.writestr("reflections.csv", reflections_csv.getvalue())
+        zf.writestr("days.csv", days_csv)
+        zf.writestr("time_blocks.csv", blocks_csv)
+        zf.writestr("reflections.csv", reflections_csv)
 
     response = HttpResponse(buffer.getvalue(), content_type="application/zip")
     response["Content-Disposition"] = 'attachment; filename="emotional_planner_export.zip"'
@@ -468,23 +484,40 @@ def send_evening_reminders_view(request):
     if not settings.TASK_SECRET or not hmac.compare_digest(provided, expected):
         return HttpResponseForbidden("Forbidden")
 
-    now_local = timezone.localtime()
-    window_start = (now_local - timedelta(minutes=15)).time()
-    window_end = now_local.time()
-    today = timezone.localdate()
+    window_end = timezone.localtime()
+    window_start = window_end - timedelta(minutes=15)
 
-    sent = 0
     profiles = UserProfile.objects.exclude(evening_reminder_time__isnull=True).select_related("user")
+    matching_profiles = []
     for profile in profiles:
         reminder_time = profile.evening_reminder_time
-        if not (window_start <= reminder_time <= window_end):
+        # Combine against both the window's start and end date, since a
+        # window spanning midnight (e.g. 23:45-00:00) would otherwise miss a
+        # reminder time that falls on the earlier day. The start is
+        # exclusive / end inclusive so consecutive 15-minute cron runs never
+        # both match the same reminder time.
+        reminder_candidates = {
+            timezone.make_aware(datetime.combine(d, reminder_time), window_end.tzinfo)
+            for d in (window_start.date(), window_end.date())
+        }
+        if any(window_start < candidate <= window_end for candidate in reminder_candidates):
+            matching_profiles.append(profile)
+
+    # One query for all matching users' today-Days instead of one per profile.
+    closed_user_ids = set(
+        Day.objects.filter(
+            user_id__in=[p.user_id for p in matching_profiles],
+            date=window_end.date(),
+            is_closed=True,
+        ).values_list("user_id", flat=True)
+    )
+
+    sent = 0
+    for profile in matching_profiles:
+        if profile.user_id in closed_user_ids:
             continue
 
-        day = Day.objects.filter(user=profile.user, date=today).first()
-        if day and day.is_closed:
-            continue
-
-        send_mail(
+        sent_count = send_mail(
             subject="🌙 A gentle nudge for your evening reflection",
             message=(
                 "No pressure — whenever you're ready, your day is waiting for you.\n\n"
@@ -494,7 +527,8 @@ def send_evening_reminders_view(request):
             recipient_list=[profile.user.email],
             fail_silently=True,
         )
-        sent += 1
+        if sent_count:
+            sent += 1
 
     return HttpResponse(f"Sent {sent} reminder(s).")
 
