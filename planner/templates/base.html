@@ -84,12 +84,14 @@
             <a href="{% url 'home' %}" class="nav-logo">🌸 <span>Emotional Planner</span></a>
             <nav class="nav-menu">
                 {% if user.is_authenticated %}
+                    <a href="{% url 'guide' %}" class="nav-item">❓ How it works</a>
                     <a href="{% url 'today' %}" class="nav-item">🌤 Today</a>
                     <a href="{% url 'calendar' %}" class="nav-item">📅 Calendar</a>
                     <a href="{% url 'search' %}" class="nav-item">🔍 Search</a>
                     <a href="{% url 'weekly_score' %}" class="nav-item">📈 Week</a>
                     <a href="{% url 'monthly_overview' %}" class="nav-item">🧭 Month</a>
                     <a href="{% url 'profile' %}" class="nav-item">👤 Profile</a>
+                    <a href="{% url 'feedback' %}" class="nav-item">💬 Feedback</a>
                     <a href="{% url 'logout' %}" class="nav-item logout">Logout</a>
                 {% else %}
                     <a href="{% url 'login' %}" class="nav-item">💗 Login</a>

@@ -52,7 +52,20 @@
     {% else %}
          <div class="day-section" style="margin-bottom:1.8rem;">
             <label style="font-weight:600;">🎨 Day Energy</label>
-            <form method="post" action="{% url 'set_day_color' %}">
+
+            <div class="saved-field" id="color-display" style="display:{% if day.color %}flex{% else %}none{% endif %}; justify-content:space-between; align-items:center; padding:0.6rem 1rem; border-radius:var(--radius-md); background:rgba(125,211,167,0.08);">
+                <span>
+                    {% if day.color == "red" %}🔴 Low
+                    {% elif day.color == "yellow" %}🟡 Medium
+                    {% elif day.color == "green" %}🟢 Good
+                    {% elif day.color == "blue" %}🔵 Calm
+                    {% elif day.color == "purple" %}🟣 Creative
+                    {% endif %}
+                </span>
+                <button type="button" class="link-button" onclick="toggleEdit('color')">✏️ Edit</button>
+            </div>
+
+            <form method="post" action="{% url 'set_day_color' %}" id="color-form" style="display:{% if day.color %}none{% else %}block{% endif %};">
                 {% csrf_token %}
                 <input type="hidden" name="day_id" value="{{ day.id }}">
                 <select name="color" required onchange="this.form.submit()" style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
@@ -68,7 +81,20 @@
 
         <div class="day-section" style="margin-bottom:1.8rem;">
             <label style="font-weight:600;">😌 Mood</label>
-            <form method="post" action="{% url 'set_day_mood' %}">
+
+            <div class="saved-field" id="mood-display" style="display:{% if day.mood %}flex{% else %}none{% endif %}; justify-content:space-between; align-items:center; padding:0.6rem 1rem; border-radius:var(--radius-md); background:rgba(125,211,167,0.08);">
+                <span>
+                    {% if day.mood == "very_bad" %}😞 Very hard
+                    {% elif day.mood == "bad" %}😕 Hard
+                    {% elif day.mood == "neutral" %}😐 Neutral
+                    {% elif day.mood == "good" %}🙂 Good
+                    {% elif day.mood == "very_good" %}😄 Very good
+                    {% endif %}
+                </span>
+                <button type="button" class="link-button" onclick="toggleEdit('mood')">✏️ Edit</button>
+            </div>
+
+            <form method="post" action="{% url 'set_day_mood' %}" id="mood-form" style="display:{% if day.mood %}none{% else %}block{% endif %};">
                 {% csrf_token %}
                 <input type="hidden" name="day_id" value="{{ day.id }}">
                 <select name="mood" required onchange="this.form.submit()" style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
@@ -84,7 +110,13 @@
 
         <div class="day-section" style="margin-bottom:1.8rem;">
             <label style="font-weight:600;">✨ A thought for today</label>
-            <form method="post" action="{% url 'update_day_text' %}">
+
+            <div class="saved-field" id="notes-display" style="display:{% if day.notes %}block{% else %}none{% endif %}; padding:0.6rem 1rem; border-radius:var(--radius-md); background:rgba(125,211,167,0.08);">
+                <div style="white-space:pre-wrap;">{{ day.notes }}</div>
+                <button type="button" class="link-button" onclick="toggleEdit('notes')" style="margin-top:0.5rem;">✏️ Edit</button>
+            </div>
+
+            <form method="post" action="{% url 'update_day_text' %}" id="notes-form" style="display:{% if day.notes %}none{% else %}block{% endif %};">
                 {% csrf_token %}
                 <input type="hidden" name="day_id" value="{{ day.id }}">
                 <textarea name="notes" rows="4" style="width:100%; padding:0.5rem; border-radius:var(--radius-md);" placeholder="One thought is enough. It doesn’t need to be perfect.">{{ day.notes }}</textarea>
@@ -152,18 +184,24 @@
     opacity: 0.8;
 }
 
-.actions a {
+.actions button {
     cursor: pointer;
     margin-left: 0.5rem;
     font-size: 1.1rem;
-    text-decoration: none;
 }
 
-.actions a:hover {
+.actions button:hover {
     transform: scale(1.2);
     transition: transform 0.2s;
 }
 </style>
+
+<script>
+function toggleEdit(field) {
+    document.getElementById(field + '-display').style.display = 'none';
+    document.getElementById(field + '-form').style.display = 'block';
+}
+</script>
 
 {% endblock %}
 

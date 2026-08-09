@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Quote, Day, TimeBlock, UserProfile, EveningReflection
+from .models import Quote, Day, TimeBlock, UserProfile, EveningReflection, Feedback
 
 @admin.register(Quote)
 class QuoteAdmin(admin.ModelAdmin):
@@ -29,5 +29,11 @@ class UserProfileAdmin(admin.ModelAdmin):
 @admin.register(EveningReflection)
 class EveningReflectionAdmin(admin.ModelAdmin):
     list_display = ("day", "created_at")
+
+@admin.register(Feedback)
+class FeedbackAdmin(admin.ModelAdmin):
+    list_display = ("user", "created_at")
+    list_filter = ("created_at",)
+    search_fields = ("user__email", "message")
 
 

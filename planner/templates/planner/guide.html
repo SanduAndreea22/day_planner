@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}🌸 How it works · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="legal-card">
+    <h1 class="title-gradient">🌸 How Emotional Planner works</h1>
+    <p class="updated-date">A short tour — no pressure to use everything at once.</p>
+
+    <h2>🌤 Today</h2>
+    <p>
+        Your daily page. Add a few time blocks for the day, check them off as you go, and jot down
+        notes whenever you feel like it. There's no "right" way to fill it in — a single line is enough.
+    </p>
+
+    <h2>🌙 Evening reflection</h2>
+    <p>
+        Close the day gently: pick a mood and a color, and optionally note what drained you and one
+        small win. Once a day is closed, it's locked in as-is — a quiet snapshot of how it went. You
+        can turn on an evening reminder email for this in your <a href="{% url 'profile' %}">profile</a>.
+    </p>
+
+    <h2>📅 Calendar</h2>
+    <p>
+        See every day at a glance, colored by mood. Click any day to open it and add or review details.
+    </p>
+
+    <h2>📈 Week &amp; 🧭 Month</h2>
+    <p>
+        The weekly score is a gentle summary of how balanced the week felt — not a grade. The monthly
+        overview shows your dominant mood and a short reflection on the month as a whole.
+    </p>
+
+    <h2>🔍 Search</h2>
+    <p>
+        Look back through past notes by keyword, or filter by mood, to find a day you're thinking of.
+    </p>
+
+    <h2>📦 Export your data</h2>
+    <p>
+        From your <a href="{% url 'profile' %}">profile</a>, you can download everything you've written
+        as a zip of CSV files, any time.
+    </p>
+
+    <h2>💬 Feedback</h2>
+    <p>
+        This app is still evolving. If something felt confusing, broken, or missing, tell us on the
+        <a href="{% url 'feedback' %}">feedback page</a> — we read every message.
+    </p>
+</div>
+{% endblock %}

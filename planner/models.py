@@ -120,6 +120,23 @@ class TimeBlock(models.Model):
     def __str__(self):
         return f"{self.title} ({self.start_time}–{self.end_time})"
 
+class Feedback(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="feedback_entries"
+    )
+
+    message = models.TextField(max_length=1000)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.user.email} – {self.created_at:%Y-%m-%d}"
+
 class EveningReflection(models.Model):
     day = models.OneToOneField(
         Day,

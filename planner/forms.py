@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from .models import UserProfile, TimeBlock
+from .models import UserProfile, TimeBlock, Feedback
 
 class RegisterForm(forms.ModelForm):
     password1 = forms.CharField(
@@ -138,3 +138,17 @@ class TimeBlockForm(forms.ModelForm):
     class Meta:
         model = TimeBlock
         fields = ["title", "start_time", "end_time"]
+
+class FeedbackForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        fields = ["message"]
+        labels = {"message": "What's on your mind?"}
+        widgets = {
+            "message": forms.Textarea(attrs={
+                "class": "feedback-textarea",
+                "rows": 5,
+                "maxlength": 1000,
+                "placeholder": "Tell us what's working, what's missing, or what felt off...",
+            })
+        }

@@ -18,8 +18,8 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from .models import Day, TimeBlock, Quote, EveningReflection, UserProfile
-from .forms import RegisterForm, EmailAuthenticationForm, TimeBlockForm, ProfileForm
+from .models import Day, TimeBlock, Quote, EveningReflection, UserProfile, Feedback
+from .forms import RegisterForm, EmailAuthenticationForm, TimeBlockForm, ProfileForm, FeedbackForm
 
 MONTH_NAMES = {
     1: "January",
@@ -108,6 +108,20 @@ def profile_view(request):
     return render(request, "planner/auth/profile.html", {"profile": profile, "form": form, "saved": saved})
 
 @login_required
+def feedback_view(request):
+    if request.method == "POST":
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            feedback = form.save(commit=False)
+            feedback.user = request.user
+            feedback.save()
+            messages.success(request, "Thank you — your feedback was sent 🤍")
+            return redirect("feedback")
+    else:
+        form = FeedbackForm()
+    return render(request, "planner/feedback.html", {"form": form})
+
+@login_required
 def delete_account_view(request):
     if request.method == "POST":
         password = request.POST.get("password", "")
@@ -164,6 +178,8 @@ def evening_reflection_view(request, year, month, day):
     except ValueError:
         raise Http404("Invalid date")
     day_obj = get_object_or_404(Day, user=request.user, date=selected_date)
+    if day_obj.is_closed:
+        return redirect_to_day(day_obj)
     reflection, _ = EveningReflection.objects.get_or_create(day=day_obj)
 
     if request.method == "POST":
@@ -215,8 +231,9 @@ def set_day_mood(request):
 @login_required
 def update_day_text(request):
     day = get_object_or_404(Day, id=request.POST.get("day_id"), user=request.user)
-    day.notes = request.POST.get("notes", "")
-    day.save(update_fields=["notes"])
+    if not day.is_closed:
+        day.notes = request.POST.get("notes", "")
+        day.save(update_fields=["notes"])
     return redirect_to_day(day)
 
 

@@ -12,3 +12,9 @@ def test_privacy_policy_renders(client):
 def test_terms_renders(client):
     response = client.get(reverse("terms"))
     assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_guide_renders(client):
+    response = client.get(reverse("guide"))
+    assert response.status_code == 200

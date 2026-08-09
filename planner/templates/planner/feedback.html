@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}💬 Feedback · Emotional Planner{% endblock %}
+
+{% block content %}
+<div class="legal-card">
+    <h1 class="title-gradient">💬 Share your thoughts</h1>
+    <p class="updated-date">This is still a work in progress — tell us what's working, what's missing, or what felt off. We read every message.</p>
+
+    <form method="post" class="feedback-form">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.message }}
+            {% if form.message.errors %}
+                <div class="field-error">{{ form.message.errors.0 }}</div>
+            {% endif %}
+        </div>
+        <button type="submit" class="button primary">Send feedback</button>
+    </form>
+</div>
+
+<style>
+.feedback-form textarea {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--text-muted);
+    background: var(--bg-card);
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical;
+}
+.feedback-form textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 8px rgba(125,211,167,0.5);
+    outline: none;
+}
+.feedback-form .button { margin-top: 1rem; }
+</style>
+{% endblock %}

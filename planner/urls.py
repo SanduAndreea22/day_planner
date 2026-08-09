@@ -21,6 +21,7 @@ from .views import (
     login_view,
     logout_view,
     profile_view,
+    feedback_view,
     delete_account_view,
     search_view,
     export_data_view,
@@ -48,6 +49,7 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     path('profile/', profile_view, name='profile'),
+    path('feedback/', feedback_view, name='feedback'),
     path('delete-account/', delete_account_view, name='delete_account'),
     path('search/', search_view, name='search'),
     path('export-data/', export_data_view, name='export_data'),
@@ -73,6 +75,10 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(
         template_name='planner/auth/password_reset_complete.html',
     ), name='password_reset_complete'),
+
+    path('how-it-works/', TemplateView.as_view(
+        template_name='planner/guide.html',
+    ), name='guide'),
 
     path('privacy-policy/', TemplateView.as_view(
         template_name='planner/legal/privacy_policy.html',

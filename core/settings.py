@@ -69,6 +69,11 @@ if DATABASE_URL:
         "default": dj_database_url.parse(
             DATABASE_URL,
             conn_max_age=600,
+            # The free Render instance spins down on idle, so a pooled
+            # connection can go stale between requests; without this,
+            # Django reuses it blindly and the first query after a wake-up
+            # fails with "SSL connection has been closed unexpectedly".
+            conn_health_checks=True,
             ssl_require=True,
         )
     }
