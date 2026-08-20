@@ -1,3 +1,5 @@
+from email.utils import parseaddr
+
 from django.core.mail.backends.base import BaseEmailBackend
 from django.conf import settings
 from sib_api_v3_sdk import ApiClient, Configuration, TransactionalEmailsApi
@@ -21,10 +23,10 @@ class BrevoBackend(BaseEmailBackend):
                     html_body = content
                     break
             try:
+                sender_name, sender_email = parseaddr(settings.DEFAULT_FROM_EMAIL)
                 email = SendSmtpEmail(
                     to=[{"email": recipient} for recipient in message.to],
-                    sender={"email": settings.DEFAULT_FROM_EMAIL.split("<")[-1].replace(">", "").strip(),
-                            "name": settings.DEFAULT_FROM_EMAIL.split("<")[0].strip()},
+                    sender={"email": sender_email, "name": sender_name or sender_email},
                     subject=message.subject,
                     html_content=html_body
                 )

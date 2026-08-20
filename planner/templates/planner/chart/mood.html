@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block title %}💭 Mood · Emotional Planner{% endblock %}
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+{% endblock %}
 
 {% block content %}
 <div class="mood-card">
@@ -29,6 +32,12 @@
             {% elif most_common_mood == "very_good" %}very good
             {% endif %}
         </strong>.
+    </div>
+    {% endif %}
+
+    {% if days %}
+    <div class="mood-chart-wrapper">
+        <canvas id="mood-chart" height="220" role="img" aria-label="Line chart of your mood across {{ month_name }} {{ year }}"></canvas>
     </div>
     {% endif %}
 
@@ -76,21 +85,13 @@
 </div>
 
 <style>
-:root {
-    --mood-very_bad: #f87171;
-    --mood-bad: #fbbf24;
-    --mood-neutral: #9ca3af;
-    --mood-good: #34d399;
-    --mood-very_good: #a78bfa;
-}
-
 .mood-card {
-    max-width: 720px;
+    max-width: 900px;
     margin: 2rem auto;
     padding: 2rem;
-    border-radius: 24px;
+    border-radius: var(--radius-lg);
     background: var(--bg-card);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+    box-shadow: var(--shadow);
 }
 
 .mood-header {
@@ -155,11 +156,7 @@
 .mood-row .mood-emoji { font-size: 1.2rem; width: 40px; text-align: center; }
 .mood-row .mood-text { flex: 1; padding-left: 0.5rem; }
 
-.mood-very_bad { background-color: var(--mood-very_bad); color: white; }
-.mood-bad { background-color: var(--mood-bad); color: white; }
-.mood-neutral { background-color: var(--mood-neutral); color: white; }
-.mood-good { background-color: var(--mood-good); color: white; }
-.mood-very_good { background-color: var(--mood-very_good); color: white; }
+.mood-chart-wrapper { margin: 1.5rem 0; }
 
 .mood-footer { text-align: center; color: var(--text-muted); margin-top: 1.5rem; }
 .mood-actions {
@@ -171,6 +168,78 @@
 
 body.dark .mood-row { background: rgba(55, 65, 81, 0.6); }
 </style>
+
+{% if days %}
+<script>
+(function () {
+    var MOOD_SCALE = { very_bad: 1, bad: 2, neutral: 3, good: 4, very_good: 5 };
+    var MOOD_COLOR = {
+        very_bad: '#ef4444', bad: '#facc15', neutral: '#9ca3af',
+        good: '#4ade80', very_good: '#a78bfa'
+    };
+    var MOOD_LABEL = {
+        1: 'Very hard', 2: 'Hard', 3: 'Neutral', 4: 'Good', 5: 'Very good'
+    };
+
+    var days = [
+        {% for day in days %}
+        { date: "{{ day.date|date:'d M' }}", mood: "{{ day.mood|default:'' }}" }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    var labels = days.map(function (d) { return d.date; });
+    var points = days.map(function (d) { return d.mood ? MOOD_SCALE[d.mood] : null; });
+    var colors = days.map(function (d) { return d.mood ? MOOD_COLOR[d.mood] : '#d1d5db'; });
+
+    var muted = getComputedStyle(document.body).getPropertyValue('--text-muted').trim();
+
+    new Chart(document.getElementById('mood-chart'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: points,
+                spanGaps: true,
+                borderColor: getComputedStyle(document.body).getPropertyValue('--secondary').trim(),
+                backgroundColor: colors,
+                pointBackgroundColor: colors,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                tension: 0.3,
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function (ctx) {
+                            return ctx.raw ? MOOD_LABEL[ctx.raw] : 'No entry';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    min: 0.5,
+                    max: 5.5,
+                    ticks: {
+                        stepSize: 1,
+                        color: muted,
+                        callback: function (value) { return MOOD_LABEL[value] || ''; }
+                    },
+                    grid: { color: 'rgba(128,128,128,0.15)' }
+                },
+                x: {
+                    ticks: { color: muted, maxRotation: 0, autoSkip: true },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+})();
+</script>
+{% endif %}
 {% endblock %}
 
 

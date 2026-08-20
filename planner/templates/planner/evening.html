@@ -3,15 +3,17 @@
 {% block title %}🌙 Evening Reflection · Emotional Planner{% endblock %}
 
 {% block content %}
-<div class="evening-card" style="
+<div class="evening-card" id="evening-card" style="
     max-width:800px;
     margin:2rem auto;
     padding:2rem;
-    border-radius:24px;
+    border-radius:var(--radius-lg);
     background:var(--bg-card);
-    box-shadow:0 20px 40px rgba(0,0,0,0.12);
-    transition: background 0.5s, color 0.5s;
+    box-shadow:var(--shadow);
+    transition: background 0.5s, color 0.5s, opacity 0.7s ease, transform 0.7s ease;
 ">
+
+    <div class="evening-moon" aria-hidden="true">🌙</div>
 
     <div class="evening-title" style="
         font-size:2rem;
@@ -34,7 +36,7 @@
         Closing the day gently. No analysis, no pressure.
     </div>
 
-    <form method="post" class="evening-form" style="display:flex; flex-direction:column; gap:1.5rem;">
+    <form method="post" class="evening-form" id="evening-form" style="display:flex; flex-direction:column; gap:1.5rem;">
         {% csrf_token %}
 
         <input type="hidden" name="mood" value="{{ day.mood }}">
@@ -71,7 +73,7 @@
                 flex:1;
                 min-width:140px;
                 transition: transform 0.2s, box-shadow 0.2s;
-            " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            ">
                 Close the day 🌙
             </button>
 
@@ -86,7 +88,7 @@
                 text-align:center;
                 text-decoration:none;
                 transition: transform 0.2s, box-shadow 0.2s;
-            " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            ">
                 Back to day
             </a>
         </div>
@@ -94,18 +96,48 @@
 </div>
 
 <style>
-@keyframes fadeInUp {
-    0% { opacity:0; transform:translateY(20px); }
-    100% { opacity:1; transform:translateY(0); }
+/* fadeInUp and dark-mode textarea theming come from style.css — one shared
+   definition, instead of a copy defined locally here. */
+.evening-actions .button:hover {
+    transform: scale(1.05);
 }
 
+.evening-moon {
+    font-size: 2.2rem;
+    text-align: center;
+    margin-bottom: 0.3rem;
+    animation: evening-breathe 4s ease-in-out infinite;
+}
+@keyframes evening-breathe {
+    0%, 100% { transform: scale(1); opacity: 0.85; }
+    50% { transform: scale(1.12); opacity: 1; }
+}
 
-body.dark textarea {
-    background: #374151;
-    color: #f4f7fb;
-    border: 1px solid #4b5563;
+/* Plays right before the form actually submits, so closing the day feels
+   like a brief pause rather than an instant page jump. */
+.evening-card.closing {
+    opacity: 0;
+    transform: scale(0.97);
+}
+.evening-card.closing .evening-moon {
+    animation: evening-breathe 0.7s ease-in-out;
 }
 </style>
+
+<script>
+(function () {
+    var card = document.getElementById('evening-card');
+    var form = document.getElementById('evening-form');
+    if (!form) return;
+
+    form.addEventListener('submit', function (event) {
+        if (card.classList.contains('closing')) return;
+        event.preventDefault();
+        card.classList.add('closing');
+        window.setTimeout(function () { form.submit(); }, 650);
+    });
+})();
+</script>
 {% endblock %}
 
 

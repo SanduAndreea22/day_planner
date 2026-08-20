@@ -2,93 +2,66 @@
 {% block title %}🌸 Create Account · Emotional Planner{% endblock %}
 
 {% block content %}
-<div class="card auth-card" style="
-    max-width: 400px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background: var(--bg-card);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow);
-    transition: background 0.5s, color 0.5s;
-">
+<div class="auth-card">
 
-    <h2 class="title-gradient auth-title" style="
-        font-size: 2rem;
-        text-align: center;
-        margin-bottom: 1rem;
-        background: linear-gradient(90deg, var(--primary), var(--secondary));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    ">🌸 Create Account</h2>
+    <h2 class="auth-title">🌸 Create Account</h2>
 
-    <p class="auth-subtitle muted" style="text-align:center; color: var(--text-muted); margin-bottom:1.5rem;">
+    <p class="auth-subtitle muted">
         Create a space that’s yours alone. Gentle. Secure. No pressure.
     </p>
 
     <form method="post" class="auth-form" novalidate>
         {% csrf_token %}
 
-        <div class="form-group" style="margin-bottom:1rem;">
+        <div class="form-group">
             {{ form.email.label_tag }}
             {{ form.email }}
             {% if form.email.errors %}
-                <div class="field-error" style="color:red; font-size:0.85rem;">{{ form.email.errors.0 }}</div>
+                <div class="field-error">{{ form.email.errors.0 }}</div>
             {% endif %}
         </div>
 
-        <div class="form-group" style="margin-bottom:1rem;">
+        <div class="form-group">
             {{ form.password1.label_tag }}
             {{ form.password1 }}
-            <small class="password-rules muted" style="display:block; color: var(--text-muted); font-size:0.8rem; margin-top:0.3rem;">
-                Minimum 8 characters · 1 uppercase letter · 1 number
+            <small class="password-rules muted">
+                At least 8 characters. Avoid common passwords or ones made only of numbers.
             </small>
             {% if form.password1.errors %}
-                <div class="field-error" style="color:red; font-size:0.85rem;">{{ form.password1.errors.0 }}</div>
+                <div class="field-error">{{ form.password1.errors.0 }}</div>
             {% endif %}
         </div>
 
-        <div class="form-group" style="margin-bottom:1rem;">
+        <div class="form-group">
             {{ form.password2.label_tag }}
             {{ form.password2 }}
             {% if form.password2.errors %}
-                <div class="field-error" style="color:red; font-size:0.85rem;">{{ form.password2.errors.0 }}</div>
+                <div class="field-error">{{ form.password2.errors.0 }}</div>
             {% endif %}
         </div>
 
         {% if form.non_field_errors %}
-            <div class="form-error-global" style="color:red; margin-bottom:1rem;">
-                {{ form.non_field_errors.0 }}
-            </div>
+            <div class="form-error-global">{{ form.non_field_errors.0 }}</div>
         {% endif %}
 
-        <p class="muted" style="text-align:center; font-size:0.8rem; color: var(--text-muted); margin-bottom:1rem;">
+        <p class="muted auth-terms">
             By creating an account, you agree to our
-            <a href="{% url 'terms' %}" style="color: var(--primary);">Terms of Service</a> and
-            <a href="{% url 'privacy_policy' %}" style="color: var(--primary);">Privacy Policy</a>.
+            <a href="{% url 'terms' %}" class="accent-link">Terms of Service</a> and
+            <a href="{% url 'privacy_policy' %}" class="accent-link">Privacy Policy</a>.
         </p>
 
-        <button type="submit" class="button primary" style="
-            width:100%;
-            padding:0.7rem;
-            font-size:1rem;
-            border-radius: var(--radius-md);
-            background-color: var(--primary);
-            color:white;
-            transition: background 0.3s;
-        ">
-            Start Gently
-        </button>
+        <button type="submit" class="auth-button">Start gently</button>
     </form>
 
-    <div class="auth-trust muted" style="text-align:center; color: var(--text-muted); margin-top:1.5rem;">
+    <div class="auth-trust muted">
         <p>🔒 Your data is private</p>
         <p>🌱 We don’t send spam</p>
         <p>🕯️ You can delete your account anytime</p>
     </div>
 
-    <p class="muted auth-footer" style="text-align:center; color: var(--text-muted); margin-top:1rem;">
+    <p class="muted auth-footer">
         Already have an account?
-        <a href="{% url 'login' %}" style="color: var(--primary); text-decoration:none;"><strong>Log in</strong></a>
+        <a href="{% url 'login' %}" class="accent-link">Log in</a>
     </p>
 </div>
 {% endblock %}

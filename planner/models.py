@@ -112,7 +112,7 @@ class TimeBlock(models.Model):
         ordering = ["start_time"]
 
     def clean(self):
-        if self.end_time <= self.start_time:
+        if self.start_time and self.end_time and self.end_time <= self.start_time:
             raise ValidationError(
                 "End time must be after start time."
             )

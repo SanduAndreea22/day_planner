@@ -2,6 +2,9 @@
 {% load static %}
 
 {% block title %}✅ Productivity & Mood · Emotional Planner{% endblock %}
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+{% endblock %}
 
 {% block content %}
 <div class="productivity-card">
@@ -19,11 +22,17 @@
         <a class="week-btn" href="?offset={{ offset|add:1 }}">Next week →</a>
     </div>
 
+    {% if data %}
+    <div class="productivity-chart-wrapper">
+        <canvas id="productivity-chart" height="200" role="img" aria-label="Bar chart of completed tasks per day, {{ start|date:'d M' }} to {{ end|date:'d M' }}"></canvas>
+    </div>
+    {% endif %}
+
     <div class="productivity-list">
         {% for item in data %}
-        <div class="productivity-row color-{{ item.mood }}">
+        <div class="productivity-row mood-{{ item.mood|default:'none' }}">
             <div class="prod-date">{{ item.date|date:"D, d M" }}</div>
-            <div class="prod-mood" title="Day's mood">
+            <div class="prod-mood" title="Day’s mood">
                 {% if item.mood == "very_bad" %}😞
                 {% elif item.mood == "bad" %}😕
                 {% elif item.mood == "neutral" %}😐
@@ -59,9 +68,9 @@
     max-width: 900px;
     margin: 2rem auto;
     padding: 2rem;
-    border-radius: 24px;
+    border-radius: var(--radius-lg);
     background: var(--bg-card);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+    box-shadow: var(--shadow);
     transition: background 0.5s, color 0.5s;
 }
 
@@ -98,15 +107,14 @@
     transform: translateY(-3px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
+.productivity-chart-wrapper { margin: 1.5rem 0; }
+
 .prod-date { font-weight: 600; width: 25%; }
 .prod-mood { font-size: 1.5rem; width: 10%; text-align: center; }
 .prod-value { width: 65%; font-weight: 500; text-align: right; }
 
-.color-very_bad { background: #f87171; color: white; }
-.color-bad { background: #facc15; color: #111827; }
-.color-neutral { background: #9ca3af; color: white; }
-.color-good { background: #4ade80; color: #111827; }
-.color-very_good { background: #60a5fa; color: white; }
+/* .mood-very_bad/.mood-bad/etc. come from style.css — one shared palette
+   for every page, instead of a copy defined locally here. */
 
 .productivity-actions {
     display: flex;
@@ -116,5 +124,73 @@
 }
 
 .productivity-final { text-align: center; font-style: italic; color: var(--text-muted); }
+
+@media (max-width: 480px) {
+    .productivity-row {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 0.3rem 0.8rem;
+    }
+    .prod-date, .prod-mood, .prod-value {
+        width: auto;
+    }
+    .prod-value { text-align: left; }
+}
 </style>
+
+{% if data %}
+<script>
+(function () {
+    var MOOD_COLOR = {
+        very_bad: '#ef4444', bad: '#facc15', neutral: '#9ca3af',
+        good: '#4ade80', very_good: '#a78bfa', none: '#d1d5db'
+    };
+
+    var rows = [
+        {% for item in data %}
+        { date: "{{ item.date }}", completed: {{ item.completed }}, mood: "{{ item.mood }}" }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    var muted = getComputedStyle(document.body).getPropertyValue('--text-muted').trim();
+
+    new Chart(document.getElementById('productivity-chart'), {
+        type: 'bar',
+        data: {
+            labels: rows.map(function (r) { return r.date; }),
+            datasets: [{
+                data: rows.map(function (r) { return r.completed; }),
+                backgroundColor: rows.map(function (r) { return MOOD_COLOR[r.mood] || MOOD_COLOR.none; }),
+                borderRadius: 6,
+                maxBarThickness: 40,
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function (ctx) {
+                            var n = ctx.raw;
+                            return n === 0 ? 'No completed tasks' : n + (n === 1 ? ' task' : ' tasks');
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { precision: 0, color: muted },
+                    grid: { color: 'rgba(128,128,128,0.15)' }
+                },
+                x: {
+                    ticks: { color: muted },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+})();
+</script>
+{% endif %}
 {% endblock %}

@@ -1,3 +1,5 @@
+import uuid
+
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
@@ -51,10 +53,12 @@ class RegisterForm(forms.ModelForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         email = self.cleaned_data["email"].lower()
-        user.username = f"user_{User.objects.count() + 1}"
+        # A random suffix instead of a sequential count avoids a race
+        # condition where two concurrent sign-ups compute the same username
+        # and one fails with an uncaught IntegrityError.
+        user.username = f"user_{uuid.uuid4().hex[:12]}"
         user.email = email
         user.set_password(self.cleaned_data["password1"])
-        user.is_active = False
         if commit:
             user.save()
         return user
@@ -86,9 +90,6 @@ class EmailAuthenticationForm(forms.Form):
 
         if user is None:
             raise ValidationError("Incorrect email or password 💭")
-
-        if not user.is_active:
-            raise ValidationError("Account is inactive. Please confirm your email 💌")
 
         self.user = user
         return cleaned_data
@@ -146,7 +147,6 @@ class FeedbackForm(forms.ModelForm):
         labels = {"message": "What's on your mind?"}
         widgets = {
             "message": forms.Textarea(attrs={
-                "class": "feedback-textarea",
                 "rows": 5,
                 "maxlength": 1000,
                 "placeholder": "Tell us what's working, what's missing, or what felt off...",

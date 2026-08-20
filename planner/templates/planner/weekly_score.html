@@ -20,9 +20,9 @@
     </div>
 
     <div class="weekly-score-wrapper">
-        <div class="weekly-score-value">{{ score }} <span>/ 100</span></div>
+        <div class="weekly-score-value"><span id="score-count">0</span> <span>/ 100</span></div>
         <div class="weekly-progress">
-            <div class="weekly-progress-fill" style="width: {{ score }}%;"></div>
+            <div class="weekly-progress-fill" id="score-fill" style="width: 0%;" data-score="{{ score }}"></div>
         </div>
     </div>
 
@@ -70,9 +70,9 @@
     max-width: 900px;
     margin: 2rem auto;
     padding: 2rem;
-    border-radius: 24px;
+    border-radius: var(--radius-lg);
     background: var(--bg-card);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+    box-shadow: var(--shadow);
     text-align: center;
     transition: background 0.5s, color 0.5s;
 }
@@ -137,6 +137,30 @@
 
 .weekly-actions { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
 </style>
+
+<script>
+(function () {
+    var fill = document.getElementById('score-fill');
+    var count = document.getElementById('score-count');
+    var target = parseInt(fill.dataset.score, 10) || 0;
+
+    requestAnimationFrame(function () {
+        fill.style.width = target + '%';
+    });
+
+    var start = null;
+    var duration = 900;
+    function step(timestamp) {
+        if (!start) start = timestamp;
+        var progress = Math.min((timestamp - start) / duration, 1);
+        count.textContent = Math.round(progress * target);
+        if (progress < 1) {
+            requestAnimationFrame(step);
+        }
+    }
+    requestAnimationFrame(step);
+})();
+</script>
 {% endblock %}
 
 

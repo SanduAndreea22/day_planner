@@ -106,7 +106,7 @@
         {% if messages %}
             <div class="app-messages" style="max-width:900px; margin:0 auto 1rem; padding:0 2rem;">
                 {% for message in messages %}
-                    <div class="app-message {{ message.tags }}" style="padding:0.75rem 1rem; border-radius:var(--radius-md); margin-bottom:0.5rem; background:var(--bg-card); box-shadow:var(--shadow); color: var(--text-main);">{{ message }}</div>
+                    <div class="app-message {{ message.tags }}">{{ message }}</div>
                 {% endfor %}
             </div>
         {% endif %}
@@ -115,7 +115,7 @@
 
     <footer>
         <div class="footer-cards">
-            <div class="footer-card">🌸 You've done enough today.</div>
+            <div class="footer-card">🌸 You’ve done enough today.</div>
             <div class="footer-card highlight">💗 Rest is productive.</div>
             <div class="footer-card">✨ Tomorrow is a new day.</div>
         </div>

@@ -6,9 +6,15 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()  # pentru .env local
 
-SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-local-only")
+_INSECURE_SECRET_KEY = "dev-secret-key-local-only"
+SECRET_KEY = os.getenv("SECRET_KEY", _INSECURE_SECRET_KEY)
 
 DEBUG = os.getenv("DEBUG", "False") == "True"
+
+if not DEBUG and SECRET_KEY == _INSECURE_SECRET_KEY:
+    raise RuntimeError(
+        "SECRET_KEY is not set. Define it in the environment/.env before running with DEBUG=False."
+    )
 
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",

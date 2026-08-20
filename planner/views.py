@@ -9,7 +9,7 @@ from random import choice
 from types import SimpleNamespace
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import login, logout, get_user_model
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render, get_object_or_404
@@ -20,6 +20,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from .models import Day, TimeBlock, Quote, EveningReflection, UserProfile, Feedback
 from .forms import RegisterForm, EmailAuthenticationForm, TimeBlockForm, ProfileForm, FeedbackForm
+from .decorators import ratelimit_post
 
 MONTH_NAMES = {
     1: "January",
@@ -39,6 +40,20 @@ MONTH_NAMES = {
 def redirect_to_day(day):
     return redirect("day_detail", year=day.date.year, month=day.date.month, day=day.date.day)
 
+def compute_streak(user):
+    streak = 0
+    current = date.today()
+    while True:
+        try:
+            day = Day.objects.get(user=user, date=current)
+        except Day.DoesNotExist:
+            break
+        if not (day.mood or day.color or day.notes or day.is_closed):
+            break
+        streak += 1
+        current -= timedelta(days=1)
+    return streak
+
 def assign_closing_quote(day_obj):
     if day_obj.closing_quote:
         return
@@ -52,33 +67,44 @@ def assign_closing_quote(day_obj):
 
 def get_month_year(request):
     today = date.today()
-    year = int(request.GET.get("year", today.year))
-    month = int(request.GET.get("month", today.month))
+    try:
+        year = int(request.GET.get("year", today.year))
+    except (TypeError, ValueError):
+        year = today.year
+    try:
+        month = int(request.GET.get("month", today.month))
+    except (TypeError, ValueError):
+        month = today.month
+    if not (1 <= month <= 12):
+        month = today.month
     return year, month
 
 def get_week_range(request):
     today = date.today()
-    offset = int(request.GET.get("offset", 0))
+    try:
+        offset = int(request.GET.get("offset", 0))
+    except (TypeError, ValueError):
+        offset = 0
     start = today - timedelta(days=today.weekday()) + timedelta(weeks=offset)
     end = start + timedelta(days=6)
 
     return start, end, offset
 
 
+@ratelimit_post('register', limit=5, period_seconds=3600)
 def register_view(request):
     if request.user.is_authenticated:
         return redirect("today")
 
     form = RegisterForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
-        user = form.save(commit=False)
-        user.is_active = True
-        user.save()
+        user = form.save()
         login(request, user)
         return redirect("today")
 
     return render(request, "planner/auth/register.html", {"form": form})
 
+@ratelimit_post('login', limit=10, period_seconds=300)
 def login_view(request):
     if request.user.is_authenticated:
         return redirect("today")
@@ -162,6 +188,7 @@ def day_detail_view(request, year, month, day):
         message = "Future day. It doesn't need to be clear yet ✨"
 
     reflection = EveningReflection.objects.filter(day=day_obj).first()
+    streak = compute_streak(request.user) if selected_date == date.today() else None
 
     return render(request, "planner/day.html", {
         "day": day_obj,
@@ -169,6 +196,7 @@ def day_detail_view(request, year, month, day):
         "message": message,
         "quote": day_obj.closing_quote,
         "reflection": reflection,
+        "streak": streak,
     })
 
 @login_required
@@ -183,8 +211,10 @@ def evening_reflection_view(request, year, month, day):
     reflection, _ = EveningReflection.objects.get_or_create(day=day_obj)
 
     if request.method == "POST":
-        day_obj.mood = request.POST.get("mood") or day_obj.mood
-        day_obj.color = request.POST.get("color") or day_obj.color
+        mood = request.POST.get("mood")
+        color = request.POST.get("color")
+        day_obj.mood = mood[:20] if mood else day_obj.mood
+        day_obj.color = color[:20] if color else day_obj.color
         day_obj.notes = request.POST.get("notes", day_obj.notes)
         day_obj.save(update_fields=["mood", "color", "notes"])
 
@@ -210,8 +240,9 @@ def set_day_color(request):
     if not day.is_closed:
         color = request.POST.get("color")
         if color:
-            day.color = color
+            day.color = color[:20]
             day.save(update_fields=["color"])
+            messages.success(request, "Saved 🎨")
     return redirect_to_day(day)
 
 
@@ -223,8 +254,9 @@ def set_day_mood(request):
     if not day.is_closed:
         mood = request.POST.get("mood")
         if mood:
-            day.mood = mood
+            day.mood = mood[:20]
             day.save(update_fields=["mood"])
+            messages.success(request, "Saved 😌")
     return redirect_to_day(day)
 
 
@@ -251,8 +283,11 @@ def add_timeblock(request):
         for field, errors in form.errors.items():
             if field == "__all__":
                 continue
+            label = form[field].label
             for error in errors:
-                messages.error(request, f"{field}: {error}")
+                text = str(error)
+                text = text[0].lower() + text[1:] if text else text
+                messages.error(request, f"{label} — {text}")
     return redirect_to_day(day)
 
 
@@ -276,8 +311,11 @@ def delete_timeblock(request, block_id):
 @login_required
 def calendar_view(request, year=None, month=None):
     today = date.today()
-    year = int(year or today.year)
-    month = int(month or today.month)
+    year = year if year is not None else today.year
+    month = month if month is not None else today.month
+
+    if not (1 <= month <= 12) or not (1 <= year <= 9999):
+        raise Http404("Invalid calendar month")
 
     if year < 2025 or (year == 2025 and month < 11):
         year, month = 2025, 11
@@ -415,11 +453,7 @@ def mood_chart_view(request):
 
 @login_required
 def productivity_chart_view(request):
-    offset = int(request.GET.get("offset", 0))
-    today = date.today()
-    start_of_week = today - timedelta(days=today.weekday())
-    start = start_of_week + timedelta(weeks=offset)
-    end = start + timedelta(days=6)
+    start, end, offset = get_week_range(request)
 
     days = Day.objects.filter(user=request.user, date__range=(start, end)).order_by("date")
     data = [{"date": d.date.strftime("%d %b"), "completed": d.time_blocks.filter(completed=True).count(), "mood": d.mood or "none"} for d in days]
@@ -548,12 +582,3 @@ def send_evening_reminders_view(request):
             sent += 1
 
     return HttpResponse(f"Sent {sent} reminder(s).")
-
-
-def create_superuser(request):
-    User = get_user_model()
-    if not User.objects.filter(username="admin").exists():
-        User.objects.create_superuser(username="admin", email="admin@planner.com", password="StrongPassword123!!")
-        return HttpResponse("✅ Superuser created successfully.")
-    else:
-        return HttpResponse("⚠️ Superuser already exists.")

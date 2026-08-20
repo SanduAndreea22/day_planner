@@ -12,6 +12,9 @@
     --highlight: #fbbf24;
     --toast-bg: #d1fae5;
     --toast-text: #065f46;
+    /* Soft rose instead of a generic off-brand red, so error/danger states
+       still read as part of the mint/lavender palette. */
+    --danger: #e0667a;
 }
 
 /* Single source of truth for dark mode: the .dark class on <body>,
@@ -26,6 +29,7 @@ body.dark {
     --text-muted: #9ca3af;
     --toast-bg: #065f46;
     --toast-text: #d1fae5;
+    --danger: #ec8b9c;
 }
 
 body {
@@ -36,6 +40,11 @@ body {
     line-height: 1.6;
     transition: background-color 0.5s ease, color 0.5s ease;
 }
+
+/* Used across nearly every page (subtitles, footers, hints) but was only
+   ever locally scoped in one template (.overview-summary .muted) — meaning
+   it silently did nothing everywhere else. */
+.muted { color: var(--text-muted); }
 
 .title-gradient {
     background: linear-gradient(90deg, var(--primary), var(--secondary));
@@ -103,7 +112,9 @@ body {
     width: 100%;
     padding: 0.6rem 0.8rem;
     border-radius: var(--radius-md);
-    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    background: var(--bg-card);
+    color: var(--text-main);
     font-family: inherit;
     transition: all 0.3s ease;
 }
@@ -113,8 +124,23 @@ body {
     outline: none;
 }
 
-.field-error { color: #f87171; font-size: 0.85rem; margin-top: 0.3rem; }
-.form-error-global { color: #f87171; font-size: 0.9rem; margin-bottom: 1rem; }
+/* Base styling for every input/select/textarea in the app, so pages built
+   without .form-group (Today, evening) still follow dark mode instead of
+   defaulting to the browser's white background. */
+input, select, textarea {
+    font-family: inherit;
+    background: var(--bg-card);
+    color: var(--text-main);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: var(--radius-md);
+}
+body.dark input, body.dark select, body.dark textarea {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+input::placeholder, textarea::placeholder { color: var(--text-muted); }
+
+.field-error { color: var(--danger); font-size: 0.85rem; margin-top: 0.3rem; }
+.form-error-global { color: var(--danger); font-size: 0.9rem; margin-bottom: 1rem; }
 
 .forgot-link {
     display: inline-block;
@@ -164,14 +190,14 @@ body {
 .accent-link:hover { color: var(--secondary); }
 
 .danger-link {
-    color: #f87171;
+    color: var(--danger);
     font-weight: 500;
     transition: color 0.3s ease;
 }
-.danger-link:hover { color: #ef4444; }
+.danger-link:hover { color: #c94f63; }
 
-.button-danger { background-color: #f87171; }
-.button-danger:hover { background-color: #ef4444; }
+.button-danger { background-color: var(--danger); }
+.button-danger:hover { background-color: #c94f63; }
 
 /* Makes a <button> inside a small inline form look like the plain-text
    links it replaces (e.g. per-timeblock actions), so mutating actions can
@@ -206,3 +232,79 @@ body {
 .legal-card ul { padding-left: 1.4rem; }
 .legal-card a { color: var(--primary); }
 .legal-card a:hover { color: var(--secondary); }
+
+/* Django messages banner (base.html). Was previously unstyled beyond a
+   generic card look, so an error message ("Start time — enter a valid
+   time.") looked identical to a success message — easy to miss entirely,
+   which is what made an invalid time-block submission look like nothing
+   happened. Each message.tags value (debug/info/success/warning/error)
+   gets a distinct left border + tint. */
+.app-message {
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 0.5rem;
+    background: var(--bg-card);
+    box-shadow: var(--shadow);
+    color: var(--text-main);
+    border-left: 4px solid var(--text-muted);
+}
+.app-message.success {
+    border-left-color: var(--primary);
+}
+.app-message.error {
+    border-left-color: var(--danger);
+    color: var(--danger);
+    font-weight: 600;
+}
+.app-message.warning {
+    border-left-color: var(--highlight);
+}
+.app-message.info, .app-message.debug {
+    border-left-color: var(--secondary);
+}
+
+/* Day "energy" color palette (Day Energy field: red/yellow/green/blue/purple).
+   Single definition shared by every page that renders it — calendar,
+   monthly overview, "Today" — so the same day reads identically everywhere
+   instead of competing palettes with different contrast.
+   !important: each of these pages also gives its own row/card element a
+   default background (e.g. .calendar-day, .productivity-row) for the "no
+   color set" case. Since that rule lives in the page's own <style> block,
+   it loads after this shared stylesheet and would otherwise win the
+   cascade at equal specificity — the modifier class would apply but never
+   visibly show. !important keeps this the one place the color truly comes
+   from, regardless of where a page's base card rule happens to load. */
+.color-red { background: linear-gradient(145deg, #ef4444, #f87171) !important; color: white !important; text-shadow: 0 1px 2px rgba(0,0,0,0.25); }
+.color-yellow { background: linear-gradient(145deg, #facc15, #fde68a) !important; color: #111827 !important; }
+.color-green { background: linear-gradient(145deg, #4ade80, #a7f3d0) !important; color: #111827 !important; }
+.color-blue { background: linear-gradient(145deg, #3b82f6, #60a5fa) !important; color: white !important; text-shadow: 0 1px 2px rgba(0,0,0,0.25); }
+.color-purple { background: linear-gradient(145deg, #c084fc, #e9d5ff) !important; color: #111827 !important; }
+
+/* Mood palette (very_bad..very_good). Single definition shared by the mood
+   chart and productivity chart. Same !important reasoning as above. */
+.mood-very_bad { background: linear-gradient(145deg, #ef4444, #f87171) !important; color: white !important; text-shadow: 0 1px 2px rgba(0,0,0,0.25); }
+.mood-bad { background: linear-gradient(145deg, #facc15, #fde68a) !important; color: #111827 !important; }
+.mood-neutral { background: linear-gradient(145deg, #9ca3af, #d1d5db) !important; color: #111827 !important; }
+.mood-good { background: linear-gradient(145deg, #4ade80, #a7f3d0) !important; color: #111827 !important; }
+.mood-very_good { background: linear-gradient(145deg, #a78bfa, #ddd6fe) !important; color: #111827 !important; }
+.mood-none { background: rgba(229, 231, 235, 0.6) !important; color: var(--text-primary) !important; }
+
+/* .link-button hardcodes --primary (mint), which loses contrast on top of
+   the saturated color-*/mood-* badges above (mint-on-red, mint-on-blue).
+   Inside a badge, inherit the badge's own text color instead. */
+.color-red .link-button, .color-blue .link-button, .mood-very_bad .link-button {
+    color: inherit;
+    opacity: 0.85;
+}
+.color-red .link-button:hover, .color-blue .link-button:hover, .mood-very_bad .link-button:hover {
+    opacity: 1;
+}
+
+/* .time-row (new-timeblock inputs on the Today page) and the calendar/
+   monthly-overview grids have no responsive fallback inline — this section
+   is the app's only @media coverage today. */
+@media (max-width: 480px) {
+    .time-row {
+        flex-wrap: wrap;
+    }
+}

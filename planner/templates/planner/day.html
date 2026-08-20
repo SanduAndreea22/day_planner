@@ -4,7 +4,7 @@
 {% block title %}🌿 My Day · Emotional Planner{% endblock %}
 
 {% block content %}
-<div class="day-card {{ day.color }}" style="
+<div class="day-card" style="
     max-width:900px;
     margin:2rem auto;
     padding:2rem;
@@ -20,6 +20,12 @@
         <span class="date-part">{{ day.date|date:"F" }}</span>
         <span class="date-part">{{ day.date|date:"Y" }}</span>
     </div>
+
+    {% if streak >= 2 %}
+    <div class="day-streak" style="text-align:center; color:var(--text-muted); font-size:0.9rem; margin-bottom:1rem;">
+        🌿 {{ streak }} days in a row you’ve written something
+    </div>
+    {% endif %}
 
     <div class="day-mood-emoji" style="font-size:3rem; text-align:center; margin-bottom:1rem; transition: transform 0.3s;">
         {% if day.mood == "very_bad" %}😞
@@ -51,15 +57,16 @@
 
     {% else %}
          <div class="day-section" style="margin-bottom:1.8rem;">
-            <label style="font-weight:600;">🎨 Day Energy</label>
+            <label style="font-weight:600;">🎨 What kind of day was it?</label>
 
-            <div class="saved-field" id="color-display" style="display:{% if day.color %}flex{% else %}none{% endif %}; justify-content:space-between; align-items:center; padding:0.6rem 1rem; border-radius:var(--radius-md); background:rgba(125,211,167,0.08);">
-                <span>
-                    {% if day.color == "red" %}🔴 Low
-                    {% elif day.color == "yellow" %}🟡 Medium
-                    {% elif day.color == "green" %}🟢 Good
-                    {% elif day.color == "blue" %}🔵 Calm
-                    {% elif day.color == "purple" %}🟣 Creative
+            <div class="saved-field color-{{ day.color }}" id="color-display" style="display:{% if day.color %}flex{% else %}none{% endif %}; justify-content:space-between; align-items:center; padding:0.6rem 1rem; border-radius:var(--radius-md);">
+                <span style="display:inline-flex; align-items:center; gap:0.4rem;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C7 8 4 12.5 4 16a8 8 0 0 0 16 0c0-3.5-3-8-8-14z"/></svg>
+                    {% if day.color == "red" %}Heavy
+                    {% elif day.color == "yellow" %}Uneven
+                    {% elif day.color == "green" %}Light
+                    {% elif day.color == "blue" %}Calm
+                    {% elif day.color == "purple" %}Creative
                     {% endif %}
                 </span>
                 <button type="button" class="link-button" onclick="toggleEdit('color')">✏️ Edit</button>
@@ -69,10 +76,10 @@
                 {% csrf_token %}
                 <input type="hidden" name="day_id" value="{{ day.id }}">
                 <select name="color" required onchange="this.form.submit()" style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
-                    <option value="">Choose energy</option>
-                    <option value="red" {% if day.color == "red" %}selected{% endif %}>🔴 Low</option>
-                    <option value="yellow" {% if day.color == "yellow" %}selected{% endif %}>🟡 Medium</option>
-                    <option value="green" {% if day.color == "green" %}selected{% endif %}>🟢 Good</option>
+                    <option value="">Choose one</option>
+                    <option value="red" {% if day.color == "red" %}selected{% endif %}>🔴 Heavy</option>
+                    <option value="yellow" {% if day.color == "yellow" %}selected{% endif %}>🟡 Uneven</option>
+                    <option value="green" {% if day.color == "green" %}selected{% endif %}>🟢 Light</option>
                     <option value="blue" {% if day.color == "blue" %}selected{% endif %}>🔵 Calm</option>
                     <option value="purple" {% if day.color == "purple" %}selected{% endif %}>🟣 Creative</option>
                 </select>
@@ -133,12 +140,12 @@
         <h3>⏰ Daily Schedule</h3>
         {% if time_blocks %}
             {% for block in time_blocks %}
-                <div class="time-block {% if block.completed %}done{% endif %}" style="display:flex; justify-content:space-between; align-items:center; padding:0.7rem; border-radius:var(--radius-md); margin-bottom:0.5rem; background:var(--bg-card); box-shadow:var(--shadow); transition:transform 0.3s;">
+                <div class="time-block {% if block.completed %}done{% endif %}" id="timeblock-{{ block.id }}" style="display:flex; justify-content:space-between; align-items:center; padding:0.7rem; border-radius:var(--radius-md); margin-bottom:0.5rem; background:var(--bg-card); box-shadow:var(--shadow); transition:transform 0.3s;">
                     <div class="time">{{ block.start_time|time:"H:i" }} – {{ block.end_time|time:"H:i" }}</div>
                     <div class="block-title">{{ block.title }}</div>
                     {% if not day.is_closed %}
                         <div class="actions">
-                            <form method="post" action="{% url 'toggle_timeblock' block.id %}" style="display:inline;">
+                            <form method="post" action="{% url 'toggle_timeblock' block.id %}" class="toggle-timeblock-form" style="display:inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="link-button">✅</button>
                             </form>
@@ -162,9 +169,9 @@
                 {% csrf_token %}
                 <input type="hidden" name="day_id" value="{{ day.id }}">
                 <div class="time-row" style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
-                    <input type="text" name="start_time" placeholder="13:00" required style="flex:1; padding:0.5rem; border-radius:var(--radius-md);">
+                    <input type="time" name="start_time" required style="flex:1; padding:0.5rem; border-radius:var(--radius-md);">
                     <span>–</span>
-                    <input type="text" name="end_time" placeholder="14:30" required style="flex:1; padding:0.5rem; border-radius:var(--radius-md);">
+                    <input type="time" name="end_time" required style="flex:1; padding:0.5rem; border-radius:var(--radius-md);">
                 </div>
                 <input type="text" name="title" placeholder="What you do" required style="width:100%; padding:0.5rem; border-radius:var(--radius-md); margin-bottom:0.5rem;">
                 <button type="submit" class="button" style="width:100%; padding:0.7rem; border-radius:var(--radius-md); background:var(--secondary); color:white;">Add</button>
@@ -194,6 +201,15 @@
     transform: scale(1.2);
     transition: transform 0.2s;
 }
+
+.time-block.just-toggled {
+    animation: timeblock-pop 0.4s ease;
+}
+@keyframes timeblock-pop {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.03); box-shadow: 0 0 0 3px var(--primary); }
+    100% { transform: scale(1); }
+}
 </style>
 
 <script>
@@ -201,6 +217,27 @@ function toggleEdit(field) {
     document.getElementById(field + '-display').style.display = 'none';
     document.getElementById(field + '-form').style.display = 'block';
 }
+
+document.querySelectorAll('.toggle-timeblock-form').forEach(function (form) {
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        var block = form.closest('.time-block');
+        var csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrfToken, 'X-Requested-With': 'XMLHttpRequest' },
+        }).then(function (response) {
+            if (!response.ok) throw new Error('Request failed');
+            block.classList.toggle('done');
+            block.classList.remove('just-toggled');
+            void block.offsetWidth;
+            block.classList.add('just-toggled');
+        }).catch(function () {
+            form.submit();
+        });
+    });
+});
 </script>
 
 {% endblock %}
