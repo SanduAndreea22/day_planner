@@ -11,11 +11,6 @@ SECRET_KEY = os.getenv("SECRET_KEY", _INSECURE_SECRET_KEY)
 
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-if not DEBUG and SECRET_KEY == _INSECURE_SECRET_KEY:
-    raise RuntimeError(
-        "SECRET_KEY is not set. Define it in the environment/.env before running with DEBUG=False."
-    )
-
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",
     "127.0.0.1,localhost"
@@ -94,6 +89,13 @@ else:
 
 # DATABASE_URL is only set in the deployed (Heroku) environment, so it also
 # doubles as the signal for "are we running in production" for these settings.
+# (Not DEBUG: CI/tests also run with DEBUG=False but no DATABASE_URL, and
+# must not be blocked by the production-only SECRET_KEY requirement below.)
+if DATABASE_URL and SECRET_KEY == _INSECURE_SECRET_KEY:
+    raise RuntimeError(
+        "SECRET_KEY is not set. Define it in the environment before deploying."
+    )
+
 if DATABASE_URL:
     SECURE_SSL_REDIRECT = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
