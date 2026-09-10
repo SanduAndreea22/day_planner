@@ -3,12 +3,6 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 class UserProfile(models.Model):
-    PRONOUN_CHOICES = [
-        ("she", "she / her"),
-        ("he", "he / him"),
-        ("they", "they"),
-    ]
-
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -17,12 +11,6 @@ class UserProfile(models.Model):
 
     nickname = models.CharField(max_length=50, blank=True)
     bio = models.TextField(blank=True)
-
-    pronoun = models.CharField(
-        max_length=10,
-        choices=PRONOUN_CHOICES,
-        blank=True
-    )
 
     evening_reminder_time = models.TimeField(
         null=True,
@@ -89,8 +77,6 @@ class Day(models.Model):
     )
 
     notes = models.TextField(blank=True)
-
-    rest_day = models.BooleanField(default=False)
 
     is_closed = models.BooleanField(default=False)
     closed_at = models.DateTimeField(blank=True, null=True)

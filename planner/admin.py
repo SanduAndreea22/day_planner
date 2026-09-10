@@ -23,7 +23,7 @@ class TimeBlockAdmin(admin.ModelAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ("user", "nickname", "pronoun")
+    list_display = ("user", "nickname")
     search_fields = ("user__email", "nickname")
 
 @admin.register(EveningReflection)

@@ -549,9 +549,9 @@ def export_data_view(request):
     user = request.user
 
     days_csv = _rows_to_csv(
-        ["date", "mood", "color", "notes", "rest_day", "is_closed", "closed_at"],
+        ["date", "mood", "color", "notes", "is_closed", "closed_at"],
         (
-            [d.date, d.mood, d.color, d.notes, d.rest_day, d.is_closed, d.closed_at]
+            [d.date, d.mood, d.color, d.notes, d.is_closed, d.closed_at]
             for d in Day.objects.filter(user=user).order_by("date")
         ),
     )
