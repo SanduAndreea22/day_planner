@@ -48,6 +48,22 @@ class Quote(models.Model):
         return self.text[:60]
 
 class Day(models.Model):
+    MOOD_CHOICES = [
+        ("very_bad", "Very hard"),
+        ("bad", "Hard"),
+        ("neutral", "Neutral"),
+        ("good", "Good"),
+        ("very_good", "Very good"),
+    ]
+
+    COLOR_CHOICES = [
+        ("red", "Heavy"),
+        ("yellow", "Uneven"),
+        ("green", "Light"),
+        ("blue", "Calm"),
+        ("purple", "Creative"),
+    ]
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -58,12 +74,14 @@ class Day(models.Model):
 
     mood = models.CharField(
         max_length=20,
+        choices=MOOD_CHOICES,
         blank=True,
         null=True
     )
 
     color = models.CharField(
         max_length=20,
+        choices=COLOR_CHOICES,
         blank=True,
         null=True
     )

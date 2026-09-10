@@ -22,6 +22,12 @@ from .models import Day, TimeBlock, Quote, EveningReflection, UserProfile, Feedb
 from .forms import RegisterForm, EmailAuthenticationForm, TimeBlockForm, ProfileForm, FeedbackForm
 from .decorators import ratelimit_post
 
+HOME_PREVIEW_CARDS = [
+    {"icon": "🌤", "title": "Today", "description": "Log a mood, a color, and a few gentle notes — whenever you feel like it."},
+    {"icon": "📅", "title": "Calendar", "description": "See every day at a glance, colored by how it felt."},
+    {"icon": "📈", "title": "Your Week", "description": "A gentle, non-judgmental summary of how balanced the week felt."},
+]
+
 MONTH_NAMES = {
     1: "January",
     2: "February",
@@ -41,18 +47,36 @@ def redirect_to_day(day):
     return redirect("day_detail", year=day.date.year, month=day.date.month, day=day.date.day)
 
 def compute_streak(user):
+    today = date.today()
+    # A single query for a generous lookback window instead of one query per
+    # day in the loop below — a year-plus streak used to mean hundreds of
+    # individual round-trips to the database.
+    cutoff = today - timedelta(days=400)
+    days_by_date = {
+        day.date: day
+        for day in Day.objects.filter(user=user, date__gte=cutoff, date__lte=today)
+    }
+
     streak = 0
-    current = date.today()
+    current = today
     while True:
-        try:
-            day = Day.objects.get(user=user, date=current)
-        except Day.DoesNotExist:
+        day = days_by_date.get(current)
+        if day is None:
             break
         if not (day.mood or day.color or day.notes or day.is_closed):
             break
         streak += 1
         current -= timedelta(days=1)
     return streak
+
+def _random_quote(queryset):
+    # Picks a random id in Python instead of ORDER BY RANDOM(), which sorts
+    # the whole matching set at the database for every call.
+    quote_ids = list(queryset.values_list("id", flat=True))
+    if not quote_ids:
+        return None
+    return Quote.objects.get(id=choice(quote_ids))
+
 
 def assign_closing_quote(day_obj):
     if day_obj.closing_quote:
@@ -62,8 +86,7 @@ def assign_closing_quote(day_obj):
         mood_quotes = quotes.filter(mood=day_obj.mood)
         if mood_quotes.exists():
             quotes = mood_quotes
-    if quotes.exists():
-        day_obj.closing_quote = choice(list(quotes))
+    day_obj.closing_quote = _random_quote(quotes)
 
 def get_month_year(request):
     today = date.today()
@@ -148,6 +171,7 @@ def feedback_view(request):
     return render(request, "planner/feedback.html", {"form": form})
 
 @login_required
+@ratelimit_post('delete_account', limit=5, period_seconds=3600)
 def delete_account_view(request):
     if request.method == "POST":
         password = request.POST.get("password", "")
@@ -165,8 +189,12 @@ def home_view(request):
     if request.user.is_authenticated:
         return redirect("today")
 
-    quote = Quote.objects.filter(active=True).order_by("?").first()
-    return render(request, "planner/home.html", {"quote": quote, "today": date.today()})
+    quote = _random_quote(Quote.objects.filter(active=True))
+    return render(request, "planner/home.html", {
+        "quote": quote,
+        "today": date.today(),
+        "preview_cards": HOME_PREVIEW_CARDS,
+    })
 
 @login_required
 def today_view(request):
@@ -237,11 +265,13 @@ def set_day_color(request):
     if request.method != "POST":
         return redirect("today")
     day = get_object_or_404(Day, id=request.POST.get("day_id"), user=request.user)
-    if not day.is_closed:
-        color = request.POST.get("color")
-        if color:
-            day.color = color[:20]
-            day.save(update_fields=["color"])
+    color = request.POST.get("color")
+    if color and color not in dict(Day.COLOR_CHOICES):
+        messages.error(request, "That's not a valid color option.")
+        return redirect_to_day(day)
+    if color:
+        updated = Day.objects.filter(id=day.id, is_closed=False).update(color=color)
+        if updated:
             messages.success(request, "Saved 🎨")
     return redirect_to_day(day)
 
@@ -251,11 +281,13 @@ def set_day_mood(request):
     if request.method != "POST":
         return redirect("today")
     day = get_object_or_404(Day, id=request.POST.get("day_id"), user=request.user)
-    if not day.is_closed:
-        mood = request.POST.get("mood")
-        if mood:
-            day.mood = mood[:20]
-            day.save(update_fields=["mood"])
+    mood = request.POST.get("mood")
+    if mood and mood not in dict(Day.MOOD_CHOICES):
+        messages.error(request, "That's not a valid mood option.")
+        return redirect_to_day(day)
+    if mood:
+        updated = Day.objects.filter(id=day.id, is_closed=False).update(mood=mood)
+        if updated:
             messages.success(request, "Saved 😌")
     return redirect_to_day(day)
 
@@ -274,9 +306,17 @@ def add_timeblock(request):
     day = get_object_or_404(Day, id=request.POST.get("day_id"), user=request.user)
     form = TimeBlockForm(request.POST)
     if form.is_valid():
-        block = form.save(commit=False)
-        block.day = day
-        block.save()
+        start_time = form.cleaned_data["start_time"]
+        end_time = form.cleaned_data["end_time"]
+        overlaps = day.time_blocks.filter(
+            start_time__lt=end_time, end_time__gt=start_time
+        ).exists()
+        if overlaps:
+            messages.error(request, "That overlaps with a block you already have that day.")
+        else:
+            block = form.save(commit=False)
+            block.day = day
+            block.save()
     else:
         for error in form.non_field_errors():
             messages.error(request, error)
@@ -370,8 +410,8 @@ def calendar_view(request, year=None, month=None):
 @login_required
 def weekly_balance_score_view(request):
     start, end, offset = get_week_range(request)
-    days = Day.objects.filter(user=request.user, date__range=[start, end])
-    days_logged = days.count()
+    days = list(Day.objects.filter(user=request.user, date__range=[start, end]))
+    days_logged = len(days)
     mood_days = sum(bool(d.mood) for d in days)
     completed_tasks = TimeBlock.objects.filter(day__in=days, completed=True).count()
 
@@ -407,8 +447,24 @@ def weekly_balance_score_view(request):
 @login_required
 def monthly_overview_view(request):
     year, month = get_month_year(request)
-    days = Day.objects.filter(user=request.user, date__year=year, date__month=month).order_by("date")
-    moods = [d.mood for d in days if d.mood]
+
+    # Build the full month grid (leading blanks + every day, whether or not
+    # it has a Day row), the same way calendar_view does — this used to only
+    # loop over logged days, so any day without a row was simply missing
+    # from the grid instead of showing as an empty cell in the right place.
+    first_weekday, days_in_month = monthrange(year, month)
+    start_offset = (first_weekday + 1) % 7
+    logged_days = list(
+        Day.objects.filter(user=request.user, date__year=year, date__month=month).order_by("date")
+    )
+    logged_by_date = {d.date: d for d in logged_days}
+
+    days = [None] * start_offset
+    for day_num in range(1, days_in_month + 1):
+        current = date(year, month, day_num)
+        days.append(logged_by_date.get(current) or SimpleNamespace(date=current, mood=None, color=None, notes=""))
+
+    moods = [d.mood for d in logged_days if d.mood]
     dominant_mood = Counter(moods).most_common(1)[0][0] if moods else None
 
     interpretation_map = {
@@ -430,7 +486,7 @@ def monthly_overview_view(request):
         "dominant_mood": dominant_mood,
         "icon": icon,
         "interpretation": interpretation,
-        "total_days": days.count(),
+        "total_days": len(logged_days),
     })
 
 

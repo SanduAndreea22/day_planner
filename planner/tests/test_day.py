@@ -27,9 +27,20 @@ def test_set_day_color(client, django_user_model):
     client.force_login(user)
     day = Day.objects.create(user=user, date=date.today())
     url = reverse("set_day_color")
+    response = client.post(url, {"day_id": day.id, "color": "red"})
+    day.refresh_from_db()
+    assert day.color == "red"
+
+
+@pytest.mark.django_db
+def test_set_day_color_rejects_invalid_value(client, django_user_model):
+    user = django_user_model.objects.create_user(username="user5b", password="pass12345")
+    client.force_login(user)
+    day = Day.objects.create(user=user, date=date.today())
+    url = reverse("set_day_color")
     response = client.post(url, {"day_id": day.id, "color": "#ff0000"})
     day.refresh_from_db()
-    assert day.color == "#ff0000"
+    assert day.color is None
 
 @pytest.mark.django_db
 def test_set_day_mood(client, django_user_model):

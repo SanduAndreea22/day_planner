@@ -16,11 +16,8 @@ ALLOWED_HOSTS = os.getenv(
     "127.0.0.1,localhost"
 ).split(",")
 
-CSRF_TRUSTED_ORIGINS = (
-    os.getenv("CSRF_TRUSTED_ORIGINS").split(",")
-    if os.getenv("CSRF_TRUSTED_ORIGINS")
-    else []
-)
+_csrf_trusted_origins = os.getenv("CSRF_TRUSTED_ORIGINS")
+CSRF_TRUSTED_ORIGINS = _csrf_trusted_origins.split(",") if _csrf_trusted_origins else []
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -87,7 +84,7 @@ else:
         }
     }
 
-# DATABASE_URL is only set in the deployed (Heroku) environment, so it also
+# DATABASE_URL is only set in the deployed (Render) environment, so it also
 # doubles as the signal for "are we running in production" for these settings.
 # (Not DEBUG: CI/tests also run with DEBUG=False but no DATABASE_URL, and
 # must not be blocked by the production-only SECRET_KEY requirement below.)
@@ -114,7 +111,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en"
 TIME_ZONE = "Europe/Bucharest"
-USE_I18N = True
+# No locale/ directory or translations exist — every template string is
+# hardcoded English, so this was on without anything actually using it.
+USE_I18N = False
 USE_TZ = True
 
 STATIC_URL = "/static/"

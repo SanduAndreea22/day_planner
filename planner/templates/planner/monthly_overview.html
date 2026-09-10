@@ -18,24 +18,26 @@
 
     <div class="month-grid">
         {% for day in days %}
-        <div class="day-card
-                    {% if day.color %}color-{{ day.color }}{% endif %}
-                    {% if not day.mood %}empty{% endif %}"
-             title="{% if day.notes %}{{ day.notes|truncatechars:50 }}{% else %}No notes for this day{% endif %}">
+            {% if day %}
+            <div class="day-card
+                        {% if day.color %}color-{{ day.color }}{% endif %}
+                        {% if not day.mood %}empty{% endif %}"
+                 title="{% if day.notes %}{{ day.notes|truncatechars:50 }}{% else %}No notes for this day{% endif %}">
 
-            <div class="day-number">{{ day.date|date:"d" }}</div>
-            <div class="day-emoji">
-                {% if day.mood == "very_bad" %}😞
-                {% elif day.mood == "bad" %}😕
-                {% elif day.mood == "neutral" %}😐
-                {% elif day.mood == "good" %}🙂
-                {% elif day.mood == "very_good" %}😄
-                {% else %}🌙
-                {% endif %}
+                <div class="day-number">{{ day.date|date:"d" }}</div>
+                <div class="day-emoji">
+                    {% if day.mood == "very_bad" %}😞
+                    {% elif day.mood == "bad" %}😕
+                    {% elif day.mood == "neutral" %}😐
+                    {% elif day.mood == "good" %}🙂
+                    {% elif day.mood == "very_good" %}😄
+                    {% else %}🌙
+                    {% endif %}
+                </div>
             </div>
-        </div>
-        {% empty %}
-        <p class="muted">No days recorded for this month yet.</p>
+            {% else %}
+            <div class="day-card empty-slot"></div>
+            {% endif %}
         {% endfor %}
     </div>
 
@@ -116,6 +118,7 @@
 .day-number { font-weight: 600; font-size: 1rem; }
 .day-emoji { font-size: 1.4rem; margin-top: 0.2rem; }
 .empty { opacity: 0.4; }
+.empty-slot { background: transparent; box-shadow: none; cursor: default; }
 
 /* .color-red/.color-yellow/etc. come from style.css — one shared palette
    for every page, instead of a copy defined locally here. */
