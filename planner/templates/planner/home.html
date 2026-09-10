@@ -3,6 +3,9 @@
 {% block title %}🌸 Home · Emotional Planner{% endblock %}
 
 {% block content %}
+<div class="home-bg-blob one" aria-hidden="true"></div>
+<div class="home-bg-blob two" aria-hidden="true"></div>
+
 <div class="home-container">
 
     <header class="home-header">
@@ -64,6 +67,22 @@
 }
 
 .home-header { text-align: center; margin-bottom: 2rem; }
+
+.home-bg-blob {
+    display: none;
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.3;
+    z-index: -1;
+    pointer-events: none;
+}
+.home-bg-blob.one { width: 420px; height: 420px; background: var(--primary); top: -140px; left: -140px; }
+.home-bg-blob.two { width: 380px; height: 380px; background: var(--secondary); bottom: -120px; right: -120px; }
+
+@media (min-width: 900px) {
+    .home-bg-blob { display: block; }
+}
 .home-title {
     font-size: 2.5rem;
     background: linear-gradient(90deg, var(--primary), var(--secondary));
