@@ -29,7 +29,7 @@
                 <div class="field-error">{{ form.nickname.errors.0 }}</div>
             {% endif %}
             <div class="nickname-preview muted">
-                Ex: Hi, <span id="namePreview">{{ profile.nickname|default:"Andi" }}</span> 🌱
+                Ex: Hi, <span id="namePreview">{{ profile.nickname|default:"Alex" }}</span> 🌱
             </div>
         </div>
 
@@ -187,7 +187,7 @@ body.dark .profile-input, body.dark .profile-textarea {
     const namePreview = document.getElementById('namePreview');
 
     nicknameInput.addEventListener('input', () => {
-        namePreview.textContent = nicknameInput.value || 'Andi';
+        namePreview.textContent = nicknameInput.value || 'Alex';
     });
 
     const bioInput = document.getElementById('bio');

@@ -119,7 +119,7 @@ class ProfileForm(forms.ModelForm):
                 "id": "nickname",
                 "class": "profile-input",
                 "maxlength": 20,
-                "placeholder": "Andi",
+                "placeholder": "Alex",
             }),
             "bio": forms.Textarea(attrs={
                 "id": "bio",

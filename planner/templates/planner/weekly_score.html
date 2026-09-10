@@ -41,7 +41,7 @@
         </div>
         <div class="detail-card highlight">
             ✅ <strong>{{ completed_tasks }}</strong>
-            <span class="muted">Tasks<br><small>You did your best</small></span>
+            <span class="muted">Tasks<br><small>{% if completed_tasks > 0 %}You did your best{% else %}No pressure to check anything off{% endif %}</small></span>
         </div>
         <div class="detail-card">
             💭 <strong>{{ mood_days }}</strong>
