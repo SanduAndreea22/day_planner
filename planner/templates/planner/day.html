@@ -68,7 +68,7 @@
                     {% elif day.color == "yellow" %}Uneven
                     {% elif day.color == "green" %}Light
                     {% elif day.color == "blue" %}Calm
-                    {% elif day.color == "purple" %}Creative
+                    {% elif day.color == "purple" %}Vivid
                     {% endif %}
                 </span>
                 <button type="button" class="link-button" onclick="toggleEdit('color')">✏️ Edit</button>
@@ -83,7 +83,7 @@
                     <option value="yellow" {% if day.color == "yellow" %}selected{% endif %}>🟡 Uneven</option>
                     <option value="green" {% if day.color == "green" %}selected{% endif %}>🟢 Light</option>
                     <option value="blue" {% if day.color == "blue" %}selected{% endif %}>🔵 Calm</option>
-                    <option value="purple" {% if day.color == "purple" %}selected{% endif %}>🟣 Creative</option>
+                    <option value="purple" {% if day.color == "purple" %}selected{% endif %}>🟣 Vivid</option>
                 </select>
             </form>
         </div>

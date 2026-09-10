@@ -51,7 +51,7 @@ class Day(models.Model):
         ("yellow", "Uneven"),
         ("green", "Light"),
         ("blue", "Calm"),
-        ("purple", "Creative"),
+        ("purple", "Vivid"),
     ]
 
     user = models.ForeignKey(
