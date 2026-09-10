@@ -175,6 +175,10 @@ def feedback_view(request):
 def delete_account_view(request):
     if request.method == "POST":
         password = request.POST.get("password", "")
+        confirm_text = request.POST.get("confirm_text", "").strip().upper()
+        if confirm_text != "DELETE":
+            messages.error(request, "Type DELETE to confirm — your account was not deleted.")
+            return redirect("delete_account")
         if request.user.check_password(password):
             user = request.user
             logout(request)

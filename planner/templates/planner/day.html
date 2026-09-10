@@ -27,6 +27,7 @@
     </div>
     {% endif %}
 
+    {% if day.mood %}
     <div class="day-mood-emoji" style="font-size:3rem; text-align:center; margin-bottom:1rem; transition: transform 0.3s;">
         {% if day.mood == "very_bad" %}😞
         {% elif day.mood == "bad" %}😕
@@ -35,6 +36,7 @@
         {% elif day.mood == "very_good" %}😄
         {% endif %}
     </div>
+    {% endif %}
 
     {% if message %}
         <div class="message gentle-message" style="text-align:center; color: var(--text-muted); margin-bottom:1rem;">
@@ -130,10 +132,6 @@
                 <button type="submit" class="button primary" style="margin-top:0.5rem; width:100%; padding:0.7rem; border-radius:var(--radius-md); background:var(--primary); color:white;">Save</button>
             </form>
         </div>
-
-        <div class="day-evening" style="text-align:center; margin-bottom:1.8rem;">
-            <a href="{% url 'evening_reflection' day.date.year day.date.month day.date.day %}" class="button primary" style="padding:0.7rem 1rem; border-radius:var(--radius-md); background:var(--primary); color:white; display:inline-block;">🌙 Close the day gently</a>
-        </div>
     {% endif %}
 
     <div class="day-section" style="margin-bottom:1.8rem;">
@@ -176,6 +174,10 @@
                 <input type="text" name="title" placeholder="What you do" required style="width:100%; padding:0.5rem; border-radius:var(--radius-md); margin-bottom:0.5rem;">
                 <button type="submit" class="button" style="width:100%; padding:0.7rem; border-radius:var(--radius-md); background:var(--secondary); color:white;">Add</button>
             </form>
+        </div>
+
+        <div class="day-evening" style="text-align:center; margin-bottom:1.8rem;">
+            <a href="{% url 'evening_reflection' day.date.year day.date.month day.date.day %}" class="button" style="padding:0.7rem 1rem; border-radius:var(--radius-md); background:transparent; color:var(--primary); border:2px solid var(--primary); display:inline-block;" title="This locks the day in — it can't be edited afterward.">🌙 Close the day gently</a>
         </div>
     {% endif %}
 

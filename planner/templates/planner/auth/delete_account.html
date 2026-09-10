@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}⚠️ Delete Account · Emotional Planner{% endblock %}
+{% block footer_cards %}{% endblock %}
 
 {% block content %}
 <div class="auth-card">
@@ -12,7 +13,7 @@
         note, and reflection you’ve logged. This cannot be undone.
     </p>
 
-    <form method="post" class="auth-form" novalidate>
+    <form method="post" class="auth-form" novalidate id="delete-account-form">
         {% csrf_token %}
 
         <div class="form-group">
@@ -20,7 +21,12 @@
             <input type="password" id="password" name="password" placeholder="Enter your password" required>
         </div>
 
-        <button type="submit" class="auth-button button-danger">
+        <div class="form-group">
+            <label for="confirm_text">Type <strong>DELETE</strong> to confirm</label>
+            <input type="text" id="confirm_text" name="confirm_text" placeholder="DELETE" autocomplete="off" required>
+        </div>
+
+        <button type="submit" class="auth-button button-danger" id="delete-account-submit" disabled>
             Permanently delete my account
         </button>
     </form>
@@ -29,4 +35,15 @@
         <a href="{% url 'profile' %}" class="accent-link">Cancel, keep my account</a>
     </p>
 </div>
+
+<script>
+    (function () {
+        var confirmInput = document.getElementById('confirm_text');
+        var submitButton = document.getElementById('delete-account-submit');
+
+        confirmInput.addEventListener('input', function () {
+            submitButton.disabled = confirmInput.value.trim().toUpperCase() !== 'DELETE';
+        });
+    })();
+</script>
 {% endblock %}

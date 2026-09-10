@@ -36,7 +36,22 @@ def test_delete_account_wrong_password_does_not_delete(client):
     )
     client.force_login(user)
 
-    response = client.post(reverse("delete_account"), {"password": "WrongPassword!"})
+    response = client.post(reverse("delete_account"), {"password": "WrongPassword!", "confirm_text": "DELETE"})
+    assert response.status_code == 302
+    assert response.url == reverse("delete_account")
+    assert User.objects.filter(pk=user.pk).exists()
+
+
+@pytest.mark.django_db
+def test_delete_account_missing_confirm_text_does_not_delete(client):
+    user = User.objects.create_user(
+        username="user13",
+        email="user13@example.com",
+        password="OldPassword123!"
+    )
+    client.force_login(user)
+
+    response = client.post(reverse("delete_account"), {"password": "OldPassword123!", "confirm_text": "delet"})
     assert response.status_code == 302
     assert response.url == reverse("delete_account")
     assert User.objects.filter(pk=user.pk).exists()
@@ -52,7 +67,7 @@ def test_delete_account_correct_password_deletes_everything(client):
     Day.objects.create(user=user, date=date.today(), mood="good")
     client.force_login(user)
 
-    response = client.post(reverse("delete_account"), {"password": "OldPassword123!"})
+    response = client.post(reverse("delete_account"), {"password": "OldPassword123!", "confirm_text": "DELETE"})
     assert response.status_code == 302
     assert response.url == reverse("home")
 

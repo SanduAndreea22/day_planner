@@ -26,6 +26,8 @@
         .nav-item.highlight { background: linear-gradient(90deg, var(--primary), var(--secondary)); color: white; font-weight: 600; }
         .nav-item.dark-toggle { background: none; color: var(--text-main); cursor: pointer; border: none; font-size: 1.2rem; }
 
+        .nav-hamburger { display: none; background: none; border: none; font-size: 1.4rem; color: var(--text-main); cursor: pointer; padding: 0.25rem 0.5rem; }
+
         .home-container, .preview-card, .footer-card {
             background: var(--bg-card);
             border-radius: var(--radius-md);
@@ -71,8 +73,10 @@
 
         /* Responsive Mobile */
         @media (max-width: 768px) {
-            .nav-container { flex-direction: column; gap: 1rem; }
-            .nav-menu { flex-direction: column; width: 100%; }
+            .nav-container { flex-wrap: nowrap; justify-content: space-between; }
+            .nav-hamburger { display: block; }
+            .nav-menu { flex-direction: column; width: 100%; display: none; margin-top: 1rem; }
+            .nav-menu.open { display: flex; }
             .nav-item { width: 100%; }
             .home-preview { flex-direction: column; gap: 1rem; }
         }
@@ -84,10 +88,11 @@
     <header class="topbar">
         <div class="nav-container">
             <a href="{% url 'home' %}" class="nav-logo">🌸 <span>Emotional Planner</span></a>
-            <nav class="nav-menu">
+            <button type="button" id="nav-hamburger" class="nav-hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-menu">☰</button>
+            <nav class="nav-menu" id="nav-menu">
                 {% if user.is_authenticated %}
                     <a href="{% url 'guide' %}" class="nav-item">❓ How it works</a>
-                    <a href="{% url 'today' %}" class="nav-item">🌤 Today</a>
+                    <a href="{% url 'today' %}" class="nav-item highlight">🌤 Today</a>
                     <a href="{% url 'calendar' %}" class="nav-item">📅 Calendar</a>
                     <a href="{% url 'search' %}" class="nav-item">🔍 Search</a>
                     <a href="{% url 'weekly_score' %}" class="nav-item">📈 Week</a>
@@ -116,11 +121,13 @@
     </main>
 
     <footer>
+        {% block footer_cards %}
         <div class="footer-cards">
             <div class="footer-card">🌸 You’ve done enough today.</div>
             <div class="footer-card highlight">💗 Rest is productive.</div>
             <div class="footer-card">✨ Tomorrow is a new day.</div>
         </div>
+        {% endblock %}
         <div class="footer-meta muted">© Emotional Planner · private · no comparisons</div>
         <div class="footer-meta muted">
             <a href="{% url 'privacy_policy' %}">Privacy Policy</a> · <a href="{% url 'terms' %}">Terms of Service</a>
@@ -149,6 +156,21 @@
         const savedTheme = localStorage.getItem('theme');
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         applyTheme(savedTheme || (systemPrefersDark ? 'dark' : 'light'));
+
+        const hamburger = document.getElementById('nav-hamburger');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            const isOpen = navMenu.classList.toggle('open');
+            hamburger.setAttribute('aria-expanded', isOpen);
+        });
+
+        navMenu.addEventListener('click', (event) => {
+            if (event.target.closest('a')) {
+                navMenu.classList.remove('open');
+                hamburger.setAttribute('aria-expanded', 'false');
+            }
+        });
     </script>
 </body>
 </html>
