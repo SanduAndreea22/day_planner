@@ -46,8 +46,7 @@ Still running your business on manual processes — bookings written in a notebo
 
 I work with fixed-price packages, agreed before we start — no hourly billing, so you know exactly what you're getting and what it costs.
 
-- 💼 See the full portfolio and book a consultation: [andreeastech.pythonanywhere.com](https://andreeastech.pythonanywhere.com)
-- 📩 Or message me directly on LinkedIn: [linkedin.com/in/andreealuizasandu](https://linkedin.com/in/andreealuizasandu)
+- 📩 Message me directly on LinkedIn: [linkedin.com/in/andreealuizasandu](https://linkedin.com/in/andreealuizasandu)
 
 ## Contact
 
