@@ -58,9 +58,11 @@ def test_update_day_text(client, django_user_model):
     client.force_login(user)
     day = Day.objects.create(user=user, date=date.today())
     url = reverse("update_day_text")
-    response = client.post(url, {"day_id": day.id, "notes": "Some notes"})
+    response = client.post(url, {"day_id": day.id, "notes": "Some notes"}, follow=True)
     day.refresh_from_db()
     assert day.notes == "Some notes"
+    messages = list(response.context["messages"])
+    assert any("Saved" in str(m) for m in messages)
 
 
 @pytest.mark.django_db

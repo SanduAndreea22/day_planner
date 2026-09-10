@@ -133,6 +133,14 @@
     form.addEventListener('submit', function (event) {
         if (card.classList.contains('closing')) return;
         event.preventDefault();
+
+        var drain = form.querySelector('[name="drain"]').value.trim();
+        var smallWin = form.querySelector('[name="small_win"]').value.trim();
+        if (!drain && !smallWin) {
+            var confirmed = window.confirm("Close the day without writing anything? Once closed, it can't be edited.");
+            if (!confirmed) return;
+        }
+
         card.classList.add('closing');
         window.setTimeout(function () { form.submit(); }, 650);
     });

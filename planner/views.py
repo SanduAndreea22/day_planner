@@ -302,6 +302,7 @@ def update_day_text(request):
     if not day.is_closed:
         day.notes = request.POST.get("notes", "")
         day.save(update_fields=["notes"])
+        messages.success(request, "Saved ✨")
     return redirect_to_day(day)
 
 
