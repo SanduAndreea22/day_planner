@@ -1,53 +1,53 @@
 # 🌸 Emotional Planner
 
-Majoritatea aplicațiilor de organizare a zilei te fac să te simți vinovat când ratezi o zi. Emotional Planner face exact invers: te ajută să-ți organizezi ziua în jurul stării tale reale, nu în jurul unui streak perfect.
+Most productivity apps make you feel guilty for missing a day. Emotional Planner does the opposite: it helps you organize your day around how you actually feel, not around a perfect streak.
 
-**Vezi aplicația live:** https://day-planner-e2sv.onrender.com
-*(e găzduită gratuit, așa că primul acces după o perioadă de inactivitate poate dura 30-50 secunde — pe un proiect de business, asta nu se întâmplă.)*
+**See it live:** https://day-planner-e2sv.onrender.com
+*(hosted on a free tier, so the first load after a while can take 30-50 seconds — on a real business project, that never happens.)*
 
 ---
 
-## Problema pe care o rezolvă
+## The problem it solves
 
-Ai încercat vreodată o aplicație de productivitate și ai renunțat pentru că îți arăta, cu roșu, toate zilele "ratate"? Cele mai multe planificatoare tratează o zi mai grea la fel ca pe o zi pierdută. Emotional Planner pornește de la o idee simplă: o zi în care doar ai notat cum te-ai simțit tot contează.
+Ever tried a productivity app and given up because it marked every "missed" day in red? Most planners treat a hard day the same as a wasted one. Emotional Planner starts from a simpler idea: a day where you just showed up and wrote down how you felt still counts.
 
-Dacă amâni organizarea zilnică pentru că sistemul tău actual (agendă, notițe împrăștiate, aplicații generice) îți cere prea mult efort constant, rezultatul e mereu același: renunți după o săptămână. Aici, ritualul de seară durează un minut și nu îți cere perfecțiune ca să continui.
+If you keep putting off your daily planning because your current setup (a notebook, scattered notes, a generic app) demands too much effort just to keep going, the outcome is always the same: you quit after a week. Here, the evening ritual takes a minute and doesn't require perfection to keep you coming back.
 
-## Ce poți face în aplicație
+## What you can do inside
 
-- **Îți notezi ziua rapid** — stare, o culoare, câteva rânduri, task-uri programate pe ore
-- **Închizi ziua cu un mic ritual de reflecție** — ce te-a consumat, o mică victorie, un citat potrivit cu starea ta
-- **Vezi evoluția în timp** — calendar, grafice de stare și productivitate, scor săptămânal de echilibru — fără să te simți judecat dacă o săptămână a fost mai slabă
-- **Primești, dacă vrei, un reminder seara**, ca să nu uiți să închizi ziua
-- **Cauți în zilele trecute** după notițe sau stare
-- **Îți exporți toate datele oricând** și îți poți șterge definitiv contul, fără să rămână nimic în urmă
+- **Log your day in seconds** — mood, a color, a few notes, time-blocked tasks
+- **Close the day with a small reflection ritual** — what drained you, one small win, a quote that matches your mood
+- **See your patterns over time** — calendar, mood and productivity charts, a weekly balance score — without ever feeling judged for a rough week
+- **Get an optional evening reminder**, so you don't forget to close your day
+- **Search past days** by note or mood
+- **Export all your data anytime**, or permanently delete your account with nothing left behind
 
-## De ce contează asta pentru tine
+## Why this matters for your business
 
-Ce vezi în demo nu e doar o aplicație frumoasă — e genul de sistem pe care îl construiesc pentru clienți, dus până la capăt:
+What you see in the demo isn't just a nice-looking app — it's the kind of system I build for clients, taken all the way to production:
 
-- **Automatizări care funcționează fără costuri suplimentare** — reminderele de seară pleacă automat, la ora fiecărui utilizator, fără să fie nevoie de un server suplimentar plătit doar pentru asta
-- **Testat automat, la fiecare modificare** — orice schimbare trece printr-un set de verificări înainte să ajungă live, ca să nu se strice ceva pe drum fără să observi
-- **Date protejate și control real pentru utilizator** — recuperare de parolă prin email real, export complet al datelor, ștergere definitivă la cerere
-- **Monitorizare a erorilor**, gata de activat, ca să afli despre o problemă înainte să afle clienții tăi
+- **Automations that don't cost you extra infrastructure** — evening reminders go out automatically, at each user's own time, without needing a paid server just for that
+- **Tested automatically, on every change** — every update runs through a suite of checks before it goes live, so nothing breaks silently
+- **Real data protection and control for the user** — password recovery by real email, full data export, permanent account deletion on request
+- **Error monitoring**, ready to switch on, so you find out about a problem before your customers do
 
-Asta înseamnă, pentru business-ul tău: un sistem pe care te poți baza, nu un demo fragil care se strică la prima actualizare.
+For your business, that means a system you can actually rely on — not a fragile demo that breaks on the first update.
 
-## Alte proiecte din portofoliu
+## More from the portfolio
 
-- **Al Noir** — demo restaurant cu rezervări online, plăți prin Stripe, gestiune de stoc și dashboard pentru proprietar
-- **Bookora** — sistem de programări online
-- **Platform Tickets** — vânzare de bilete cu plată online, cod QR și bilet PDF generat automat
-- **MyBudget** — aplicație proprie de gestionare a bugetului personal
+- **Al Noir** — demo restaurant with online reservations, Stripe payments, inventory management, and an owner dashboard
+- **Bookora** — online booking system
+- **Platform Tickets** — ticket sales with online payment, QR codes, and auto-generated PDF tickets
+- **MyBudget** — a personal budgeting app built as my own product
 
-## Hai să vorbim despre proiectul tău
+## Let's talk about your project
 
-Ai un business care încă funcționează cu procese manuale — programări notate în caiet, facturi făcute pe rând, clienți contactați unul câte unul? Pot construi sistemul care face asta automat, la fel de solid ca aplicația de mai sus.
+Still running your business on manual processes — bookings written in a notebook, invoices done one by one, customers followed up with by hand? I can build a system that does it automatically, just as solid as the app above.
 
-Lucrez cu pachete la preț fix, stabilit înainte să începem, nu cu tarif orar — știi exact ce primești și cât costă.
+I work with fixed-price packages, agreed before we start — no hourly billing, so you know exactly what you're getting and what it costs.
 
-- 💼 Vezi portofoliul complet și programează o consultație: [andreeastech.pythonanywhere.com](https://andreeastech.pythonanywhere.com)
-- 📩 Sau scrie-mi direct pe LinkedIn: [linkedin.com/in/andreealuizasandu](https://linkedin.com/in/andreealuizasandu)
+- 💼 See the full portfolio and book a consultation: [andreeastech.pythonanywhere.com](https://andreeastech.pythonanywhere.com)
+- 📩 Or message me directly on LinkedIn: [linkedin.com/in/andreealuizasandu](https://linkedin.com/in/andreealuizasandu)
 
 ## Contact
 
