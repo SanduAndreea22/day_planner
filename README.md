@@ -1,105 +1,55 @@
 # 🌸 Emotional Planner
 
-A Django web app for organizing your day around **emotional wellbeing and gentle reflection**, not toxic productivity. Log how a day felt, close it with a small ritual, and see the pattern over time — without streak-shaming or guilt if you miss a day.
+Majoritatea aplicațiilor de organizare a zilei te fac să te simți vinovat când ratezi o zi. Emotional Planner face exact invers: te ajută să-ți organizezi ziua în jurul stării tale reale, nu în jurul unui streak perfect.
 
-**Live demo:** https://day-planner-e2sv.onrender.com
-*(hosted on Render's free tier — the first request after inactivity can take 30-50s to wake up)*
+**Vezi aplicația live:** https://day-planner-e2sv.onrender.com
+*(e găzduită gratuit, așa că primul acces după o perioadă de inactivitate poate dura 30-50 secunde — pe un proiect de business, asta nu se întâmplă.)*
 
 ---
 
-## What this project demonstrates
+## Problema pe care o rezolvă
 
-Underneath the calm interface is a fully production-shaped app: password reset with real email delivery, scheduled background jobs on a free host with no built-in scheduler, a 43-test suite running in CI on every push, and an error-monitoring hook ready to switch on with one environment variable.
+Ai încercat vreodată o aplicație de productivitate și ai renunțat pentru că îți arăta, cu roșu, toate zilele "ratate"? Cele mai multe planificatoare tratează o zi mai grea la fel ca pe o zi pierdută. Emotional Planner pornește de la o idee simplă: o zi în care doar ai notat cum te-ai simțit tot contează.
 
-- **Evening reminder emails without a task queue.** Render's free tier has no Celery/cron worker, so a GitHub Actions workflow (`.github/workflows/evening-reminders.yml`) pings a protected endpoint every 15 minutes, which sends a reminder email (via Brevo) to any user whose `evening_reminder_time` has just passed and who hasn't closed their day yet — a real scheduled job built entirely out of free infrastructure.
-- **Streak logic that respects the app's own philosophy.** `compute_streak()` counts consecutive days *only* where the user actually engaged (mood, color, notes, or a closed day) — not just days the row exists — and it's shown gently ("🌿 X days in a row you've written something"), only once it reaches 2+ days, never as a guilt trip if it breaks.
-- **A weekly balance score that's additive, not punitive**: `min(days_logged*10 + mood_days*8 + completed_tasks*2, 100)`, capped at 100 and framed on-screen as *"This score doesn't define you. It's just a gentle reflection."*
+Dacă amâni organizarea zilnică pentru că sistemul tău actual (agendă, notițe împrăștiate, aplicații generice) îți cere prea mult efort constant, rezultatul e mereu același: renunți după o săptămână. Aici, ritualul de seară durează un minut și nu îți cere perfecțiune ca să continui.
 
-## Features
+## Ce poți face în aplicație
 
-**Daily planning**
-- "Today" view: log a mood, a color, free-text notes, and time-blocked tasks for the day
-- Evening reflection ritual: a short close-of-day prompt (what drained you / one small win), with a gentle animated transition when you close the day, and a rotating closing quote matched to your mood
-- Optional daily evening reminder email, sent by a scheduled job (see above) — never required, easy to turn off
+- **Îți notezi ziua rapid** — stare, o culoare, câteva rânduri, task-uri programate pe ore
+- **Închizi ziua cu un mic ritual de reflecție** — ce te-a consumat, o mică victorie, un citat potrivit cu starea ta
+- **Vezi evoluția în timp** — calendar, grafice de stare și productivitate, scor săptămânal de echilibru — fără să te simți judecat dacă o săptămână a fost mai slabă
+- **Primești, dacă vrei, un reminder seara**, ca să nu uiți să închizi ziua
+- **Cauți în zilele trecute** după notițe sau stare
+- **Îți exporți toate datele oricând** și îți poți șterge definitiv contul, fără să rămână nimic în urmă
 
-**Looking back**
-- Calendar and monthly overview of logged days
-- Mood chart and productivity chart (Chart.js), colored by the day's mood — with the same data available as a plain list underneath, for accessibility
-- Weekly balance score with an animated count-up on load
-- Gentle streak indicator, shown only on "Today" and only when it means something
-- Search past days by note content or filter by mood
+## De ce contează asta pentru tine
 
-**Account & data**
-- Email + password authentication, no email confirmation required (keeps it reliable on free hosting)
-- Password reset via real email (rate-limited)
-- Export all your data as CSV (days, time blocks, reflections)
-- Delete your account and everything in it, permanently, with a password confirmation
-- In-app feedback form
+Ce vezi în demo nu e doar o aplicație frumoasă — e genul de sistem pe care îl construiesc pentru clienți, dus până la capăt:
 
-## Tech stack
+- **Automatizări care funcționează fără costuri suplimentare** — reminderele de seară pleacă automat, la ora fiecărui utilizator, fără să fie nevoie de un server suplimentar plătit doar pentru asta
+- **Testat automat, la fiecare modificare** — orice schimbare trece printr-un set de verificări înainte să ajungă live, ca să nu se strice ceva pe drum fără să observi
+- **Date protejate și control real pentru utilizator** — recuperare de parolă prin email real, export complet al datelor, ștergere definitivă la cerere
+- **Monitorizare a erorilor**, gata de activat, ca să afli despre o problemă înainte să afle clienții tăi
 
-- **Backend:** Django 5.2
-- **Database:** PostgreSQL (production), SQLite (local dev)
-- **Charts:** Chart.js
-- **Email:** Brevo (Sendinblue) API, console backend for local dev
-- **Error monitoring:** Sentry — a no-op until `SENTRY_DSN` is set
-- **Scheduled jobs:** GitHub Actions cron (`workflow_dispatch` + `schedule`), no external task queue
-- **Static files:** WhiteNoise
-- **Testing/CI:** pytest + `manage.py test` (43 tests), GitHub Actions runs the suite on every push
-- **Hosting:** Render
+Asta înseamnă, pentru business-ul tău: un sistem pe care te poți baza, nu un demo fragil care se strică la prima actualizare.
 
-## Architecture
+## Alte proiecte din portofoliu
 
-Two apps: `core` (project settings) and `planner` (everything else — models, views, templates, tests). Key models:
+- **Al Noir** — demo restaurant cu rezervări online, plăți prin Stripe, gestiune de stoc și dashboard pentru proprietar
+- **Bookora** — sistem de programări online
+- **Platform Tickets** — vânzare de bilete cu plată online, cod QR și bilet PDF generat automat
+- **MyBudget** — aplicație proprie de gestionare a bugetului personal
 
-| Model | Purpose |
-|---|---|
-| `Day` | One row per user per date (`unique_together`) — mood, color, notes, rest-day flag, closed state |
-| `TimeBlock` | Scheduled tasks within a day, with completion state |
-| `EveningReflection` | The end-of-day ritual prompt, one-to-one with a closed `Day` |
-| `UserProfile` | Nickname, pronouns, optional evening reminder time |
-| `Quote` | Mood-tagged quotes shown when a day is closed |
-| `Feedback` | In-app feedback messages |
+## Hai să vorbim despre proiectul tău
 
-## Before migrating in production
+Ai un business care încă funcționează cu procese manuale — programări notate în caiet, facturi făcute pe rând, clienți contactați unul câte unul? Pot construi sistemul care face asta automat, la fel de solid ca aplicația de mai sus.
 
-The migration history includes several destructive changes (field renames,
-`RemoveField`, a `delete_habit`) from early iteration on the schema — normal
-during development, but a reminder that any future `RemoveField`/`RunPython`
-migration should be backed up for first. Before running `python manage.py
-migrate` against the production database (Neon Postgres, via `DATABASE_URL`):
+Lucrez cu pachete la preț fix, stabilit înainte să începem, nu cu tarif orar — știi exact ce primești și cât costă.
 
-1. Take a backup — either a Neon branch/snapshot of the database (fast,
-   built into the Neon dashboard) or `pg_dump "$DATABASE_URL" > backup.sql`.
-2. Run the migration against a copy first if it's destructive (drops or
-   renames a column with existing data), not directly on production.
-3. Keep the backup until you've confirmed the app works correctly after the
-   migration.
+- 💼 Vezi portofoliul complet și programează o consultație: [andreeastech.pythonanywhere.com](https://andreeastech.pythonanywhere.com)
+- 📩 Sau scrie-mi direct pe LinkedIn: [linkedin.com/in/andreealuizasandu](https://linkedin.com/in/andreealuizasandu)
 
-## Running locally
+## Contact
 
-```bash
-git clone https://github.com/SanduAndreea22/day_planner.git
-cd day_planner
-python -m venv venv
-venv\Scripts\activate        # or: source venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env         # fill in your own values
-python manage.py migrate
-python manage.py runserver
-```
-
-Email, Sentry, and the evening-reminder task secret are all optional for local dev — without them, email just prints to the console and Sentry stays off.
-
-Run the test suite with:
-
-```bash
-python manage.py test
-```
-
-## 👩‍💻 Author
-
-**Andreea Sandu**
+**Andreea Sandu** — Andreea Tech
 LinkedIn: [linkedin.com/in/andreealuizasandu](https://linkedin.com/in/andreealuizasandu)
-
-✨ *Made with calm & a lot of debugging.* ✨
