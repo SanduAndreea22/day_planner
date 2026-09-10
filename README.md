@@ -61,6 +61,21 @@ Two apps: `core` (project settings) and `planner` (everything else — models, v
 | `Quote` | Mood-tagged quotes shown when a day is closed |
 | `Feedback` | In-app feedback messages |
 
+## Before migrating in production
+
+The migration history includes several destructive changes (field renames,
+`RemoveField`, a `delete_habit`) from early iteration on the schema — normal
+during development, but a reminder that any future `RemoveField`/`RunPython`
+migration should be backed up for first. Before running `python manage.py
+migrate` against the production database (Neon Postgres, via `DATABASE_URL`):
+
+1. Take a backup — either a Neon branch/snapshot of the database (fast,
+   built into the Neon dashboard) or `pg_dump "$DATABASE_URL" > backup.sql`.
+2. Run the migration against a copy first if it's destructive (drops or
+   renames a column with existing data), not directly on production.
+3. Keep the backup until you've confirmed the app works correctly after the
+   migration.
+
 ## Running locally
 
 ```bash

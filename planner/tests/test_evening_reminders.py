@@ -86,6 +86,23 @@ def test_reminder_sent_when_window_spans_midnight(client):
 
 @pytest.mark.django_db
 @override_settings(TASK_SECRET="test-secret")
+def test_reminder_not_sent_twice_for_overlapping_runs_of_same_window(client):
+    # Regression test: two cron invocations landing on the exact same
+    # window (e.g. a retried/delayed GitHub Actions run next to a fresh
+    # one) used to both match and both send.
+    user = User.objects.create_user(username="r6", email="r6@example.com", password="pass12345")
+    now = timezone.localtime()
+    UserProfile.objects.create(user=user, evening_reminder_time=now.time())
+    Day.objects.create(user=user, date=timezone.localdate(), is_closed=False)
+
+    client.post(reverse(URL_NAME), HTTP_AUTHORIZATION="Bearer test-secret")
+    client.post(reverse(URL_NAME), HTTP_AUTHORIZATION="Bearer test-secret")
+
+    assert len(mail.outbox) == 1
+
+
+@pytest.mark.django_db
+@override_settings(TASK_SECRET="test-secret")
 def test_reminder_not_sent_twice_across_adjacent_windows(client):
     user = User.objects.create_user(username="r5", email="r5@example.com", password="pass12345")
     reminder_time = datetime.strptime("20:00", "%H:%M").time()

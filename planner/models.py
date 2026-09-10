@@ -30,6 +30,8 @@ class UserProfile(models.Model):
         help_text="Optional daily reminder time for evening reflection."
     )
 
+    last_evening_reminder_sent_at = models.DateTimeField(null=True, blank=True)
+
     def __str__(self):
         return self.nickname or self.user.email
 

@@ -623,6 +623,11 @@ def send_evening_reminders_view(request):
     for profile in matching_profiles:
         if profile.user_id in closed_user_ids:
             continue
+        # Guards against two overlapping cron runs (a retried/delayed
+        # GitHub Actions call landing next to a fresh one) both matching the
+        # same window for the same profile and double-sending.
+        if profile.last_evening_reminder_sent_at and profile.last_evening_reminder_sent_at > window_start:
+            continue
 
         sent_count = send_mail(
             subject="🌙 A gentle nudge for your evening reflection",
@@ -636,5 +641,7 @@ def send_evening_reminders_view(request):
         )
         if sent_count:
             sent += 1
+            profile.last_evening_reminder_sent_at = window_end
+            profile.save(update_fields=["last_evening_reminder_sent_at"])
 
     return HttpResponse(f"Sent {sent} reminder(s).")

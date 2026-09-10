@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import sys
 from dotenv import load_dotenv
 import dj_database_url
 
@@ -38,6 +39,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "core.middleware.ContentSecurityPolicyMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -152,6 +154,23 @@ DEFAULT_FROM_EMAIL = os.getenv(
     "DEFAULT_FROM_EMAIL",
     "Emotional Planner <no-reply@example.com>"
 )
+
+# Both are silently no-op when empty (Brevo emails simply aren't sent, the
+# reminder endpoint always 403s) rather than raising, so a missing value in
+# production can go unnoticed for a long time. Surface it loudly at boot.
+if DATABASE_URL:
+    if not BREVO_API_KEY:
+        print(
+            "WARNING: BREVO_API_KEY is not set — password reset and evening "
+            "reminder emails will silently fail to send.",
+            file=sys.stderr,
+        )
+    if not TASK_SECRET:
+        print(
+            "WARNING: TASK_SECRET is not set — /tasks/send-evening-reminders/ "
+            "will reject every request, so evening reminders will never go out.",
+            file=sys.stderr,
+        )
 
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "today"
