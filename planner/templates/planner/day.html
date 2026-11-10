@@ -4,7 +4,7 @@
 {% block title %}🌿 My Day · Emotional Planner{% endblock %}
 
 {% block content %}
-<div class="day-card" style="
+<div class="day-card day-page-card" style="
     max-width:900px;
     margin:2rem auto;
     padding:2rem;
@@ -215,7 +215,12 @@
     opacity: 0.8;
 }
 
+.time-block { flex-wrap: wrap; gap: 0.5rem; }
+.time-block .block-title { flex: 1 1 140px; word-break: break-word; }
+.time-row label { min-width: 0; }
 .actions button {
+    min-width: 44px;
+    min-height: 44px;
     cursor: pointer;
     margin-left: 0.5rem;
     font-size: 1.1rem;

@@ -23,6 +23,7 @@
            {% if item.day.color %}color-{{ item.day.color }}{% endif %}
            {% if item.is_today %}today{% endif %}"
          {% if item.day.notes %}data-notes="{{ item.day.notes|escape }}" {% endif %}>
+        {% if item.day.notes %}<span class="day-note-mark" aria-label="Has a note">📝</span>{% endif %}
         <div class="day-number">{{ item.date.day }}</div>
         <div class="day-mood">
           {% if item.day.mood == "very_bad" %}😞
@@ -41,7 +42,7 @@
   </div>
 
   <div class="calendar-legend muted">
-    Select any day to open it. The emoji is the day’s mood. The color is its character: 🔴 Heavy · 🟡 Uneven · 🟢 Light · 🔵 Calm · 🟣 Vivid. Open a day to read its note.
+    Select any day to open it. The emoji is the day’s mood. 📝 marks a day with a note. The color is its character: 🔴 Heavy · 🟡 Uneven · 🟢 Light · 🔵 Calm · 🟣 Vivid. Open a day to read its note.
   </div>
 
   <div class="calendar-links">
@@ -52,6 +53,7 @@
 </div>
 
 <style>
+.day-note-mark { position: absolute; top: 2px; right: 4px; font-size: 0.6rem; }
 .calendar-links { text-align: center; margin-top: 1rem; font-size: 0.95rem; }
 .nav-arrow { font-size: 1rem; white-space: nowrap; color: var(--primary); }
 .calendar-title { font-size: 1.3rem; text-align: center; }

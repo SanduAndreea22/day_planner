@@ -304,7 +304,15 @@ input::placeholder, textarea::placeholder { color: var(--text-muted); }
    monthly-overview grids have no responsive fallback inline — this section
    is the app's only @media coverage today. */
 @media (max-width: 480px) {
+    .calendar-card, .month-overview-card, .weekly-card, .legal-card, .auth-card, .profile-card, .evening-card, .day-page-card, .home-container {
+        padding: 1.1rem !important;
+    }
+    .time-row input[type="time"] { min-width: 0; }
     .time-row {
         flex-wrap: wrap;
     }
 }
+
+/* Mobile safety: padded full-width fields and cards must never push the page wider than the screen. */
+input, textarea, select, .preview-card { box-sizing: border-box; max-width: 100%; }
+canvas { max-width: 100%; height: auto; }
