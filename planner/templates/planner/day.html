@@ -175,7 +175,8 @@
 
     {% if not day.is_closed %}
         <div class="day-section" style="margin-bottom:1.8rem;">
-            <h3>➕ New time block</h3>
+            <h3 id="new-block">➕ New time block</h3>
+            <div id="new-block-errors"></div>
             <p class="muted" style="color:var(--text-muted); font-size:0.9rem; margin:0 0 0.6rem;">A time block is a slot in your day, like 09:00 – 10:00 · Study.</p>
             <form method="post" action="{% url 'add_timeblock' %}" id="add-block-form">
                 {% csrf_token %}
@@ -266,6 +267,12 @@ if (closeLink) {
         event.preventDefault();
         saveNotesIfDirty().then(function () { window.location = closeLink.href; });
     });
+}
+
+// Errors from the new-block form show right above it, not at the top of the page.
+if (window.location.hash === '#new-block') {
+    var box = document.getElementById('new-block-errors');
+    document.querySelectorAll('.app-messages .app-message.error').forEach(function (m) { box.appendChild(m); });
 }
 
 document.querySelectorAll('.toggle-timeblock-form').forEach(function (form) {

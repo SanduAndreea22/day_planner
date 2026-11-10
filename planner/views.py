@@ -315,6 +315,7 @@ def update_day_text(request):
 def add_timeblock(request):
     day = get_object_or_404(Day, id=request.POST.get("day_id"), user=request.user)
     form = TimeBlockForm(request.POST)
+    had_error = False
     if form.is_valid():
         start_time = form.cleaned_data["start_time"]
         end_time = form.cleaned_data["end_time"]
@@ -323,11 +324,13 @@ def add_timeblock(request):
         ).exists()
         if overlaps:
             messages.error(request, "That overlaps with a block you already have that day.")
+            had_error = True
         else:
             block = form.save(commit=False)
             block.day = day
             block.save()
     else:
+        had_error = True
         for error in form.non_field_errors():
             messages.error(request, error)
         for field, errors in form.errors.items():
@@ -338,7 +341,11 @@ def add_timeblock(request):
                 text = str(error)
                 text = text[0].lower() + text[1:] if text else text
                 messages.error(request, f"{label} — {text}")
-    return redirect_to_day(day)
+    response = redirect_to_day(day)
+    if had_error:
+        # Land on the form so the error shows right next to it, not off-screen at the top.
+        response["Location"] += "#new-block"
+    return response
 
 
 @login_required
