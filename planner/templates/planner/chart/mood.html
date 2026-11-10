@@ -25,13 +25,7 @@
     <div class="mood-summary">
         Most logged days were
         <strong>
-            {% if most_common_mood == "very_bad" %}very difficult
-            {% elif most_common_mood == "bad" %}hard
-            {% elif most_common_mood == "neutral" %}neutral
-            {% elif most_common_mood == "good" %}good
-            {% elif most_common_mood == "very_good" %}very good
-            {% endif %}
-        </strong>.
+            {% if most_common_mood == "very_bad" %}very difficult{% elif most_common_mood == "bad" %}hard{% elif most_common_mood == "neutral" %}neutral{% elif most_common_mood == "good" %}good{% elif most_common_mood == "very_good" %}very good{% endif %}</strong>.
     </div>
     {% endif %}
 
@@ -79,7 +73,7 @@
 
     <div class="mood-actions">
         <a href="{% url 'calendar' %}" class="button primary">📅 Calendar</a>
-        <a href="{% url 'monthly_overview' %}?month={{ month }}&year={{ year }}" class="button">← Monthly Overview</a>
+        <a href="{% url 'monthly_overview' %}?month={{ month }}&year={{ year }}" class="button">← Month summary</a>
     </div>
 
 </div>

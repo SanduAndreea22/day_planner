@@ -107,6 +107,7 @@
 .weekly-score-wrapper { margin: 1rem 0; }
 .weekly-score-value { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.6rem; }
 .weekly-score-value span { font-size: 1rem; color: var(--text-muted); }
+.weekly-score-value #score-count { font-size: 2.6rem; color: var(--text-main); }
 
 .weekly-progress {
     height: 14px;
@@ -124,6 +125,11 @@
 .weekly-message { font-size: 1.1rem; margin: 1rem 0; }
 .weekly-hint { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem; }
 
+@media (max-width: 480px) {
+    .weekly-nav { flex-wrap: wrap; justify-content: space-between; row-gap: 0.4rem; }
+    .week-label { order: -1; flex-basis: 100%; text-align: center; }
+    .week-btn { white-space: nowrap; }
+}
 .weekly-details {
     display: flex;
     justify-content: center;
@@ -138,7 +144,7 @@
     min-width: 100px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.05);
 }
-.detail-card.highlight { background: var(--highlight); color: #111827; }
+.detail-card.highlight { background: rgba(125,211,167,0.18); color: var(--text-main); }
 
 .weekly-how { max-width: 520px; margin: 0 auto 1.5rem; font-size: 0.9rem; text-align: left; }
 .weekly-how summary { cursor: pointer; text-align: center; }

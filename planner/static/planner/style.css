@@ -64,6 +64,8 @@ body {
     transition: background 0.3s ease;
 }
 .button:hover { background: #d1d5db; }
+button.button { font-family: inherit; font-size: 1rem; line-height: inherit; }
+.button { display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; text-align: center; }
 .button.primary { background: var(--primary); color: #fff; }
 .button.primary:hover { background: #5fd1a0; }
 .button.secondary { background: #e5e7eb; color: var(--text-primary); }

@@ -25,7 +25,7 @@
         -webkit-text-fill-color: transparent;
         animation: fadeInUp 0.8s ease forwards;
     ">
-        🌙 Evening Reflection
+        Evening Reflection
     </div>
 
     <div class="evening-date muted" style="text-align:center; color:var(--text-muted); margin-bottom:1.5rem;">
@@ -101,6 +101,8 @@
 <style>
 /* fadeInUp and dark-mode textarea theming come from style.css — one shared
    definition, instead of a copy defined locally here. */
+.evening-actions .button { font: inherit; font-weight: 600; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
+@media (max-width: 480px) { .evening-actions { flex-direction: column-reverse; } .evening-actions .button { width: 100%; } }
 .evening-actions .button:hover {
     transform: scale(1.05);
 }
