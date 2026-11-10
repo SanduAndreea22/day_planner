@@ -117,11 +117,11 @@
                 <input type="hidden" name="day_id" value="{{ day.id }}">
                 <select name="color" required onchange="this.form.submit()" style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
                     <option value="">Choose one</option>
-                    <option value="red" {% if day.color == "red" %}selected{% endif %}>🔴 Heavy</option>
-                    <option value="yellow" {% if day.color == "yellow" %}selected{% endif %}>🟡 Uneven</option>
-                    <option value="green" {% if day.color == "green" %}selected{% endif %}>🟢 Light</option>
-                    <option value="blue" {% if day.color == "blue" %}selected{% endif %}>🔵 Calm</option>
-                    <option value="purple" {% if day.color == "purple" %}selected{% endif %}>🟣 Vivid</option>
+                    <option value="red" {% if day.color == "red" %}selected{% endif %}>🔴 Heavy — a draining day</option>
+                    <option value="yellow" {% if day.color == "yellow" %}selected{% endif %}>🟡 Uneven — ups and downs</option>
+                    <option value="green" {% if day.color == "green" %}selected{% endif %}>🟢 Light — easy and open</option>
+                    <option value="blue" {% if day.color == "blue" %}selected{% endif %}>🔵 Calm — quiet and steady</option>
+                    <option value="purple" {% if day.color == "purple" %}selected{% endif %}>🟣 Vivid — full of energy</option>
                 </select>
             </form>
         </div>
