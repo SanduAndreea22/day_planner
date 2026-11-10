@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}📈 Your Week · Emotional Planner{% endblock %}
+{% block title %}Your Week · Emotional Planner{% endblock %}
 
 {% block content %}
 <div class="weekly-card">
 
     <div class="weekly-title title-gradient">
-        💗 Your Week
+         Your Week
     </div>
 
     <div class="weekly-subtitle muted">
@@ -41,33 +41,33 @@
 
     <div class="weekly-details">
         <div class="detail-card">
-            🌿 <strong>{{ days_logged }}</strong>
+             <strong>{{ days_logged }}</strong>
             <span class="muted">Days logged<br><small>Every day counts</small></span>
         </div>
         <div class="detail-card highlight">
-            ✅ <strong>{{ completed_tasks }}</strong>
+             <strong>{{ completed_tasks }}</strong>
             <span class="muted">Tasks<br><small>{% if completed_tasks > 0 %}You did your best{% else %}No pressure to check anything off{% endif %}</small></span>
         </div>
         <div class="detail-card">
-            💭 <strong>{{ mood_days }}</strong>
+             <strong>{{ mood_days }}</strong>
             <span class="muted">Mood entries<br><small>Connecting with yourself</small></span>
         </div>
     </div>
 
     <div class="weekly-suggestion">
-        🌱 {{ suggestion }}
+         {{ suggestion }}
     </div>
 
     <div class="weekly-hint muted">Where to next:</div>
     <div class="weekly-actions">
-        <a href="{% url 'today' %}" class="button primary">🌸 Start Today</a>
-        <a href="{% url 'calendar' %}" class="button">📅 Calendar</a>
+        <a href="{% url 'today' %}" class="button primary">Start Today</a>
+        <a href="{% url 'calendar' %}" class="button">Calendar</a>
     </div>
 
     <div class="weekly-hint muted">See the bigger picture:</div>
     <div class="weekly-actions secondary">
-        <a href="{% url 'mood_chart' %}" class="button">📈 Mood chart</a>
-        <a href="{% url 'productivity_chart' %}" class="button">✅ Completed-tasks chart</a>
+        <a href="{% url 'mood_chart' %}" class="button">Mood chart</a>
+        <a href="{% url 'productivity_chart' %}" class="button">Completed-tasks chart</a>
     </div>
 
 </div>

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}💭 Mood · Emotional Planner{% endblock %}
+{% block title %}Mood · Emotional Planner{% endblock %}
 {% block extra_head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 {% endblock %}
@@ -8,7 +8,7 @@
 <div class="mood-card">
 
     <div class="mood-header">
-        <h2 class="title-gradient">💭 Mood</h2>
+        <h2 class="title-gradient">Mood</h2>
         <div class="mood-period muted">{{ month_name }} {{ year }}</div>
         <div class="mood-nav">
             <a href="?month={{ month|add:'-1' }}&year={{ year }}">← Previous month</a>
@@ -69,10 +69,10 @@
         {% endfor %}
     </div>
 
-    <p class="mood-footer">🌿 Observing is already a first step.</p>
+    <p class="mood-footer"> Observing is already a first step.</p>
 
     <div class="mood-actions">
-        <a href="{% url 'calendar' %}" class="button primary">📅 Calendar</a>
+        <a href="{% url 'calendar' %}" class="button primary">Calendar</a>
         <a href="{% url 'monthly_overview' %}?month={{ month }}&year={{ year }}" class="button">← Month summary</a>
     </div>
 

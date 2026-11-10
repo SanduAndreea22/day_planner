@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}🌙 Evening Reflection · Emotional Planner{% endblock %}
+{% block title %}Evening Reflection · Emotional Planner{% endblock %}
 
 {% block content %}
 <div class="evening-card" id="evening-card" style="
@@ -13,7 +13,7 @@
     transition: background 0.5s, color 0.5s, opacity 0.7s ease, transform 0.7s ease;
 ">
 
-    <div class="evening-moon" aria-hidden="true">🌙</div>
+    <div class="evening-moon" aria-hidden="true"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg></div>
 
     <div class="evening-title" style="
         font-size:2rem;
@@ -42,7 +42,7 @@
         <input type="hidden" name="notes" value="{{ day.notes }}">
 
         <div class="evening-section" style="display:flex; flex-direction:column;">
-            <label style="font-weight:600; margin-bottom:0.3rem;">🔋 What drained my energy today? <span style="font-weight:400; color:var(--text-muted);">(optional)</span></label>
+            <label style="font-weight:600; margin-bottom:0.3rem;">What drained my energy today? <span style="font-weight:400; color:var(--text-muted);">(optional)</span></label>
             <textarea
                 name="drain"
                 rows="3"
@@ -52,7 +52,7 @@
         </div>
 
         <div class="evening-section" style="display:flex; flex-direction:column;">
-            <label style="font-weight:600; margin-bottom:0.3rem;">🌸 One small thing I can appreciate about myself today <span style="font-weight:400; color:var(--text-muted);">(optional)</span></label>
+            <label style="font-weight:600; margin-bottom:0.3rem;">One small thing I can appreciate about myself today <span style="font-weight:400; color:var(--text-muted);">(optional)</span></label>
             <textarea
                 name="small_win"
                 rows="3"
@@ -74,7 +74,7 @@
                 min-width:140px;
                 transition: transform 0.2s, box-shadow 0.2s;
             ">
-                Close the day 🌙
+                Close the day 
             </button>
 
             <a href="{% url 'day_detail' day.date.year day.date.month day.date.day %}" class="button" style="

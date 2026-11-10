@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}📅 Calendar · Emotional Planner{% endblock %}
+{% block title %}Calendar · Emotional Planner{% endblock %}
 
 {% block content %}
 <div class="calendar-card">
@@ -42,12 +42,12 @@
   </div>
 
   <div class="calendar-legend muted">
-    Select any day to open it. The emoji is the day’s mood. 📝 marks a day with a note. The color is its character: 🔴 Heavy · 🟡 Uneven · 🟢 Light · 🔵 Calm · 🟣 Vivid. Open a day to read its note.
+    Select any day to open it. The emoji is the day’s mood. 📝 marks a day with a note. The color is its character: <span class="swatch color-red"></span>Heavy · <span class="swatch color-yellow"></span>Uneven · <span class="swatch color-green"></span>Light · <span class="swatch color-blue"></span>Calm · <span class="swatch color-purple"></span>Vivid. Open a day to read its note.
   </div>
 
   <div class="calendar-links">
-    <a href="{% url 'calendar' %}">📅 Jump to this month</a> ·
-    <a href="{% url 'monthly_overview' %}?year={{ year }}&month={{ month }}">🧭 Month summary</a>
+    <a href="{% url 'calendar' %}">Jump to this month</a> ·
+    <a href="{% url 'monthly_overview' %}?year={{ year }}&month={{ month }}">Month summary</a>
   </div>
 
 </div>

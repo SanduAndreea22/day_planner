@@ -102,11 +102,8 @@ a { color: var(--primary); text-underline-offset: 3px; }
    it silently did nothing everywhere else. */
 .muted { color: var(--text-muted); }
 
-.title-gradient {
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
+.title-gradient { color: var(--heading); font-family: var(--font-serif); font-weight: 500; }
+.auth-title { font-family: var(--font-serif); font-weight: 500; }
 
 .button {
     padding: 0.6rem 1.2rem;
@@ -368,3 +365,5 @@ input::placeholder, textarea::placeholder { color: var(--text-muted); }
 /* Mobile safety: padded full-width fields and cards must never push the page wider than the screen. */
 input, textarea, select, .preview-card { box-sizing: border-box; max-width: 100%; }
 canvas { max-width: 100%; height: auto; }
+.calendar-title { font-family: var(--font-serif) !important; font-size: 1.7rem !important; font-weight: 500 !important; }
+.swatch { display: inline-block; width: 0.8em; height: 0.8em; border-radius: 50%; margin-right: 0.35em; vertical-align: -0.05em; border: 1px solid var(--border); }

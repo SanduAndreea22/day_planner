@@ -187,7 +187,7 @@ def feedback_view(request):
             feedback = form.save(commit=False)
             feedback.user = request.user
             feedback.save()
-            messages.success(request, "Thank you — your feedback was sent 🤍")
+            messages.success(request, "Thank you — your feedback was sent")
             return redirect("feedback")
     else:
         form = FeedbackForm()
@@ -206,7 +206,7 @@ def delete_account_view(request):
             user = request.user
             logout(request)
             user.delete()
-            messages.success(request, "Your account and all your data have been permanently deleted. Take care 🤍")
+            messages.success(request, "Your account and all your data have been permanently deleted. Take care")
             return redirect("home")
         messages.error(request, "Incorrect password — your account was not deleted.")
         return redirect("delete_account")
@@ -299,9 +299,9 @@ def day_detail_view(request, year, month, day):
 
     message = None
     if selected_date < date.today():
-        message = "Past day. You can reflect at your own pace 🤍"
+        message = "Past day. You can reflect at your own pace"
     elif selected_date > date.today():
-        message = "Future day. It doesn't need to be clear yet ✨"
+        message = "Future day. It doesn't need to be clear yet"
 
     reflection = EveningReflection.objects.filter(day=day_obj).first()
     streak = compute_streak(request.user) if selected_date == date.today() else None
@@ -364,7 +364,7 @@ def set_day_color(request):
     if color:
         updated = Day.objects.filter(id=day.id, is_closed=False).update(color=color)
         if updated:
-            messages.success(request, "Saved 🎨")
+            messages.success(request, "Saved")
     return redirect_to_day(day)
 
 
@@ -380,7 +380,7 @@ def set_day_mood(request):
     if mood:
         updated = Day.objects.filter(id=day.id, is_closed=False).update(mood=mood)
         if updated:
-            messages.success(request, "Saved 😌")
+            messages.success(request, "Saved")
     return redirect_to_day(day)
 
 
@@ -390,7 +390,7 @@ def update_day_text(request):
     if not day.is_closed:
         day.notes = request.POST.get("notes", "")
         day.save(update_fields=["notes"])
-        messages.success(request, "Saved ✨")
+        messages.success(request, "Saved")
     return redirect_to_day(day)
 
 

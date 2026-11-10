@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}✅ Productivity & Mood · Emotional Planner{% endblock %}
+{% block title %}Productivity & Mood · Emotional Planner{% endblock %}
 {% block extra_head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 {% endblock %}
@@ -9,7 +9,7 @@
 {% block content %}
 <div class="productivity-card">
 
-    <h2 class="title-gradient">✅ Productivity & Mood</h2>
+    <h2 class="title-gradient">Productivity & Mood</h2>
 
     <p class="productivity-subtitle">
         How many things you completed <strong>regardless of how you felt</strong>.<br>
@@ -54,12 +54,12 @@
     </div>
 
     <div class="productivity-actions">
-        <a href="{% url 'calendar' %}" class="button primary">📅 Calendar</a>
+        <a href="{% url 'calendar' %}" class="button primary">Calendar</a>
         <a href="{% url 'weekly_score' %}" class="button">← Weekly Score</a>
     </div>
 
     <p class="productivity-final">
-        🌱 Even small steps tell a story.
+         Even small steps tell a story.
     </p>
 </div>
 

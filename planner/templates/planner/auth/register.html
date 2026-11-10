@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}🌸 Create account · Emotional Planner{% endblock %}
+{% block title %}Create account · Emotional Planner{% endblock %}
 
 {% block content %}
 <div class="auth-card">
 
-    <h2 class="auth-title">🌸 Create account</h2>
+    <h2 class="auth-title">Create account</h2>
 
     <p class="auth-subtitle muted">
         Create a private space that’s yours alone. No email confirmation needed: after signing up you’ll land on today’s page.
@@ -52,14 +52,14 @@
             <a href="{% url 'privacy_policy' %}" class="accent-link">Privacy Policy</a>.
         </p>
 
-        <button type="submit" class="auth-button">Create account 🌸</button>
+        <button type="submit" class="auth-button">Create account </button>
     </form>
     <script>document.getElementById("show-password").addEventListener("change",function(e){document.querySelectorAll('.auth-form input[name^="password"]').forEach(function(i){i.type=e.target.checked?"text":"password";});});</script>
 
     <div class="auth-trust muted">
-        <p>🔒 Your data is private</p>
-        <p>🌱 Only emails you ask for (the evening reminder is optional)</p>
-        <p>🕯️ You can delete your account anytime</p>
+        <p> Your data is private</p>
+        <p> Only emails you ask for (the evening reminder is optional)</p>
+        <p> You can delete your account anytime</p>
     </div>
 
     <p class="muted auth-footer">

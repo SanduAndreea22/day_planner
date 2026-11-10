@@ -16,7 +16,7 @@
         margin-bottom:0.5rem;
         text-align:center;
         color: var(--heading);
-    ">🔒 This was your day</h4>
+    "> This was your day</h4>
 
     <p class="muted" style="text-align:center; color:var(--text-muted); margin-bottom:1rem;">
         Day closed. The information below can no longer be edited.
@@ -24,7 +24,7 @@
 
     {% if day.color %}
     <div class="summary-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem; padding:0.5rem 1rem; border-radius:14px; background:var(--bg-card); box-shadow:0 5px 15px rgba(0,0,0,0.05);">
-        <span class="summary-label" style="font-weight:600;">🎨 What kind of day it was</span>
+        <span class="summary-label" style="font-weight:600;">What kind of day it was</span>
         <span class="color-{{ day.color }}" style="font-weight:600; padding:0.15rem 0.6rem; border-radius:999px; display:inline-flex; align-items:center; gap:0.4rem;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C7 8 4 12.5 4 16a8 8 0 0 0 16 0c0-3.5-3-8-8-14z"/></svg>
             {% if day.color == "red" %}Heavy
@@ -40,7 +40,7 @@
 
     {% if day.mood %}
     <div class="summary-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem; padding:0.5rem 1rem; border-radius:14px; background:var(--bg-card); box-shadow:0 5px 15px rgba(0,0,0,0.05);">
-        <span class="summary-label" style="font-weight:600;">😌 Mood</span>
+        <span class="summary-label" style="font-weight:600;">Mood</span>
         <span class="mood-{{ day.mood }}" style="font-weight:600; padding:0.15rem 0.6rem; border-radius:999px;">
             {% if day.mood == "very_bad" %}😞 Very hard
             {% elif day.mood == "bad" %}😕 Hard
@@ -55,7 +55,7 @@
 
     {% if day.notes %}
     <div class="summary-box" style="margin-top:1rem;">
-        <label style="font-weight:600;">✨ A thought for today</label>
+        <label style="font-weight:600;">A thought for today</label>
         <div class="closed-box" style="
             margin-top:0.3rem;
             padding:0.7rem 1rem;
@@ -71,7 +71,7 @@
 
     {% if reflection and reflection.drain %}
     <div class="summary-box" style="margin-top:1rem;">
-        <label style="font-weight:600;">🔋 What drained my energy today?</label>
+        <label style="font-weight:600;">What drained my energy today?</label>
         <div class="closed-box" style="
             margin-top:0.3rem;
             padding:0.7rem 1rem;
@@ -87,7 +87,7 @@
 
     {% if reflection and reflection.small_win %}
     <div class="summary-box" style="margin-top:1rem;">
-        <label style="font-weight:600;">🌸 One small thing I can appreciate about myself today</label>
+        <label style="font-weight:600;">One small thing I can appreciate about myself today</label>
         <div class="closed-box" style="
             margin-top:0.3rem;
             padding:0.7rem 1rem;
@@ -145,7 +145,7 @@
         color:var(--text-muted);
         font-size:1.1rem;
     ">
-        🌙 {{ quote.text }}
+         {{ quote.text }}
     </div>
     {% endif %}
 

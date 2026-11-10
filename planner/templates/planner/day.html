@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}🌿 My Day · Emotional Planner{% endblock %}
+{% block title %}My Day · Emotional Planner{% endblock %}
 
 {% block content %}
 <div class="day-card day-page-card" style="
@@ -54,14 +54,14 @@
 
     {% if day.is_closed %}
         <div class="message closed-message" style="text-align:center; color: var(--text-muted); margin-bottom:1rem;">
-            🌙 The day is closed. You’ve done enough today.
+             The day is closed. You’ve done enough today.
         </div>
 
         {% include "planner/partials/day_summary.html" %}
 
         {% if quote %}
             <div class="gentle-recommendation" style="text-align:center; font-style:italic; margin-top:1rem;">
-                🌙 {{ quote.text }}
+                 {{ quote.text }}
             </div>
         {% endif %}
 
@@ -79,7 +79,7 @@
                     {% elif day.mood == "very_good" %}😄 Very good
                     {% endif %}
                 </span>
-                <button type="button" class="link-button" onclick="toggleEdit('mood')">✏️ Edit</button>
+                <button type="button" class="link-button" onclick="toggleEdit('mood')">Edit</button>
             </div>
 
             <form method="post" action="{% url 'set_day_mood' %}" id="mood-form" style="display:{% if day.mood %}none{% else %}block{% endif %};">
@@ -112,7 +112,7 @@
                     {% elif day.color == "purple" %}Vivid
                     {% endif %}
                 </span>
-                <button type="button" class="link-button" onclick="toggleEdit('color')">✏️ Edit</button>
+                <button type="button" class="link-button" onclick="toggleEdit('color')">Edit</button>
             </div>
 
             <form method="post" action="{% url 'set_day_color' %}" id="color-form" style="display:{% if day.color %}none{% else %}block{% endif %};">
@@ -120,11 +120,11 @@
                 <input type="hidden" name="day_id" value="{{ day.id }}">
                 <select name="color" required style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
                     <option value="">Choose one</option>
-                    <option value="red" {% if day.color == "red" %}selected{% endif %}>🔴 Heavy — a draining day</option>
-                    <option value="yellow" {% if day.color == "yellow" %}selected{% endif %}>🟡 Uneven — ups and downs</option>
-                    <option value="green" {% if day.color == "green" %}selected{% endif %}>🟢 Light — easy and open</option>
-                    <option value="blue" {% if day.color == "blue" %}selected{% endif %}>🔵 Calm — quiet and steady</option>
-                    <option value="purple" {% if day.color == "purple" %}selected{% endif %}>🟣 Vivid — full of energy</option>
+                    <option value="red" {% if day.color == "red" %}selected{% endif %}>Heavy — a draining day</option>
+                    <option value="yellow" {% if day.color == "yellow" %}selected{% endif %}>Uneven — ups and downs</option>
+                    <option value="green" {% if day.color == "green" %}selected{% endif %}>Light — easy and open</option>
+                    <option value="blue" {% if day.color == "blue" %}selected{% endif %}>Calm — quiet and steady</option>
+                    <option value="purple" {% if day.color == "purple" %}selected{% endif %}>Vivid — full of energy</option>
                 </select>
                 <button type="submit" class="button primary" style="margin-top:0.5rem; width:100%; padding:0.7rem; border-radius:var(--radius-md); background:var(--primary); color:white;">Save</button>
             </form>
@@ -135,7 +135,7 @@
 
             <div class="saved-field" id="notes-display" style="display:{% if day.notes %}block{% else %}none{% endif %}; padding:0.6rem 1rem; border-radius:var(--radius-md); background:rgba(183,201,181,0.3);">
                 <div style="white-space:pre-wrap;">{{ day.notes }}</div>
-                <button type="button" class="link-button" onclick="toggleEdit('notes')" style="margin-top:0.5rem;">✏️ Edit</button>
+                <button type="button" class="link-button" onclick="toggleEdit('notes')" style="margin-top:0.5rem;">Edit</button>
             </div>
 
             <form method="post" action="{% url 'update_day_text' %}" id="notes-form" style="display:{% if day.notes %}none{% else %}block{% endif %};">
@@ -158,11 +158,11 @@
                         <div class="actions">
                             <form method="post" action="{% url 'toggle_timeblock' block.id %}" class="toggle-timeblock-form" style="display:inline;">
                                 {% csrf_token %}
-                                <button type="submit" class="link-button" title="Mark as done / not done" aria-label="Mark as done or not done">✅ Done</button>
+                                <button type="submit" class="link-button" title="Mark as done / not done" aria-label="Mark as done or not done">Done</button>
                             </form>
                             <form method="post" action="{% url 'delete_timeblock' block.id %}" style="display:inline;" onsubmit="return confirm('Delete this block?')">
                                 {% csrf_token %}
-                                <button type="submit" class="link-button delete" title="Delete this block" aria-label="Delete this block">🗑️ Delete</button>
+                                <button type="submit" class="link-button delete" title="Delete this block" aria-label="Delete this block">Delete</button>
                             </form>
                         </div>
                     {% endif %}
