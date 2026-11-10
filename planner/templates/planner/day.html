@@ -83,7 +83,7 @@
             <form method="post" action="{% url 'set_day_mood' %}" id="mood-form" style="display:{% if day.mood %}none{% else %}block{% endif %};">
                 {% csrf_token %}
                 <input type="hidden" name="day_id" value="{{ day.id }}">
-                <select name="mood" required onchange="this.form.submit()" style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
+                <select name="mood" required style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
                     <option value="">Choose mood</option>
                     <option value="very_bad" {% if day.mood == "very_bad" %}selected{% endif %}>😞 Very hard</option>
                     <option value="bad" {% if day.mood == "bad" %}selected{% endif %}>😕 Hard</option>
@@ -91,6 +91,7 @@
                     <option value="good" {% if day.mood == "good" %}selected{% endif %}>🙂 Good</option>
                     <option value="very_good" {% if day.mood == "very_good" %}selected{% endif %}>😄 Very good</option>
                 </select>
+                <button type="submit" class="button primary" style="margin-top:0.5rem; width:100%; padding:0.7rem; border-radius:var(--radius-md); background:var(--primary); color:white;">Save</button>
             </form>
         </div>
 
@@ -115,7 +116,7 @@
             <form method="post" action="{% url 'set_day_color' %}" id="color-form" style="display:{% if day.color %}none{% else %}block{% endif %};">
                 {% csrf_token %}
                 <input type="hidden" name="day_id" value="{{ day.id }}">
-                <select name="color" required onchange="this.form.submit()" style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
+                <select name="color" required style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
                     <option value="">Choose one</option>
                     <option value="red" {% if day.color == "red" %}selected{% endif %}>🔴 Heavy — a draining day</option>
                     <option value="yellow" {% if day.color == "yellow" %}selected{% endif %}>🟡 Uneven — ups and downs</option>
@@ -123,6 +124,7 @@
                     <option value="blue" {% if day.color == "blue" %}selected{% endif %}>🔵 Calm — quiet and steady</option>
                     <option value="purple" {% if day.color == "purple" %}selected{% endif %}>🟣 Vivid — full of energy</option>
                 </select>
+                <button type="submit" class="button primary" style="margin-top:0.5rem; width:100%; padding:0.7rem; border-radius:var(--radius-md); background:var(--primary); color:white;">Save</button>
             </form>
         </div>
 
@@ -154,11 +156,11 @@
                         <div class="actions">
                             <form method="post" action="{% url 'toggle_timeblock' block.id %}" class="toggle-timeblock-form" style="display:inline;">
                                 {% csrf_token %}
-                                <button type="submit" class="link-button">✅</button>
+                                <button type="submit" class="link-button" title="Mark as done / not done" aria-label="Mark as done or not done">✅ Done</button>
                             </form>
                             <form method="post" action="{% url 'delete_timeblock' block.id %}" style="display:inline;" onsubmit="return confirm('Delete this block?')">
                                 {% csrf_token %}
-                                <button type="submit" class="link-button delete">🗑️</button>
+                                <button type="submit" class="link-button delete" title="Delete this block" aria-label="Delete this block">🗑️ Delete</button>
                             </form>
                         </div>
                     {% endif %}
@@ -172,7 +174,7 @@
     {% if not day.is_closed %}
         <div class="day-section" style="margin-bottom:1.8rem;">
             <h3>➕ New Block</h3>
-            <form method="post" action="{% url 'add_timeblock' %}">
+            <form method="post" action="{% url 'add_timeblock' %}" id="add-block-form">
                 {% csrf_token %}
                 <input type="hidden" name="day_id" value="{{ day.id }}">
                 <div class="time-row" style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
@@ -186,7 +188,8 @@
         </div>
 
         <div class="day-evening" style="text-align:center; margin-bottom:1.8rem;">
-            <a href="{% url 'evening_reflection' day.date.year day.date.month day.date.day %}" class="button" style="padding:0.7rem 1rem; border-radius:var(--radius-md); background:transparent; color:var(--primary); border:2px solid var(--primary); display:inline-block;" title="This locks the day in — it can't be edited afterward.">🌙 Close the day gently</a>
+            <a href="{% url 'evening_reflection' day.date.year day.date.month day.date.day %}" id="close-day-link" class="button" style="padding:0.7rem 1rem; border-radius:var(--radius-md); background:transparent; color:var(--primary); border:2px solid var(--primary); display:inline-block;" title="This locks the day in — it can't be edited afterward.">🌙 Close the day gently</a>
+            <div style="color:var(--text-muted); font-size:0.85rem; margin-top:0.5rem;">Closing locks the day — it can’t be edited afterward.</div>
         </div>
     {% endif %}
 
@@ -227,6 +230,33 @@
 function toggleEdit(field) {
     document.getElementById(field + '-display').style.display = 'none';
     document.getElementById(field + '-form').style.display = 'block';
+}
+
+// Save an unsaved thought first, so saving mood/color or closing the day never wipes it.
+function saveNotesIfDirty() {
+    var nf = document.getElementById('notes-form');
+    var ta = nf && nf.querySelector('textarea');
+    if (!ta || ta.value === ta.defaultValue) return Promise.resolve();
+    return fetch(nf.action, { method: 'POST', body: new FormData(nf), headers: { 'X-Requested-With': 'XMLHttpRequest' } }).catch(function () {});
+}
+['mood-form', 'color-form', 'add-block-form'].forEach(function (id) {
+    var f = document.getElementById(id);
+    if (!f) return;
+    f.addEventListener('submit', function (event) {
+        var ta = document.querySelector('#notes-form textarea');
+        if (!ta || ta.value === ta.defaultValue) return;
+        event.preventDefault();
+        saveNotesIfDirty().then(function () { f.submit(); });
+    });
+});
+var closeLink = document.getElementById('close-day-link');
+if (closeLink) {
+    closeLink.addEventListener('click', function (event) {
+        var ta = document.querySelector('#notes-form textarea');
+        if (!ta || ta.value === ta.defaultValue) return;
+        event.preventDefault();
+        saveNotesIfDirty().then(function () { window.location = closeLink.href; });
+    });
 }
 
 document.querySelectorAll('.toggle-timeblock-form').forEach(function (form) {

@@ -63,6 +63,8 @@
             >{{ reflection.small_win }}</textarea>
         </div>
 
+        <div style="text-align:center; color:var(--text-muted); font-size:0.9rem;">Once you close the day, it can’t be edited afterward.</div>
+
         <div class="evening-actions" style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-top:1rem;">
             <button type="submit" class="button primary" style="
                 padding:0.7rem 1.2rem;
@@ -80,8 +82,9 @@
             <a href="{% url 'day_detail' day.date.year day.date.month day.date.day %}" class="button" style="
                 padding:0.7rem 1.2rem;
                 border-radius:14px;
-                background:var(--secondary);
-                color:white;
+                background:transparent;
+                color:var(--primary);
+                border:2px solid var(--primary);
                 font-weight:600;
                 flex:1;
                 min-width:140px;

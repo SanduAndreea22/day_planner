@@ -58,14 +58,16 @@
         🌱 {{ suggestion }}
     </div>
 
+    <div class="weekly-hint muted">Where to next:</div>
     <div class="weekly-actions">
         <a href="{% url 'today' %}" class="button primary">🌸 Start Today</a>
         <a href="{% url 'calendar' %}" class="button">📅 Calendar</a>
     </div>
 
+    <div class="weekly-hint muted">See the bigger picture:</div>
     <div class="weekly-actions secondary">
-        <a href="{% url 'mood_chart' %}" class="button">📈 Your Moods</a>
-        <a href="{% url 'productivity_chart' %}" class="button">✅ Productivity</a>
+        <a href="{% url 'mood_chart' %}" class="button">📈 Mood chart</a>
+        <a href="{% url 'productivity_chart' %}" class="button">✅ Completed-tasks chart</a>
     </div>
 
 </div>

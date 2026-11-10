@@ -10,6 +10,7 @@
     <form method="post" class="feedback-form">
         {% csrf_token %}
         <div class="form-group">
+            <label for="{{ form.message.id_for_label }}" style="display:block; font-weight:600; margin-bottom:0.4rem;">{{ form.message.label }}</label>
             {{ form.message }}
             {% if form.message.errors %}
                 <div class="field-error">{{ form.message.errors.0 }}</div>
