@@ -25,7 +25,7 @@ Underneath the calm interface is a fully production-shaped app: password reset w
 **Looking back**
 - Calendar and monthly overview of logged days
 - Mood chart and productivity chart (Chart.js), colored by the day's mood — with the same data available as a plain list underneath, for accessibility
-- Weekly balance score with an animated count-up on load
+- Weekly balance score, with a plain-language explanation of how it adds up
 - Gentle streak indicator, shown only on "Today" and only when it means something
 - Search past days by note content or filter by mood
 

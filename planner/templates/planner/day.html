@@ -58,8 +58,40 @@
         {% endif %}
 
     {% else %}
-         <div class="day-section" style="margin-bottom:1.8rem;">
+        <div class="day-section" style="margin-bottom:1.8rem;">
+            <label style="font-weight:600;">😌 How did you feel today?</label>
+            <div class="field-hint muted" style="color:var(--text-muted); font-size:0.85rem; margin-bottom:0.3rem;">Your overall mood. It shows as an emoji on the calendar.</div>
+
+            <div class="saved-field" id="mood-display" style="display:{% if day.mood %}flex{% else %}none{% endif %}; justify-content:space-between; align-items:center; padding:0.6rem 1rem; border-radius:var(--radius-md); background:rgba(125,211,167,0.08);">
+                <span>
+                    {% if day.mood == "very_bad" %}😞 Very hard
+                    {% elif day.mood == "bad" %}😕 Hard
+                    {% elif day.mood == "neutral" %}😐 Neutral
+                    {% elif day.mood == "good" %}🙂 Good
+                    {% elif day.mood == "very_good" %}😄 Very good
+                    {% endif %}
+                </span>
+                <button type="button" class="link-button" onclick="toggleEdit('mood')">✏️ Edit</button>
+            </div>
+
+            <form method="post" action="{% url 'set_day_mood' %}" id="mood-form" style="display:{% if day.mood %}none{% else %}block{% endif %};">
+                {% csrf_token %}
+                <input type="hidden" name="day_id" value="{{ day.id }}">
+                <select name="mood" required onchange="this.form.submit()" style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
+                    <option value="">Choose mood</option>
+                    <option value="very_bad" {% if day.mood == "very_bad" %}selected{% endif %}>😞 Very hard</option>
+                    <option value="bad" {% if day.mood == "bad" %}selected{% endif %}>😕 Hard</option>
+                    <option value="neutral" {% if day.mood == "neutral" %}selected{% endif %}>😐 Neutral</option>
+                    <option value="good" {% if day.mood == "good" %}selected{% endif %}>🙂 Good</option>
+                    <option value="very_good" {% if day.mood == "very_good" %}selected{% endif %}>😄 Very good</option>
+                </select>
+            </form>
+        </div>
+
+
+        <div class="day-section" style="margin-bottom:1.8rem;">
             <label style="font-weight:600;">🎨 What kind of day was it?</label>
+            <div class="field-hint muted" style="color:var(--text-muted); font-size:0.85rem; margin-bottom:0.3rem;">The day’s character in one color (separate from mood). It tints the day on the calendar.</div>
 
             <div class="saved-field color-{{ day.color }}" id="color-display" style="display:{% if day.color %}flex{% else %}none{% endif %}; justify-content:space-between; align-items:center; padding:0.6rem 1rem; border-radius:var(--radius-md);">
                 <span style="display:inline-flex; align-items:center; gap:0.4rem;">
@@ -84,35 +116,6 @@
                     <option value="green" {% if day.color == "green" %}selected{% endif %}>🟢 Light</option>
                     <option value="blue" {% if day.color == "blue" %}selected{% endif %}>🔵 Calm</option>
                     <option value="purple" {% if day.color == "purple" %}selected{% endif %}>🟣 Vivid</option>
-                </select>
-            </form>
-        </div>
-
-        <div class="day-section" style="margin-bottom:1.8rem;">
-            <label style="font-weight:600;">😌 Mood</label>
-
-            <div class="saved-field" id="mood-display" style="display:{% if day.mood %}flex{% else %}none{% endif %}; justify-content:space-between; align-items:center; padding:0.6rem 1rem; border-radius:var(--radius-md); background:rgba(125,211,167,0.08);">
-                <span>
-                    {% if day.mood == "very_bad" %}😞 Very hard
-                    {% elif day.mood == "bad" %}😕 Hard
-                    {% elif day.mood == "neutral" %}😐 Neutral
-                    {% elif day.mood == "good" %}🙂 Good
-                    {% elif day.mood == "very_good" %}😄 Very good
-                    {% endif %}
-                </span>
-                <button type="button" class="link-button" onclick="toggleEdit('mood')">✏️ Edit</button>
-            </div>
-
-            <form method="post" action="{% url 'set_day_mood' %}" id="mood-form" style="display:{% if day.mood %}none{% else %}block{% endif %};">
-                {% csrf_token %}
-                <input type="hidden" name="day_id" value="{{ day.id }}">
-                <select name="mood" required onchange="this.form.submit()" style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
-                    <option value="">Choose mood</option>
-                    <option value="very_bad" {% if day.mood == "very_bad" %}selected{% endif %}>😞 Very hard</option>
-                    <option value="bad" {% if day.mood == "bad" %}selected{% endif %}>😕 Hard</option>
-                    <option value="neutral" {% if day.mood == "neutral" %}selected{% endif %}>😐 Neutral</option>
-                    <option value="good" {% if day.mood == "good" %}selected{% endif %}>🙂 Good</option>
-                    <option value="very_good" {% if day.mood == "very_good" %}selected{% endif %}>😄 Very good</option>
                 </select>
             </form>
         </div>

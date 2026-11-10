@@ -23,9 +23,10 @@ from .forms import RegisterForm, EmailAuthenticationForm, TimeBlockForm, Profile
 from .decorators import ratelimit_post
 
 HOME_PREVIEW_CARDS = [
-    {"icon": "🌤", "title": "Today", "description": "Log a mood, a color, and a few gentle notes — whenever you feel like it."},
+    {"icon": "🌤", "title": "Today", "description": "Log a mood, a color and a thought, and plan the day in time blocks."},
+    {"icon": "🌙", "title": "Evening ritual", "description": "Close the day with two gentle questions. Once closed, it stays as it was."},
     {"icon": "📅", "title": "Calendar", "description": "See every day at a glance, colored by how it felt."},
-    {"icon": "📈", "title": "Your Week", "description": "A gentle, non-judgmental summary of how balanced the week felt."},
+    {"icon": "📈", "title": "Your Week", "description": "A gentle summary of how balanced the week felt. Not a grade."},
 ]
 
 MONTH_NAMES = {
