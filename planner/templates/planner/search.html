@@ -34,7 +34,7 @@
         <div style="display:flex; flex-direction:column; gap:0.5rem;">
             {% for day in days %}
                 <a href="{% url 'day_detail' day.date.year day.date.month day.date.day %}"
-                   style="display:flex; justify-content:space-between; gap:1rem; padding:0.7rem 1rem; border-radius:14px; background:rgba(125,211,167,0.08); text-decoration:none; color:var(--text-main);">
+                   style="display:flex; justify-content:space-between; gap:1rem; padding:0.7rem 1rem; border-radius:14px; background:rgba(183,201,181,0.3); text-decoration:none; color:var(--text-main);">
                     <span style="font-weight:600; white-space:nowrap;">{{ day.date|date:"d M Y" }}</span>
                     <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text-muted);">
                         {{ day.notes|default:"—"|truncatechars:80 }}

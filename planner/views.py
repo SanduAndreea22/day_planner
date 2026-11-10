@@ -29,6 +29,28 @@ HOME_PREVIEW_CARDS = [
     {"icon": "📈", "title": "Your Week", "description": "A gentle summary of how balanced the week felt. Not a grade."},
 ]
 
+# The home check-in offers five emotions, but the existing Day.mood field is a
+# five-step scale (very_bad..very_good). Until a dedicated emotion field exists
+# (see README / hand-off notes), each emotion is saved to the nearest existing
+# step so the current charts, calendar and weekly view keep working unchanged.
+MOOD_CHECKINS = [
+    {"key": "happy", "label": "Happy", "value": "very_good"},
+    {"key": "calm", "label": "Calm", "value": "good"},
+    {"key": "tired", "label": "Tired", "value": "neutral"},
+    {"key": "anxious", "label": "Anxious", "value": "bad"},
+    {"key": "sad", "label": "Sad", "value": "very_bad"},
+]
+
+DAILY_MESSAGES = [
+    "Small, honest moments are enough to begin with.",
+    "Notice one thing that feels softer than yesterday.",
+    "Rest is not the opposite of progress. It is part of it.",
+    "Whatever you feel today is allowed to be here.",
+    "Be as kind to yourself as you would be to a friend.",
+    "A few quiet lines can change how a day is remembered.",
+    "You don't need a perfect plan to take a gentle step.",
+]
+
 MONTH_NAMES = {
     1: "January",
     2: "February",
@@ -190,9 +212,70 @@ def delete_account_view(request):
         return redirect("delete_account")
     return render(request, "planner/auth/delete_account.html")
 
+def build_home_context(user, today):
+    """Everything the signed-in home page shows, from existing Day data only.
+
+    Deliberately no scores, streaks or targets: just a calm reflection of what
+    the user has already recorded.
+    """
+    day_obj, _ = Day.objects.get_or_create(user=user, date=today)
+    mood_labels = dict(Day.MOOD_CHOICES)
+    recent = list(
+        Day.objects.filter(user=user, date__gt=today - timedelta(days=30), date__lte=today)
+    )
+    by_date = {d.date: d for d in recent}
+
+    week_start = today - timedelta(days=6)
+    checkins_week = sum(1 for d in recent if d.mood and d.date >= week_start)
+    notes_days = sum(1 for d in recent if d.notes.strip())
+
+    # Last 14 days, oldest first, for the mood-pattern strip.
+    strip = []
+    for offset in range(13, -1, -1):
+        d = today - timedelta(days=offset)
+        entry = by_date.get(d)
+        strip.append({
+            "date": d,
+            "mood": entry.mood if entry and entry.mood else "",
+            "label": mood_labels.get(entry.mood, "") if entry and entry.mood else "",
+            "is_today": d == today,
+        })
+
+    counts = Counter(d.mood for d in recent if d.mood)
+    total = sum(counts.values())
+    patterns = [
+        {
+            "value": value,
+            "label": label,
+            "count": counts.get(value, 0),
+            "percent": round(counts.get(value, 0) * 100 / total) if total else 0,
+        }
+        for value, label in reversed(Day.MOOD_CHOICES)
+    ]
+
+    latest = sorted((d for d in recent if d.mood), key=lambda d: d.date, reverse=True)[:3]
+
+    return {
+        "day": day_obj,
+        "today": today,
+        "daily_message": DAILY_MESSAGES[today.toordinal() % len(DAILY_MESSAGES)],
+        "mood_checkins": MOOD_CHECKINS,
+        "current_mood_label": mood_labels.get(day_obj.mood, ""),
+        "checkins_week": checkins_week,
+        "notes_days": notes_days,
+        "mood_strip": strip,
+        "mood_patterns": patterns,
+        "mood_total": total,
+        "latest_checkins": [
+            {"date": d.date, "mood": d.mood, "label": mood_labels[d.mood]} for d in latest
+        ],
+        "nickname": getattr(getattr(user, "profile", None), "nickname", ""),
+    }
+
+
 def home_view(request):
     if request.user.is_authenticated:
-        return redirect("today")
+        return render(request, "planner/home_member.html", build_home_context(request.user, date.today()))
 
     quote = _random_quote(Quote.objects.filter(active=True))
     return render(request, "planner/home.html", {

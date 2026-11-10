@@ -1,20 +1,35 @@
 :root {
-    --primary: #7dd3a7;
-    --secondary: #a5b4fc;
-    --bg-main: #f4f7fb;
-    --bg-card: rgba(255, 255, 255, 0.9);
-    --text-main: #1f2937;
-    --text-primary: #1f2937;
-    --text-muted: #6b7280;
-    --radius-lg: 24px;
-    --radius-md: 14px;
-    --shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-    --highlight: #fbbf24;
-    --toast-bg: #d1fae5;
-    --toast-text: #065f46;
-    /* Soft rose instead of a generic off-brand red, so error/danger states
-       still read as part of the mint/lavender palette. */
-    --danger: #e0667a;
+    /* Soft Editorial Wellness palette */
+    --ivory: #F5F1EB;
+    --sage: #B7C9B5;
+    --rose: #E9BFC5;
+    --olive: #6D7469;
+    --lavender: #E8E3EF;
+    --charcoal: #343A35;
+
+    /* Semantic tokens used by every page */
+    --primary: #5F6A5B;          /* actions + links (4.9:1 on ivory) */
+    --primary-hover: #484f45;
+    --secondary: #8E5C68;        /* deep dusty rose for hover/secondary actions */
+    --on-primary: #ffffff;
+    --heading: #343A35;
+    --bg-main: #F5F1EB;
+    --bg-card: rgba(255, 255, 255, 0.72);
+    --bg-soft: rgba(183, 201, 181, 0.22);
+    --border: rgba(109, 116, 105, 0.22);
+    --text-main: #343A35;
+    --text-primary: #343A35;
+    --text-muted: #5C6359;
+    --radius-lg: 28px;
+    --radius-md: 16px;
+    --shadow: 0 1px 2px rgba(52, 58, 53, 0.04), 0 12px 32px -12px rgba(52, 58, 53, 0.14);
+    --shadow-hover: 0 2px 4px rgba(52, 58, 53, 0.05), 0 22px 44px -14px rgba(52, 58, 53, 0.2);
+    --highlight: #D9B77A;
+    --toast-bg: #DCE6DA;
+    --toast-text: #2f3a2d;
+    --danger: #A8485B;
+    --font-serif: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
+    --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
 }
 
 /* Single source of truth for dark mode: the .dark class on <body>,
@@ -22,23 +37,64 @@
    OS preference on first visit). Pages must not add their own
    prefers-color-scheme overrides — it creates two competing mechanisms. */
 body.dark {
-    --bg-main: #1f2937;
-    --bg-card: rgba(31, 41, 55, 0.9);
-    --text-main: #f4f7fb;
-    --text-primary: #f4f7fb;
-    --text-muted: #9ca3af;
-    --toast-bg: #065f46;
-    --toast-text: #d1fae5;
-    --danger: #ec8b9c;
+    --primary: #B7C9B5;
+    --primary-hover: #cfdccd;
+    --secondary: #E9BFC5;
+    --on-primary: #1f2421;
+    --heading: #F5F1EB;
+    --bg-main: #232824;
+    --bg-card: rgba(255, 255, 255, 0.05);
+    --bg-soft: rgba(183, 201, 181, 0.1);
+    --border: rgba(245, 241, 235, 0.14);
+    --text-main: #F5F1EB;
+    --text-primary: #F5F1EB;
+    --text-muted: #B4BCAF;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 12px 32px -12px rgba(0, 0, 0, 0.5);
+    --shadow-hover: 0 22px 44px -14px rgba(0, 0, 0, 0.6);
+    --toast-bg: #34402f;
+    --toast-text: #DCE6DA;
+    --danger: #F0A3B1;
 }
+
+html { scroll-behavior: smooth; }
 
 body {
     background-color: var(--bg-main);
     color: var(--text-main);
-    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-sans);
     margin: 0;
-    line-height: 1.6;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
     transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--heading);
+    line-height: 1.15;
+}
+h1 { font-size: clamp(2rem, 4vw, 2.8rem); }
+h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); }
+h3 { font-size: 1.4rem; }
+
+a { color: var(--primary); text-underline-offset: 3px; }
+
+/* Visible keyboard focus everywhere */
+:focus-visible {
+    outline: 2px solid var(--secondary);
+    outline-offset: 3px;
+    border-radius: 6px;
+}
+.skip-link {
+    position: absolute; left: 1rem; top: -4rem; z-index: 100;
+    background: var(--primary); color: var(--on-primary); padding: 0.6rem 1rem; border-radius: 10px;
+}
+.skip-link:focus { top: 1rem; }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
 
 /* Used across nearly every page (subtitles, footers, hints) but was only
@@ -57,19 +113,22 @@ body {
     border-radius: 8px;
     text-decoration: none;
     font-weight: 600;
-    background: #e5e7eb;
-    color: var(--text-primary);
-    border: none;
+    background: var(--lavender);
+    color: var(--charcoal);
+    border: 1px solid var(--border);
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
 }
-.button:hover { background: #d1d5db; }
+.button:hover { background: #dcd5e8; transform: translateY(-1px); }
 button.button { font-family: inherit; font-size: 1rem; line-height: inherit; }
 .button { display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; text-align: center; }
-.button.primary { background: var(--primary); color: #fff; }
-.button.primary:hover { background: #5fd1a0; }
-.button.secondary { background: #e5e7eb; color: var(--text-primary); }
-.button.secondary:hover { background: #d1d5db; }
+.button.primary { background: var(--primary); color: var(--on-primary); border-color: transparent; }
+.button.primary:hover { background: var(--primary-hover); }
+.button.secondary { background: var(--lavender); color: var(--charcoal); }
+.button.secondary:hover { background: #dcd5e8; }
+/* Inline-styled buttons (white text on --primary/--secondary) stay readable in both themes */
+body.dark button[style*="color:white"], body.dark a[style*="color:white"] { color: var(--on-primary) !important; }
+button[style*="background:var(--primary)"], button[style*="background:var(--secondary)"] { border: none; cursor: pointer; transition: background 0.3s, transform 0.2s; }
 
 /* Shared auth-page card (login, register, password reset) */
 .auth-card {
@@ -114,7 +173,7 @@ button.button { font-family: inherit; font-size: 1rem; line-height: inherit; }
     width: 100%;
     padding: 0.6rem 0.8rem;
     border-radius: var(--radius-md);
-    border: 1px solid rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border);
     background: var(--bg-card);
     color: var(--text-main);
     font-family: inherit;
@@ -122,7 +181,7 @@ button.button { font-family: inherit; font-size: 1rem; line-height: inherit; }
 }
 .form-group input:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 8px rgba(125,211,167,0.5);
+    box-shadow: 0 0 0 3px rgba(142,92,104,0.25);
     outline: none;
 }
 
@@ -133,7 +192,7 @@ input, select, textarea {
     font-family: inherit;
     background: var(--bg-card);
     color: var(--text-main);
-    border: 1px solid rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border);
     border-radius: var(--radius-md);
 }
 body.dark input, body.dark select, body.dark textarea {
@@ -155,10 +214,10 @@ input::placeholder, textarea::placeholder { color: var(--text-muted); }
 
 .auth-button {
     width: 100%;
-    padding: 0.6rem;
-    border-radius: var(--radius-md);
+    padding: 0.75rem;
+    border-radius: 999px;
     background-color: var(--primary);
-    color: white;
+    color: var(--on-primary);
     font-weight: 500;
     transition: all 0.3s ease;
     cursor: pointer;
@@ -167,8 +226,8 @@ input::placeholder, textarea::placeholder { color: var(--text-muted); }
     font-size: 1rem;
 }
 .auth-button:hover {
-    background-color: var(--secondary);
-    transform: translateY(-2px) scale(1.02);
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
 }
 
 .auth-trust {
@@ -196,10 +255,10 @@ input::placeholder, textarea::placeholder { color: var(--text-muted); }
     font-weight: 500;
     transition: color 0.3s ease;
 }
-.danger-link:hover { color: #c94f63; }
+.danger-link:hover { color: var(--danger); text-decoration: underline; }
 
-.button-danger { background-color: var(--danger); }
-.button-danger:hover { background-color: #c94f63; }
+.button-danger { background-color: var(--danger); color: #fff; }
+.button-danger:hover { filter: brightness(0.92); }
 
 /* Makes a <button> inside a small inline form look like the plain-text
    links it replaces (e.g. per-timeblock actions), so mutating actions can
@@ -227,7 +286,7 @@ input::placeholder, textarea::placeholder { color: var(--text-muted); }
     box-shadow: var(--shadow);
     line-height: 1.7;
 }
-.legal-card h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+.legal-card h1 { font-size: 2.2rem; margin-bottom: 0.3rem; }
 .legal-card .updated-date { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2rem; }
 .legal-card h2 { font-size: 1.2rem; margin-top: 2rem; margin-bottom: 0.5rem; }
 .legal-card p, .legal-card li { color: var(--text-main); }
@@ -276,31 +335,22 @@ input::placeholder, textarea::placeholder { color: var(--text-muted); }
    cascade at equal specificity — the modifier class would apply but never
    visibly show. !important keeps this the one place the color truly comes
    from, regardless of where a page's base card rule happens to load. */
-.color-red { background: linear-gradient(145deg, #ef4444, #f87171) !important; color: white !important; text-shadow: 0 1px 2px rgba(0,0,0,0.25); }
-.color-yellow { background: linear-gradient(145deg, #facc15, #fde68a) !important; color: #111827 !important; }
-.color-green { background: linear-gradient(145deg, #4ade80, #a7f3d0) !important; color: #111827 !important; }
-.color-blue { background: linear-gradient(145deg, #3b82f6, #60a5fa) !important; color: white !important; text-shadow: 0 1px 2px rgba(0,0,0,0.25); }
-.color-purple { background: linear-gradient(145deg, #c084fc, #e9d5ff) !important; color: #111827 !important; }
+.color-red { background: #E9BFC5 !important; color: #343A35 !important; }
+.color-yellow { background: #EADFC0 !important; color: #343A35 !important; }
+.color-green { background: #B7C9B5 !important; color: #343A35 !important; }
+.color-blue { background: #C3D3DA !important; color: #343A35 !important; }
+.color-purple { background: #D8CEE6 !important; color: #343A35 !important; }
 
-/* Mood palette (very_bad..very_good). Single definition shared by the mood
-   chart and productivity chart. Same !important reasoning as above. */
-.mood-very_bad { background: linear-gradient(145deg, #ef4444, #f87171) !important; color: white !important; text-shadow: 0 1px 2px rgba(0,0,0,0.25); }
-.mood-bad { background: linear-gradient(145deg, #facc15, #fde68a) !important; color: #111827 !important; }
-.mood-neutral { background: linear-gradient(145deg, #9ca3af, #d1d5db) !important; color: #111827 !important; }
-.mood-good { background: linear-gradient(145deg, #4ade80, #a7f3d0) !important; color: #111827 !important; }
-.mood-very_good { background: linear-gradient(145deg, #a78bfa, #ddd6fe) !important; color: #111827 !important; }
-.mood-none { background: rgba(229, 231, 235, 0.6) !important; color: var(--text-primary) !important; }
+/* Mood palette (very_bad..very_good): rose → sand → stone → sage → deep sage.
+   Single definition shared by the home, charts and calendar. */
+.mood-very_bad { background: #E2A9B3 !important; color: #343A35 !important; }
+.mood-bad { background: #EBCFC3 !important; color: #343A35 !important; }
+.mood-neutral { background: #E4DFD4 !important; color: #343A35 !important; }
+.mood-good { background: #CBDAC9 !important; color: #343A35 !important; }
+.mood-very_good { background: #A9C2A7 !important; color: #343A35 !important; }
+.mood-none { background: rgba(109, 116, 105, 0.12) !important; color: var(--text-primary) !important; }
 
-/* .link-button hardcodes --primary (mint), which loses contrast on top of
-   the saturated color-*/mood-* badges above (mint-on-red, mint-on-blue).
-   Inside a badge, inherit the badge's own text color instead. */
-.color-red .link-button, .color-blue .link-button, .mood-very_bad .link-button {
-    color: inherit;
-    opacity: 0.85;
-}
-.color-red .link-button:hover, .color-blue .link-button:hover, .mood-very_bad .link-button:hover {
-    opacity: 1;
-}
+.color-red .link-button, .color-blue .link-button, .color-yellow .link-button, .color-green .link-button, .color-purple .link-button, [class*="mood-"] .link-button { color: inherit; text-decoration: underline; }
 
 /* .time-row (new-timeblock inputs on the Today page) and the calendar/
    monthly-overview grids have no responsive fallback inline — this section

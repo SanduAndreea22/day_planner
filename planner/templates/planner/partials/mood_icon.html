@@ -1,0 +1,9 @@
+{# Line-art glyph per check-in emotion. Usage: {% include "planner/partials/mood_icon.html" with key=mood.key %} #}
+<svg class="mood-glyph" width="44" height="44" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+{% if key == "happy" %}<circle cx="24" cy="24" r="7"/><path d="M24 7v5M24 36v5M7 24h5M36 24h5M12 12l3.5 3.5M32.5 32.5L36 36M36 12l-3.5 3.5M15.5 32.5L12 36"/>
+{% elif key == "calm" %}<path d="M24 41V22"/><path d="M24 30c-7 0-12-4.5-12-12 7.5 0 12 4.5 12 12z"/><path d="M24 24c0-6.5 4-11 11-12 .4 7-4 12-11 12z"/>
+{% elif key == "sad" %}<path d="M24 8c6 8 10 13 10 19a10 10 0 0 1-20 0c0-6 4-11 10-19z"/><path d="M19.5 28.5a5 5 0 0 0 3 4.2"/>
+{% elif key == "anxious" %}<path d="M8 18h20a5 5 0 1 0-5-5"/><path d="M8 26h28a5 5 0 1 1-5 5"/><path d="M8 34h12"/>
+{% elif key == "tired" %}<path d="M38 28.5A15 15 0 0 1 19.5 10 15 15 0 1 0 38 28.5z"/><path d="M30 10h6l-6 6h6"/>
+{% endif %}
+</svg>

@@ -1,0 +1,132 @@
+/* Home (guest landing + signed-in sanctuary). Tokens come from style.css. */
+.sanctuary { max-width: 1040px; margin: 0 auto; padding: 0 1.5rem; position: relative; }
+
+/* Soft botanical wash behind the hero */
+.sanctuary-bg { position: absolute; inset: 0 0 auto 0; height: 560px; pointer-events: none; overflow: hidden; z-index: 0; }
+.sanctuary-bg::before, .sanctuary-bg::after { content: ''; position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.55; }
+.sanctuary-bg::before { width: 420px; height: 420px; background: var(--lavender); top: -160px; right: -80px; }
+.sanctuary-bg::after { width: 360px; height: 360px; background: var(--sage); top: 60px; left: -160px; opacity: 0.35; }
+body.dark .sanctuary-bg::before, body.dark .sanctuary-bg::after { opacity: 0.12; }
+.sanctuary > :not(.sanctuary-bg) { position: relative; z-index: 1; }
+
+.eyebrow { font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); font-weight: 500; margin: 0 0 0.9rem; }
+
+/* ---------- Hero ---------- */
+.hero { padding: clamp(2.5rem, 7vw, 5rem) 0 clamp(2rem, 5vw, 3.5rem); text-align: center; }
+.hero h1 { font-size: clamp(2.8rem, 8vw, 5.4rem); line-height: 1.02; margin: 0 auto 1.2rem; max-width: 12ch; font-weight: 400; }
+.hero h1 em { font-style: italic; color: var(--secondary); }
+.hero-sub { font-size: clamp(1.05rem, 2vw, 1.25rem); color: var(--text-muted); max-width: 34rem; margin: 0 auto 1.6rem; }
+.hero-date { font-family: var(--font-serif); font-style: italic; font-size: 1.3rem; color: var(--text-muted); margin: 0 0 1.4rem; }
+.daily-note { display: inline-flex; align-items: center; gap: 0.6rem; max-width: 34rem; padding: 0.6rem 1.2rem; border: 1px solid var(--border); border-radius: 999px; background: var(--bg-card); font-size: 0.95rem; color: var(--text-main); }
+.daily-note svg { flex: none; color: var(--secondary); }
+
+.cta-row { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin-top: 1.6rem; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.85rem 1.7rem; border-radius: 999px; font-weight: 500; font-size: 1rem; font-family: inherit; text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: transform 0.25s ease, background 0.25s, box-shadow 0.25s, color 0.25s; }
+.btn-primary { background: var(--primary); color: var(--on-primary); box-shadow: var(--shadow); }
+.btn-primary:hover { background: var(--primary-hover); color: var(--on-primary); transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.btn-ghost { background: transparent; color: var(--text-main); border-color: var(--border); }
+.btn-ghost:hover { background: var(--bg-soft); color: var(--text-main); transform: translateY(-2px); }
+.cta-note { color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem; }
+
+/* ---------- Sections & cards ---------- */
+.section { margin: clamp(2.5rem, 6vw, 4.5rem) 0; }
+.section-head { text-align: center; margin-bottom: 1.8rem; }
+.section-head h2 { margin: 0 0 0.4rem; }
+.section-head p { color: var(--text-muted); margin: 0; }
+.card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: clamp(1.4rem, 3vw, 2.2rem); box-shadow: var(--shadow); }
+
+/* ---------- Mood check-in ---------- */
+.mood-form { margin: 0; }
+.mood-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.9rem; list-style: none; padding: 0; margin: 0; }
+.mood-option { position: relative; }
+.mood-option button { all: unset; box-sizing: border-box; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1.3rem 0.5rem 1.1rem; border-radius: 22px; background: var(--tile, var(--bg-soft)); color: #343A35; cursor: pointer; text-align: center; border: 1.5px solid transparent; transition: transform 0.35s cubic-bezier(.2,.8,.2,1), box-shadow 0.35s ease, border-color 0.25s; }
+.mood-option button:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); }
+.mood-option button:hover .mood-glyph { transform: scale(1.1) rotate(-4deg); }
+.mood-option button:focus-visible { outline: 2px solid var(--secondary); outline-offset: 3px; }
+.mood-option.is-selected button { border-color: var(--charcoal); box-shadow: var(--shadow); }
+.mood-option.is-selected button::after { content: '✓'; position: absolute; top: 10px; right: 14px; font-size: 0.85rem; }
+body.dark .mood-option.is-selected button { border-color: var(--ivory); }
+.mood-glyph { transition: transform 0.4s ease; }
+.mood-name { font-family: var(--font-serif); font-size: 1.45rem; font-weight: 500; line-height: 1; }
+.mood-saved-as { font-size: 0.74rem; letter-spacing: 0.04em; opacity: 0.8; }
+.mood-happy { --tile: #E9D9B4; } .mood-calm { --tile: #B7C9B5; } .mood-sad { --tile: #C9D3DE; }
+.mood-anxious { --tile: #E8E3EF; } .mood-tired { --tile: #E9BFC5; }
+.mood-hint { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin: 1.2rem 0 0; }
+.mood-status { text-align: center; margin: 1.2rem 0 0; font-family: var(--font-serif); font-size: 1.3rem; }
+.mood-readonly { opacity: 0.9; }
+
+/* ---------- Reflection ---------- */
+.reflect { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(1.5rem, 4vw, 3rem); align-items: center; background: linear-gradient(135deg, var(--lavender), var(--bg-card) 70%); }
+body.dark .reflect { background: var(--bg-card); }
+.reflect h2 { margin: 0 0 0.6rem; }
+.reflect-prompt { font-family: var(--font-serif); font-style: italic; font-size: clamp(1.5rem, 3vw, 2rem); line-height: 1.25; color: var(--heading); margin: 0; }
+.reflect textarea { width: 100%; box-sizing: border-box; min-height: 130px; padding: 1rem 1.1rem; font-size: 1rem; line-height: 1.6; resize: vertical; border-radius: 18px; background: var(--bg-main); }
+.reflect-actions { display: flex; gap: 0.8rem; align-items: center; margin-top: 0.9rem; flex-wrap: wrap; }
+.reflect-actions a { font-size: 0.92rem; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- Progress ---------- */
+.progress-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
+.progress-grid .card { padding: 1.6rem; }
+.stat-num { font-family: var(--font-serif); font-size: 3.2rem; line-height: 1; margin: 0.2rem 0 0.4rem; color: var(--heading); }
+.stat-label { font-weight: 500; margin: 0; }
+.stat-sub { color: var(--text-muted); font-size: 0.9rem; margin: 0.2rem 0 0; }
+.recent-list { list-style: none; padding: 0; margin: 0.8rem 0 0; display: grid; gap: 0.5rem; }
+.recent-list a { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; color: var(--text-main); font-size: 0.93rem; }
+.recent-list a:hover { color: var(--primary); }
+.dot { width: 12px; height: 12px; border-radius: 50%; flex: none; display: inline-block; }
+.pattern-card { margin-top: 1.1rem; }
+.pattern-card h3 { margin: 0 0 0.2rem; }
+.strip { display: flex; gap: 6px; margin: 1.1rem 0 0.4rem; }
+.strip a { flex: 1; height: 44px; border-radius: 10px; display: block; background: rgba(109,116,105,0.14); transition: transform 0.25s; position: relative; }
+.strip a:hover { transform: translateY(-4px); }
+.strip a.is-today { outline: 2px solid var(--secondary); outline-offset: 2px; }
+.strip-legend { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); }
+.bars { display: grid; gap: 0.55rem; margin-top: 1.4rem; }
+.bar-row { display: grid; grid-template-columns: 5.5rem 1fr 2.5rem; gap: 0.8rem; align-items: center; font-size: 0.88rem; }
+.bar-track { height: 10px; border-radius: 99px; background: rgba(109,116,105,0.14); overflow: hidden; }
+.bar-fill { display: block; height: 100%; border-radius: 99px; }
+.bar-count { color: var(--text-muted); text-align: right; }
+.empty-note { color: var(--text-muted); margin: 0.6rem 0 0; }
+
+/* ---------- Gentle reminder ---------- */
+.gentle { text-align: center; padding: clamp(2rem, 5vw, 3.5rem) 1rem; }
+.gentle blockquote { font-family: var(--font-serif); font-style: italic; font-size: clamp(1.7rem, 4vw, 2.6rem); line-height: 1.2; margin: 0 auto; max-width: 22ch; color: var(--heading); }
+.gentle svg { color: var(--sage); margin-bottom: 1rem; }
+
+/* ---------- Guest landing extras ---------- */
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.1rem; }
+.step { padding: 1.7rem; }
+.step svg { color: var(--olive); margin-bottom: 0.8rem; }
+body.dark .step svg { color: var(--sage); }
+.step h3 { margin: 0 0 0.4rem; }
+.step p { margin: 0; color: var(--text-muted); font-size: 0.95rem; }
+.lift { transition: transform 0.35s ease, box-shadow 0.35s ease; }
+.lift:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
+.example { max-width: 540px; margin: 0 auto; }
+.example-row { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 0.7rem 0; }
+.example-row + .example-row { border-top: 1px solid var(--border); }
+.example-row span { color: var(--text-muted); }
+.pill { display: inline-block; padding: 0.15rem 0.8rem; border-radius: 99px; font-size: 0.88rem; }
+.closing-quote { text-align: center; font-family: var(--font-serif); font-style: italic; font-size: clamp(1.4rem, 3vw, 1.9rem); color: var(--text-muted); max-width: 30ch; margin: 0 auto; }
+
+/* ---------- Entrance ---------- */
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+.rise { opacity: 0; animation: rise 0.8s cubic-bezier(.2,.7,.2,1) forwards; }
+.d1 { animation-delay: 0.05s; } .d2 { animation-delay: 0.18s; } .d3 { animation-delay: 0.3s; } .d4 { animation-delay: 0.42s; }
+
+@media (max-width: 860px) {
+    .reflect { grid-template-columns: 1fr; }
+    .progress-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+    .mood-grid { grid-template-columns: repeat(2, 1fr); }
+    .mood-option:last-child { grid-column: 1 / -1; }
+    .mood-option button { flex-direction: row; justify-content: flex-start; gap: 1rem; padding: 1rem 1.2rem; }
+    .mood-option button .mood-glyph { width: 34px; height: 34px; }
+    .mood-text { display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem; }
+    .mood-text .mood-name { font-size: 1.3rem; }
+}
+@media (max-width: 420px) { .mood-grid { grid-template-columns: 1fr; } .bar-row { grid-template-columns: 4.6rem 1fr 2rem; } }
+.mood-text { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; }
+@media (max-width: 720px) { .mood-text { align-items: flex-start; } }

@@ -6,128 +6,108 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Emotional Planner - Track your emotions and plan your well-being.">
 
-    <title>{% block title %}Home{% endblock %} | 🌸 Emotional Planner</title>
+    <title>{% block title %}Home{% endblock %} | Emotional Planner</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'planner/style.css' %}">
     <style>
-        a { color: var(--primary); text-decoration: none; transition: color 0.3s; }
-        a:hover { color: var(--secondary); }
-
-        header, footer { text-align: center; margin-bottom: 2rem; }
-        footer { margin-top: 3rem; font-size: 0.9rem; color: var(--text-muted); }
-
+        footer { text-align: center; margin: 4rem auto 0; padding: 2.5rem 1.5rem 3rem; border-top: 1px solid var(--border); max-width: 1000px; }
         .main-container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
 
-        header.topbar { padding: 0.6rem 1rem; }
-        .nav-container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-        .nav-menu { display: flex; gap: 1rem; flex-wrap: wrap; }
-        .nav-item { box-sizing: border-box; padding: 0.5rem 1rem; border-radius: var(--radius-md); transition: 0.3s; text-align: center; }
-        .nav-item.highlight { background: linear-gradient(90deg, var(--primary), var(--secondary)); color: white; font-weight: 600; }
-        .nav-item.dark-toggle { background: none; color: var(--text-main); cursor: pointer; border: none; font-size: 1.2rem; }
-
-        .nav-mobile-cta { display: none; margin-left: auto; margin-right: 0.5rem; padding: 0.4rem 0.8rem; border-radius: var(--radius-md); background: linear-gradient(90deg, var(--primary), var(--secondary)); color: white; font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
-        .nav-hamburger { display: none; background: none; border: none; font-size: 1.4rem; color: var(--text-main); cursor: pointer; padding: 0.25rem 0.5rem; }
-
-        .home-container, .preview-card {
-            background: var(--bg-card);
-            border-radius: var(--radius-md);
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            transition: background-color 0.5s ease, color 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        /* ---------- Navigation ---------- */
+        header.topbar {
+            position: sticky; top: 0; z-index: 50;
+            background: color-mix(in srgb, var(--bg-main) 88%, transparent);
+            -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
         }
+        .nav-container { max-width: 1080px; margin: 0 auto; padding: 0.7rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .nav-logo { display: inline-flex; align-items: center; gap: 0.55rem; font-family: var(--font-serif); font-size: 1.5rem; font-weight: 500; color: var(--heading); text-decoration: none; letter-spacing: -0.01em; white-space: nowrap; }
+        .nav-logo:hover { color: var(--heading); }
+        .nav-logo svg { color: var(--olive); transition: transform 0.6s ease; }
+        .nav-logo:hover svg { transform: rotate(-12deg) scale(1.08); }
+        body.dark .nav-logo svg { color: var(--sage); }
+        .nav-menu { display: flex; gap: 0.25rem; align-items: center; flex-wrap: wrap; }
+        .nav-item { position: relative; box-sizing: border-box; padding: 0.5rem 0.9rem; border-radius: 999px; color: var(--text-main); font-size: 0.93rem; font-weight: 500; text-decoration: none; transition: background 0.25s, color 0.25s; text-align: center; }
+        .nav-item:hover { background: var(--bg-soft); color: var(--text-main); }
+        .nav-item[aria-current="page"] { background: var(--bg-soft); }
+        .nav-item[aria-current="page"]::after { content: ''; position: absolute; left: 50%; bottom: 3px; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--secondary); }
+        .nav-item.highlight { background: var(--primary); color: var(--on-primary); }
+        .nav-item.highlight:hover { background: var(--primary-hover); color: var(--on-primary); }
+        .nav-item.logout { color: var(--text-muted); }
+        .nav-item.dark-toggle { background: none; cursor: pointer; border: none; font-size: 1.05rem; line-height: 1; padding: 0.55rem 0.7rem; color: var(--text-muted); }
+        .nav-item.dark-toggle:hover { background: var(--bg-soft); color: var(--text-main); }
 
-        .preview-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-        }
+        .nav-mobile-cta { display: none; margin-left: auto; padding: 0.4rem 0.9rem; border-radius: 999px; background: var(--primary); color: var(--on-primary); font-weight: 600; font-size: 0.88rem; white-space: nowrap; text-decoration: none; }
+        .nav-mobile-cta:hover { color: var(--on-primary); background: var(--primary-hover); }
+        .nav-hamburger { display: none; background: none; border: 1px solid var(--border); border-radius: 999px; font-size: 0.95rem; color: var(--text-main); cursor: pointer; padding: 0.4rem 0.85rem; font-family: inherit; }
 
-        /* Headers */
-        h1.home-title {
-            font-size: 2.5rem;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
-        }
+        .app-messages { max-width: 900px; margin: 1rem auto 0; padding: 0 1.5rem; }
 
-        .home-date { color: var(--text-muted); margin-bottom: 1.5rem; }
+        /* ---------- Footer ---------- */
+        .footer-cards { display: flex; justify-content: center; gap: 0.4rem 2rem; margin-bottom: 1.5rem; flex-wrap: wrap; font-family: var(--font-serif); font-style: italic; font-size: 1.25rem; color: var(--text-muted); }
+        .footer-sprig { color: var(--sage); margin-bottom: 0.8rem; }
+        .footer-meta { color: var(--text-muted); font-size: 0.85rem; text-align: center; margin-top: 0.3rem; }
+        .footer-meta a { color: var(--text-muted); }
+        .footer-meta a:hover { color: var(--primary); }
 
-        .home-quote { font-style: italic; text-align: center; margin: 1.5rem 0; color: var(--text-muted); }
-
-        .home-description, .home-onboarding, .history-hint, .home-trust, .home-messages {
-            text-align: center;
-            margin-bottom: 2rem;
-            color: var(--text-muted);
-        }
-
-        .home-preview { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; }
-
-        .card-icon { font-size: 2rem; margin-bottom: 0.5rem; }
-        .card-title { font-size: 1.2rem; margin-bottom: 0.5rem; }
-        .card-desc { font-size: 0.95rem; color: var(--text-muted); }
-
-        .footer-cards { display: flex; justify-content: center; gap: 0.4rem 1.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-style: italic; color: var(--text-muted); }
-        
-        .footer-meta { color: var(--text-muted); font-size: 0.8rem; text-align: center; }
-
-        /* Responsive Mobile */
         @media (max-width: 768px) {
-            .nav-container { flex-wrap: wrap; justify-content: space-between; align-items: center; }
-            .nav-hamburger { display: block; font-size: 1rem; }
+            .nav-container { padding: 0.6rem 1rem; }
+            .nav-hamburger { display: block; }
             .nav-mobile-cta { display: inline-block; }
             .nav-cta-dup { display: none; }
-            .nav-logo { white-space: nowrap; font-size: 0.95rem; }
-            .nav-hamburger { white-space: nowrap; }
-            .nav-menu { flex-direction: column; flex: 1 1 100%; width: 100%; display: none; margin-top: 1rem; }
+            .nav-logo { font-size: 1.3rem; }
+            .nav-menu { flex-direction: column; align-items: stretch; flex: 1 1 100%; width: 100%; display: none; margin: 0.6rem 0 0.4rem; padding: 0.5rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); }
             .nav-menu.open { display: flex; }
-            .nav-item { width: 100%; }
-            .home-preview { flex-direction: column; gap: 1rem; }
+            .nav-item { width: 100%; padding: 0.8rem 1rem; text-align: left; }
+            .nav-item[aria-current="page"]::after { display: none; }
+            .nav-item.dark-toggle { text-align: left; }
         }
         @media (max-width: 400px) {
             .hb-label { display: none; }
-            .nav-mobile-cta { padding: 0.35rem 0.6rem; font-size: 0.85rem; margin-right: 0.3rem; }
-            .nav-logo { font-size: 0.85rem; }
-        }
-        @media (max-width: 360px) {
-            header.topbar { padding: 0.6rem 0.6rem; }
-            .nav-logo { font-size: 0.8rem; }
-            .nav-mobile-cta { padding: 0.3rem 0.5rem; font-size: 0.8rem; margin-right: 0.2rem; }
-            .nav-hamburger { padding: 0.25rem 0.3rem; }
+            .nav-logo { font-size: 1.15rem; }
+            .nav-logo svg { width: 20px; height: 20px; }
+            .nav-mobile-cta { padding: 0.35rem 0.7rem; font-size: 0.82rem; }
         }
     </style>
 
     {% block extra_head %}{% endblock %}
 </head>
 <body>
+    <a href="#main" class="skip-link">Skip to content</a>
     <script>try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.body.classList.add('dark');}catch(e){}</script>
+    {% url 'today' as today_url %}{% url 'calendar' as calendar_url %}{% url 'weekly_score' as week_url %}{% url 'search' as search_url %}{% url 'profile' as profile_url %}{% url 'guide' as guide_url %}{% url 'login' as login_url %}
     <header class="topbar">
         <div class="nav-container">
-            <a href="{% url 'home' %}" class="nav-logo">🌸 <span>Emotional Planner</span></a>
-            {% if not user.is_authenticated %}<a href="{% url 'register' %}" class="nav-mobile-cta">🌸 Create account</a>{% endif %}
+            <a href="{% url 'home' %}" class="nav-logo" aria-label="Emotional Planner, home">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c0-6 .5-9 0-14"/><path d="M12 13c-3.5 0-6-2.2-6-6 3.8 0 6 2.4 6 6z"/><path d="M12 10c0-3.2 2-5.6 5.6-6 .2 3.6-2 6-5.6 6z"/></svg>
+                <span>Emotional Planner</span>
+            </a>
+            {% if not user.is_authenticated %}<a href="{% url 'register' %}" class="nav-mobile-cta">Create account</a>{% endif %}
             <button type="button" id="nav-hamburger" class="nav-hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-menu"><span class="hb-icon" aria-hidden="true">☰</span><span class="hb-label"> Menu</span></button>
-            <nav class="nav-menu" id="nav-menu">
+            <nav class="nav-menu" id="nav-menu" aria-label="Main">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'today' %}" class="nav-item highlight">🌤 Today</a>
-                    <a href="{% url 'calendar' %}" class="nav-item">📅 Calendar</a>
-                    <a href="{% url 'weekly_score' %}" class="nav-item">📈 Your Week</a>
-                    <a href="{% url 'search' %}" class="nav-item">🔍 Search</a>
-                    <a href="{% url 'profile' %}" class="nav-item">👤 Profile</a>
-                    <a href="{% url 'logout' %}" class="nav-item logout">Logout</a>
+                    <a href="{% url 'home' %}" class="nav-item" {% if request.path == '/' %}aria-current="page"{% endif %}>Home</a>
+                    <a href="{{ today_url }}" class="nav-item" {% if request.path == today_url or '/day/' in request.path %}aria-current="page"{% endif %}>Today</a>
+                    <a href="{{ calendar_url }}" class="nav-item" {% if '/calendar/' in request.path %}aria-current="page"{% endif %}>Calendar</a>
+                    <a href="{{ week_url }}" class="nav-item" {% if request.path == week_url %}aria-current="page"{% endif %}>Your week</a>
+                    <a href="{{ search_url }}" class="nav-item" {% if request.path == search_url %}aria-current="page"{% endif %}>Search</a>
+                    <a href="{{ profile_url }}" class="nav-item" {% if request.path == profile_url %}aria-current="page"{% endif %}>Profile</a>
+                    <a href="{% url 'logout' %}" class="nav-item logout">Log out</a>
                 {% else %}
-                    <a href="{% url 'guide' %}" class="nav-item">❓ How it works</a>
-                    <a href="{% url 'login' %}" class="nav-item">💗 Log in</a>
-                    <a href="{% url 'register' %}" class="nav-item highlight nav-cta-dup">🌸 Create account</a>
+                    <a href="{{ guide_url }}" class="nav-item" {% if request.path == guide_url %}aria-current="page"{% endif %}>How it works</a>
+                    <a href="{{ login_url }}" class="nav-item" {% if request.path == login_url %}aria-current="page"{% endif %}>Log in</a>
+                    <a href="{% url 'register' %}" class="nav-item highlight nav-cta-dup">Create account</a>
                 {% endif %}
-                <button type="button" id="theme-toggle" class="nav-item dark-toggle" aria-label="Toggle dark mode" title="Toggle Dark / Light Mode">🌙</button>
+                <button type="button" id="theme-toggle" class="nav-item dark-toggle" aria-label="Toggle dark mode" title="Toggle dark / light mode">☾</button>
             </nav>
         </div>
     </header>
 
-    <main class="app-main">
+    <main class="app-main" id="main">
         {% if messages %}
-            <div class="app-messages" style="max-width:900px; margin:0 auto 1rem; padding:0 2rem;">
+            <div class="app-messages" role="status">
                 {% for message in messages %}
                     <div class="app-message {{ message.tags }}">{{ message }}</div>
                 {% endfor %}
@@ -137,11 +117,12 @@
     </main>
 
     <footer>
+        <div class="footer-sprig" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c0-6 .5-9 0-14"/><path d="M12 13c-3.5 0-6-2.2-6-6 3.8 0 6 2.4 6 6z"/><path d="M12 10c0-3.2 2-5.6 5.6-6 .2 3.6-2 6-5.6 6z"/></svg></div>
         {% block footer_cards %}
         <div class="footer-cards">
-            <div class="footer-card">🌸 You’ve done enough today.</div>
-            <div class="footer-card highlight">💗 Rest is productive.</div>
-            <div class="footer-card">✨ Tomorrow is a new day.</div>
+            <div class="footer-card">You’ve done enough today.</div>
+            <div class="footer-card">Rest is productive.</div>
+            <div class="footer-card">Tomorrow is a new day.</div>
         </div>
         {% endblock %}
         <div class="footer-meta muted">© Emotional Planner · private · no comparisons</div>
@@ -156,11 +137,11 @@
         function applyTheme(theme) {
             if(theme === 'dark') {
                 document.body.classList.add('dark');
-                toggle.textContent = '☀️';
+                toggle.textContent = '☀︎';
                 toggle.title = toggle.ariaLabel = 'Switch to light mode';
             } else {
                 document.body.classList.remove('dark');
-                toggle.textContent = '🌙';
+                toggle.textContent = '☾';
                 toggle.title = toggle.ariaLabel = 'Switch to dark mode';
             }
             localStorage.setItem('theme', theme);

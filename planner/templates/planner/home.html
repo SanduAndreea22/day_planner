@@ -1,188 +1,63 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}🌸 Home · Emotional Planner{% endblock %}
+{% block title %}A private space for your days{% endblock %}
+
+{% block extra_head %}<link rel="stylesheet" href="{% static 'planner/home.css' %}">{% endblock %}
 
 {% block content %}
-<div class="home-bg-blob one" aria-hidden="true"></div>
-<div class="home-bg-blob two" aria-hidden="true"></div>
+<div class="sanctuary">
+    <div class="sanctuary-bg" aria-hidden="true"></div>
 
-<div class="home-container">
-
-    <header class="home-header">
-        <h1 class="home-title">Notice how your days actually feel 🌿</h1>
-        <p class="home-tagline">A private daily journal with a gentle plan for the day: log a mood, write a thought, close the day with a small ritual. A few lines is enough.</p>
-        <div class="home-cta">
-            <a href="{% url 'register' %}" class="auth-button home-cta-button">🌸 Create free account</a>
-            <p class="home-cta-sub">Free, takes under a minute, just an email and a password. <a href="{% url 'login' %}">Already have an account? Log in</a></p>
-            <p class="home-cta-sub"><a href="#example-day">See an example day ↓</a> · <a href="{% url 'guide' %}">How it works →</a></p>
+    <header class="hero rise d1">
+        <p class="eyebrow">A private digital journal</p>
+        <h1>Notice how your days <em>actually</em> feel.</h1>
+        <p class="hero-sub">Log a mood, write a thought, close the day with a small ritual. A few lines is enough.</p>
+        <div class="cta-row">
+            <a href="{% url 'register' %}" class="btn btn-primary">Create free account</a>
+            <a href="#example-day" class="btn btn-ghost">See an example day</a>
         </div>
+        <p class="cta-note">Free, under a minute, just an email and a password. <a href="{% url 'login' %}">Already here? Log in</a></p>
     </header>
 
-    <section class="home-example" id="example-day" aria-label="Example of a day entry">
-        <div class="home-example-label">Example of one day</div>
-        <div class="home-example-card">
-            <div class="home-example-row"><span>😌 Mood</span><strong>🙂 Good</strong></div>
-            <div class="home-example-row"><span>🎨 Color of the day</span><strong>🔵 Calm</strong></div>
-            <div class="home-example-row"><span>✨ A thought</span><em>“Slow morning, good walk.”</em></div>
-            <div class="home-example-row"><span>⏰ Schedule</span><strong>12:30 – 13:30 · Lunch with a friend</strong></div>
+    <section class="section rise d2" aria-labelledby="how-title">
+        <div class="section-head">
+            <p class="eyebrow">What's inside</p>
+            <h2 id="how-title">Everything you need to slow down</h2>
+        </div>
+        <div class="steps">
+            {% for card in preview_cards %}
+            <article class="card step lift">
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    {% if forloop.counter == 1 %}<circle cx="12" cy="12" r="3.5"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/>
+                    {% elif forloop.counter == 2 %}<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>
+                    {% elif forloop.counter == 3 %}<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>
+                    {% else %}<path d="M4 17c3-1 4-7 8-7s5 6 8 5"/><path d="M4 21h16"/>{% endif %}
+                </svg>
+                <h3>{{ card.title }}</h3>
+                <p>{{ card.description }}</p>
+            </article>
+            {% endfor %}
         </div>
     </section>
 
-    <section class="home-preview">
-        {% for card in preview_cards %}
-        <div class="preview-card">
-            <div class="card-icon">{{ card.icon }}</div>
-            <h3 class="card-title">{{ card.title }}</h3>
-            <p class="card-desc">{{ card.description }}</p>
+    <section class="section rise d3" id="example-day" aria-labelledby="example-title">
+        <div class="section-head">
+            <p class="eyebrow">A glimpse</p>
+            <h2 id="example-title">One day, held gently</h2>
         </div>
-        {% endfor %}
+        <div class="card example lift">
+            <div class="example-row"><span>Mood</span><strong>Good</strong></div>
+            <div class="example-row"><span>Color of the day</span><strong class="pill color-blue">Calm</strong></div>
+            <div class="example-row"><span>A thought</span><em>“Slow morning, good walk.”</em></div>
+            <div class="example-row"><span>Schedule</span><strong>12:30 – 13:30 · Lunch with a friend</strong></div>
+        </div>
+        <p class="cta-note" style="text-align:center;">Everything you write stays private and saved. Search past days or export it all, any time. <a href="{% url 'guide' %}">How it works</a></p>
     </section>
 
-    <section class="home-trust">
-        🔒 Everything you write stays private, and every entry is saved. Search past days or export it all, any time.
+    <section class="gentle" aria-label="A gentle note">
+        {% if quote %}<p class="closing-quote">“{{ quote.text }}”</p>{% else %}<p class="closing-quote">Today, it's enough just to be here.</p>{% endif %}
+        <div class="cta-row"><a href="{% url 'register' %}" class="btn btn-primary">Begin with how you feel</a></div>
     </section>
-
-    <section class="home-quote">
-        {% if quote %}
-            “{{ quote.text }}”
-        {% else %}
-            Today, it’s enough just to be here.
-        {% endif %}
-    </section>
-
 </div>
-
-<style>
-.home-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 2rem;
-}
-
-.home-header { text-align: center; margin-bottom: 2rem; }
-
-.home-bg-blob {
-    display: none;
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(90px);
-    opacity: 0.3;
-    z-index: -1;
-    pointer-events: none;
-}
-.home-bg-blob.one { width: 420px; height: 420px; background: var(--primary); top: -140px; left: -140px; }
-.home-bg-blob.two { width: 380px; height: 380px; background: var(--secondary); bottom: -120px; right: -120px; }
-
-@media (min-width: 900px) {
-    .home-bg-blob { display: block; }
-}
-.home-title {
-    font-size: 2.5rem;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin: 0;
-}
-.home-date { font-size: 1rem; color: var(--text-muted); }
-.home-title { font-size: 2.2rem; line-height: 1.2; }
-.home-tagline { font-size: 1.15rem; color: var(--text-main); margin: 0.8rem auto 1.2rem; max-width: 640px; }
-.home-cta { text-align: center; }
-.home-cta-button { display: inline-block; width: auto; padding: 0.8rem 2rem; }
-.home-cta-sub { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.6rem; }
-.home-cta-sub a { text-decoration: underline; }
-
-.home-example { max-width: 520px; margin: 0 auto 2rem; }
-.home-example-label { text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 0.5rem; }
-.home-example-card { background: var(--bg-card); border-radius: var(--radius-md); box-shadow: var(--shadow); padding: 1rem 1.2rem; }
-.home-example-row { display: flex; justify-content: space-between; gap: 1rem; padding: 0.45rem 0; flex-wrap: wrap; }
-.home-example-row span { color: var(--text-muted); }
-.home-example-row + .home-example-row { border-top: 1px solid rgba(125,211,167,0.2); }
-
-.home-quote {
-    font-style: italic;
-    text-align: center;
-    margin: 1.5rem 0;
-    font-size: 1.2rem;
-    color: var(--text-muted);
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.home-preview {
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-bottom: 2rem;
-}
-.preview-card {
-    background: var(--bg-card);
-    border-radius: var(--radius-md);
-    padding: 1.5rem;
-    text-align: center;
-    width: 220px;
-    box-shadow: var(--shadow);
-    transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.5s ease;
-    position: relative;
-    overflow: hidden;
-}
-.preview-card::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, var(--primary), var(--secondary), var(--primary));
-    opacity: 0.15;
-    transform: rotate(0deg);
-    transition: transform 0.6s ease;
-    z-index: 0;
-}
-.preview-card * { position: relative; z-index: 1; }
-
-.card-icon {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-    display: inline-block;
-    transition: transform 0.3s ease, color 0.3s ease;
-}
-
-.card-title { font-size: 1.2rem; margin-bottom: 0.5rem; }
-.card-desc { font-size: 0.95rem; color: var(--text-muted); }
-
-.home-trust {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    color: var(--text-muted);
-}
-
-.home-container > section,
-.home-header {
-    opacity: 0;
-    transform: translateY(20px) scale(0.98);
-    animation: fadeInUpScale 0.5s forwards;
-}
-.home-header { animation-delay: 0.05s; }
-.home-example { animation-delay: 0.15s; }
-.home-preview { animation-delay: 0.25s; }
-.home-trust { animation-delay: 0.3s; }
-.home-quote { animation-delay: 0.35s; }
-
-@keyframes fadeInUpScale {
-    0% { opacity: 0; transform: translateY(20px) scale(0.98); }
-    100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@media (max-width: 600px) { .preview-card { width: 100%; } .home-title { font-size: 1.8rem; } }
-</style>
-
 {% endblock %}
-
-
-
-
