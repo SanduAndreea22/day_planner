@@ -19,7 +19,8 @@
     <div class="month-grid">
         {% for day in days %}
             {% if day %}
-            <div class="day-card
+            <a href="{% url 'day_detail' day.date.year day.date.month day.date.day %}"
+                 class="day-card
                         {% if day.color %}color-{{ day.color }}{% endif %}
                         {% if not day.mood %}empty{% endif %}"
                  title="{% if day.notes %}{{ day.notes|truncatechars:50 }}{% else %}No notes for this day{% endif %}">
@@ -34,7 +35,7 @@
                     {% else %}🌙
                     {% endif %}
                 </div>
-            </div>
+            </a>
             {% else %}
             <div class="day-card empty-slot"></div>
             {% endif %}
@@ -42,7 +43,7 @@
     </div>
 
     <div class="overview-summary">
-        <p>You have recorded <strong>{{ total_days }}</strong> days this month.</p>
+        <p>You have recorded <strong>{{ total_days }}</strong> day{{ total_days|pluralize }} this month.</p>
         <p class="muted">{{ interpretation }}</p>
     </div>
 
@@ -54,6 +55,7 @@
 </div>
 
 <style>
+a.day-card { text-decoration: none; color: inherit; display: block; }
 .month-overview-card {
     max-width: 960px;
     margin: 2rem auto;
