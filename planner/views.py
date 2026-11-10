@@ -231,6 +231,7 @@ def day_detail_view(request, year, month, day):
         "reflection": reflection,
         "streak": streak,
         "is_today": selected_date == date.today(),
+        "nickname": getattr(getattr(request.user, "profile", None), "nickname", ""),
         "prev_date": selected_date - timedelta(days=1),
         "next_date": selected_date + timedelta(days=1),
     })

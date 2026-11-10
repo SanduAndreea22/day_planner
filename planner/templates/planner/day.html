@@ -14,6 +14,8 @@
     transition: background 0.5s, color 0.5s;
 ">
 
+    {% if is_today and nickname %}<div style="text-align:center; margin-bottom:0.5rem; color:var(--text-muted);">Hi, {{ nickname }} 🌱</div>{% endif %}
+
     <div class="day-nav" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem; font-size:0.95rem;">
         <a href="{% url 'day_detail' prev_date.year prev_date.month prev_date.day %}">← Previous day</a>
         {% if is_today %}<strong>🌤 Today</strong>{% else %}<a href="{% url 'today' %}">Go to today</a>{% endif %}
@@ -146,7 +148,7 @@
     {% endif %}
 
     <div class="day-section" style="margin-bottom:1.8rem;">
-        <h3>⏰ Daily Schedule</h3>
+        <h3>⏰ Daily schedule</h3>
         {% if time_blocks %}
             {% for block in time_blocks %}
                 <div class="time-block {% if block.completed %}done{% endif %}" id="timeblock-{{ block.id }}" style="display:flex; justify-content:space-between; align-items:center; padding:0.7rem; border-radius:var(--radius-md); margin-bottom:0.5rem; background:var(--bg-card); box-shadow:var(--shadow); transition:transform 0.3s;">
@@ -167,23 +169,30 @@
                 </div>
             {% endfor %}
         {% else %}
-            <p class="muted" style="color: var(--text-muted);">You haven’t added anything today yet. You can start with a single block.</p>
+            <p class="muted" style="color: var(--text-muted);">You haven’t added anything {% if is_today %}today{% else %}to this day{% endif %} yet. You can start with a single time block.</p>
         {% endif %}
     </div>
 
     {% if not day.is_closed %}
         <div class="day-section" style="margin-bottom:1.8rem;">
-            <h3>➕ New Block</h3>
+            <h3>➕ New time block</h3>
+            <p class="muted" style="color:var(--text-muted); font-size:0.9rem; margin:0 0 0.6rem;">A time block is a slot in your day, like 09:00 – 10:00 · Study.</p>
             <form method="post" action="{% url 'add_timeblock' %}" id="add-block-form">
                 {% csrf_token %}
                 <input type="hidden" name="day_id" value="{{ day.id }}">
-                <div class="time-row" style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
-                    <input type="time" name="start_time" required style="flex:1; padding:0.5rem; border-radius:var(--radius-md);">
-                    <span>–</span>
-                    <input type="time" name="end_time" required style="flex:1; padding:0.5rem; border-radius:var(--radius-md);">
+                <div class="time-row" style="display:flex; gap:0.5rem; margin-bottom:0.5rem; align-items:flex-end;">
+                    <label style="flex:1; font-size:0.85rem;">Start
+                        <input type="time" name="start_time" required style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
+                    </label>
+                    <span style="padding-bottom:0.6rem;">–</span>
+                    <label style="flex:1; font-size:0.85rem;">End
+                        <input type="time" name="end_time" required style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
+                    </label>
                 </div>
-                <input type="text" name="title" placeholder="e.g. Lunch with a friend" required style="width:100%; padding:0.5rem; border-radius:var(--radius-md); margin-bottom:0.5rem;">
-                <button type="submit" class="button" style="width:100%; padding:0.7rem; border-radius:var(--radius-md); background:var(--secondary); color:white;">Add</button>
+                <label style="display:block; font-size:0.85rem; margin-bottom:0.5rem;">What will you do?
+                    <input type="text" name="title" placeholder="e.g. Lunch with a friend" required style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
+                </label>
+                <button type="submit" class="button" style="width:100%; padding:0.7rem; border-radius:var(--radius-md); background:var(--secondary); color:white;">Add time block</button>
             </form>
         </div>
 

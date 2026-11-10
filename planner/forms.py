@@ -111,7 +111,7 @@ class ProfileForm(forms.ModelForm):
         help_texts = {
             "nickname": "Can be your real name, a nickname, or a handle.",
             "bio": "Doesn't need to be complete. Can be just one sentence.",
-            "evening_reminder_time": "Optional. We'll email you around this time if you haven't closed the day yet.",
+            "evening_reminder_time": "Optional. We'll email you around this time if you haven't closed the day yet. Clear the field and save to turn it off.",
         }
 
         widgets = {

@@ -7,10 +7,10 @@
     <h2 class="auth-title">🌸 Create account</h2>
 
     <p class="auth-subtitle muted">
-        Create a private space that’s yours alone — gentle and secure, no pressure attached.
+        Create a private space that’s yours alone. No email confirmation needed: after signing up you’ll land on today’s page.
     </p>
 
-    <form method="post" class="auth-form" novalidate>
+    <form method="post" class="auth-form">
         {% csrf_token %}
 
         <div class="form-group">
@@ -40,6 +40,8 @@
             {% endif %}
         </div>
 
+        <label class="show-password muted"><input type="checkbox" id="show-password"> Show passwords</label>
+
         {% if form.non_field_errors %}
             <div class="form-error-global">{{ form.non_field_errors.0 }}</div>
         {% endif %}
@@ -52,10 +54,11 @@
 
         <button type="submit" class="auth-button">Create account 🌸</button>
     </form>
+    <script>document.getElementById("show-password").addEventListener("change",function(e){document.querySelectorAll('.auth-form input[name^="password"]').forEach(function(i){i.type=e.target.checked?"text":"password";});});</script>
 
     <div class="auth-trust muted">
         <p>🔒 Your data is private</p>
-        <p>🌱 We don’t send spam</p>
+        <p>🌱 Only emails you ask for (the evening reminder is optional)</p>
         <p>🕯️ You can delete your account anytime</p>
     </div>
 

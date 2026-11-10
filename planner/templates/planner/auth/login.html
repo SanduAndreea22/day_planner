@@ -12,7 +12,7 @@
         Welcome back. Continue where you left off 🤍
     </p>
 
-    <form method="post" class="auth-form" novalidate>
+    <form method="post" class="auth-form">
         {% csrf_token %}
 
         <div class="form-group">
@@ -33,17 +33,19 @@
             <a href="{% url 'password_reset' %}" class="forgot-link">Forgot your password?</a>
         </div>
 
+        <label class="show-password muted"><input type="checkbox" id="show-password"> Show password</label>
+
         {% if form.non_field_errors %}
             <div class="form-error-global">{{ form.non_field_errors.0 }}</div>
         {% endif %}
 
         <button type="submit" class="auth-button">Log in 💗</button>
     </form>
+    <script>document.getElementById("show-password").addEventListener("change",function(e){document.querySelectorAll('.auth-form input[name^="password"]').forEach(function(i){i.type=e.target.checked?"text":"password";});});</script>
 
     <div class="auth-trust muted">
         <p>🔒 Your data is protected</p>
         <p>🌙 Your activity is private</p>
-        <p>🕯️ You can log out anytime</p>
     </div>
 
     <p class="muted auth-footer">
