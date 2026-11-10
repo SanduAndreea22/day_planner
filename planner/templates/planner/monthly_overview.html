@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}📊 Monthly Overview · Emotional Planner{% endblock %}
+{% block title %}🧭 Month summary · Emotional Planner{% endblock %}
 
 {% block content %}
 <div class="month-overview-card">
 
     <div class="month-nav">
-        <a class="month-btn" href="?year={{ year }}&month={{ month|add:'-1' }}">←</a>
+        <a class="month-btn" href="?year={{ year }}&month={{ month|add:'-1' }}" aria-label="Previous month">← Prev</a>
         <div class="month-label title-gradient">{{ month_name }} {{ year }}</div>
-        <a class="month-btn" href="?year={{ year }}&month={{ month|add:'1' }}">→</a>
+        <a class="month-btn" href="?year={{ year }}&month={{ month|add:'1' }}" aria-label="Next month">Next →</a>
     </div>
 
     <div class="weekdays">

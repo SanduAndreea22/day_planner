@@ -230,6 +230,9 @@ def day_detail_view(request, year, month, day):
         "quote": day_obj.closing_quote,
         "reflection": reflection,
         "streak": streak,
+        "is_today": selected_date == date.today(),
+        "prev_date": selected_date - timedelta(days=1),
+        "next_date": selected_date + timedelta(days=1),
     })
 
 @login_required
@@ -411,6 +414,9 @@ def calendar_view(request, year=None, month=None):
         "next_month": next_month,
         "next_year": next_year,
         "today": today,
+        "month_name": MONTH_NAMES[month],
+        "prev_month_name": MONTH_NAMES[prev_month],
+        "next_month_name": MONTH_NAMES[next_month],
     })
 
 @login_required

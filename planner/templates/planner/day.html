@@ -14,6 +14,12 @@
     transition: background 0.5s, color 0.5s;
 ">
 
+    <div class="day-nav" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem; font-size:0.95rem;">
+        <a href="{% url 'day_detail' prev_date.year prev_date.month prev_date.day %}">← Previous day</a>
+        {% if is_today %}<strong>🌤 Today</strong>{% else %}<a href="{% url 'today' %}">Go to today</a>{% endif %}
+        <a href="{% url 'day_detail' next_date.year next_date.month next_date.day %}">Next day →</a>
+    </div>
+
     <div class="day-date-block" style="text-align:center; font-weight:600; margin-bottom:1rem;">
         <span class="date-part">{{ day.date|date:"l" }}</span>
         <span class="date-part">{{ day.date|date:"d" }}</span>

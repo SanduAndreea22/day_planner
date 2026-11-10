@@ -28,7 +28,7 @@
 
         .nav-hamburger { display: none; background: none; border: none; font-size: 1.4rem; color: var(--text-main); cursor: pointer; padding: 0.25rem 0.5rem; }
 
-        .home-container, .preview-card, .footer-card {
+        .home-container, .preview-card {
             background: var(--bg-card);
             border-radius: var(--radius-md);
             padding: 1.5rem;
@@ -66,9 +66,8 @@
         .card-title { font-size: 1.2rem; margin-bottom: 0.5rem; }
         .card-desc { font-size: 0.95rem; color: var(--text-muted); }
 
-        .footer-cards { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
-        .footer-card.highlight { background: linear-gradient(90deg, var(--primary), var(--secondary)); color: white; }
-
+        .footer-cards { display: flex; justify-content: center; gap: 0.4rem 1.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-style: italic; color: var(--text-muted); }
+        
         .footer-meta { color: var(--text-muted); font-size: 0.8rem; text-align: center; }
 
         /* Responsive Mobile */
@@ -91,18 +90,16 @@
             <button type="button" id="nav-hamburger" class="nav-hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-menu">☰</button>
             <nav class="nav-menu" id="nav-menu">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'guide' %}" class="nav-item">❓ How it works</a>
                     <a href="{% url 'today' %}" class="nav-item highlight">🌤 Today</a>
-                    <a href="{% url 'calendar' %}" class="nav-item" title="Browse every day on a monthly grid">📅 Calendar</a>
-                    <a href="{% url 'search' %}" class="nav-item" title="Search past days by keyword or mood">🔍 Search</a>
-                    <a href="{% url 'weekly_score' %}" class="nav-item" title="This week's balance score and charts">📈 Week</a>
-                    <a href="{% url 'monthly_overview' %}" class="nav-item" title="This month's dominant mood and summary">🧭 Month</a>
+                    <a href="{% url 'calendar' %}" class="nav-item">📅 Calendar</a>
+                    <a href="{% url 'weekly_score' %}" class="nav-item">📈 Your Week</a>
+                    <a href="{% url 'search' %}" class="nav-item">🔍 Search</a>
                     <a href="{% url 'profile' %}" class="nav-item">👤 Profile</a>
-                    <a href="{% url 'feedback' %}" class="nav-item">💬 Feedback</a>
                     <a href="{% url 'logout' %}" class="nav-item logout">Logout</a>
                 {% else %}
-                    <a href="{% url 'login' %}" class="nav-item">💗 Login</a>
-                    <a href="{% url 'register' %}" class="nav-item highlight">🌸 Sign Up</a>
+                    <a href="{% url 'guide' %}" class="nav-item">❓ How it works</a>
+                    <a href="{% url 'login' %}" class="nav-item">💗 Log in</a>
+                    <a href="{% url 'register' %}" class="nav-item highlight">🌸 Sign up</a>
                 {% endif %}
                 <button type="button" id="theme-toggle" class="nav-item dark-toggle" aria-label="Toggle dark mode" title="Toggle Dark / Light Mode">🌙</button>
             </nav>
@@ -130,7 +127,7 @@
         {% endblock %}
         <div class="footer-meta muted">© Emotional Planner · private · no comparisons</div>
         <div class="footer-meta muted">
-            <a href="{% url 'privacy_policy' %}">Privacy Policy</a> · <a href="{% url 'terms' %}">Terms of Service</a>
+            <a href="{% url 'guide' %}">How it works</a> · {% if user.is_authenticated %}<a href="{% url 'feedback' %}">Feedback</a> · {% endif %}<a href="{% url 'privacy_policy' %}">Privacy Policy</a> · <a href="{% url 'terms' %}">Terms of Service</a>
         </div>
     </footer>
 
@@ -141,9 +138,11 @@
             if(theme === 'dark') {
                 document.body.classList.add('dark');
                 toggle.textContent = '☀️';
+                toggle.title = toggle.ariaLabel = 'Switch to light mode';
             } else {
                 document.body.classList.remove('dark');
                 toggle.textContent = '🌙';
+                toggle.title = toggle.ariaLabel = 'Switch to dark mode';
             }
             localStorage.setItem('theme', theme);
         }

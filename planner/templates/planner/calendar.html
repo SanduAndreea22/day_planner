@@ -6,9 +6,9 @@
 <div class="calendar-card">
 
   <div class="calendar-header">
-    <a href="{% url 'calendar_month' prev_year prev_month %}" class="nav-arrow">←</a>
-    <div class="calendar-title title-gradient">{{ month }} / {{ year }}</div>
-    <a href="{% url 'calendar_month' next_year next_month %}" class="nav-arrow">→</a>
+    <a href="{% url 'calendar_month' prev_year prev_month %}" class="nav-arrow" aria-label="Previous month">← {{ prev_month_name|slice:":3" }}</a>
+    <div class="calendar-title title-gradient">{{ month_name }} {{ year }}</div>
+    <a href="{% url 'calendar_month' next_year next_month %}" class="nav-arrow" aria-label="Next month">{{ next_month_name|slice:":3" }} →</a>
   </div>
 
   <div class="calendar-weekdays">
@@ -41,12 +41,20 @@
   </div>
 
   <div class="calendar-legend muted">
-    😊 day with an entry · blank day — tap any day to add one
+    Select any day to open it. The emoji is the day’s mood; the color is its character. Open a day to read its note.
+  </div>
+
+  <div class="calendar-links">
+    <a href="{% url 'calendar' %}">📅 Jump to this month</a> ·
+    <a href="{% url 'monthly_overview' %}?year={{ year }}&month={{ month }}">🧭 Month summary</a>
   </div>
 
 </div>
 
 <style>
+.calendar-links { text-align: center; margin-top: 1rem; font-size: 0.95rem; }
+.nav-arrow { font-size: 1rem; white-space: nowrap; color: var(--primary); }
+.calendar-title { font-size: 1.3rem; text-align: center; }
 .calendar-card {
     max-width: 950px;
     margin: 2rem auto;
