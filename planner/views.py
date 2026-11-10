@@ -212,6 +212,27 @@ def delete_account_view(request):
         return redirect("delete_account")
     return render(request, "planner/auth/delete_account.html")
 
+def _daily_quote_text(day_obj, today):
+    """A saved encouragement for today, stable across refreshes.
+
+    Matches today's mood when one is set, otherwise uses the general quotes
+    (no mood). Falls back to the built-in daily messages if none are saved.
+    """
+    quotes = Quote.objects.filter(active=True)
+    if day_obj.mood:
+        matched = quotes.filter(mood=day_obj.mood)
+        if matched.exists():
+            quotes = matched
+    else:
+        general = quotes.filter(mood__isnull=True) | quotes.filter(mood="")
+        if general.exists():
+            quotes = general
+    ids = sorted(quotes.values_list("id", flat=True))
+    if ids:
+        return Quote.objects.get(id=ids[today.toordinal() % len(ids)]).text
+    return DAILY_MESSAGES[today.toordinal() % len(DAILY_MESSAGES)]
+
+
 def build_home_context(user, today):
     """Everything the signed-in home page shows, from existing Day data only.
 
@@ -258,7 +279,7 @@ def build_home_context(user, today):
     return {
         "day": day_obj,
         "today": today,
-        "daily_message": DAILY_MESSAGES[today.toordinal() % len(DAILY_MESSAGES)],
+        "daily_message": _daily_quote_text(day_obj, today),
         "mood_checkins": MOOD_CHECKINS,
         "current_mood_label": mood_labels.get(day_obj.mood, ""),
         "checkins_week": checkins_week,

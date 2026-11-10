@@ -69,3 +69,26 @@ def test_closed_day_has_no_mood_form(client, django_user_model):
     client.force_login(user)
     html = client.get(reverse("home")).content.decode()
     assert 'name="mood"' not in html
+
+
+@pytest.mark.django_db
+def test_home_shows_saved_quote_matching_mood(client, django_user_model):
+    from planner.models import Quote
+    Quote.objects.all().delete()
+    Quote.objects.create(text="General kindness.", mood=None)
+    Quote.objects.create(text="Hard days pass.", mood="very_bad")
+    user = django_user_model.objects.create_user(username="q1", password="pass12345")
+    client.force_login(user)
+    assert "General kindness." in client.get(reverse("home")).content.decode()
+    Day.objects.filter(user=user, date=date.today()).update(mood="very_bad")
+    html = client.get(reverse("home")).content.decode()
+    assert "Hard days pass." in html and "General kindness." not in html
+
+
+@pytest.mark.django_db
+def test_home_falls_back_without_quotes(client, django_user_model):
+    from planner.models import Quote
+    Quote.objects.all().delete()
+    user = django_user_model.objects.create_user(username="q2", password="pass12345")
+    client.force_login(user)
+    assert client.get(reverse("home")).status_code == 200
