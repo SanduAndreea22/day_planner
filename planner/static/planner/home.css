@@ -151,7 +151,7 @@ body.dark .peek-tile.is-picked { outline-color: var(--ivory); }
 .rhythm li { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; text-align: center; padding: 1.2rem 0.8rem; border-radius: 20px; background: var(--bg-card); border: 1px solid var(--border); }
 .rhythm li span:last-child { color: var(--text-muted); font-size: 0.92rem; }
 .rhythm-num { width: 2rem; height: 2rem; border-radius: 50%; display: grid; place-items: center; background: var(--rose); color: #343A35; font-family: var(--font-serif); font-size: 1.15rem; margin-bottom: 0.4rem; }
-.guide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.1rem; }
+.guide-grid { align-items: start; display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.1rem; }
 .guide-card { padding: 1.6rem; }
 .guide-card h2 { font-size: 1.6rem; margin: 0 0 0.4rem; }
 .guide-card p { margin: 0 0 0.6rem; color: var(--text-muted); }

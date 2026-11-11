@@ -12,14 +12,14 @@
     <header class="hero rise d1" style="padding-bottom: 1.5rem;">
         <p class="eyebrow">A short tour</p>
         <h1 style="max-width: 16ch;">How Emotional Planner works</h1>
-        <p class="hero-sub">No pressure to use everything at once. A single line is enough.</p>
+        <p class="hero-sub">Use as much or as little as you like. One short entry is enough.</p>
     </header>
 
     <section class="rise d2" aria-label="The daily rhythm">
         <ol class="rhythm">
             <li><span class="rhythm-num">1</span><strong>Check in</strong><span>Tap how you feel.</span></li>
-            <li><span class="rhythm-num">2</span><strong>Write a line</strong><span>One thought is enough.</span></li>
-            <li><span class="rhythm-num">3</span><strong>Close the day</strong><span>When you're ready, gently.</span></li>
+            <li><span class="rhythm-num">2</span><strong>Write an entry</strong><span>A few lines are enough.</span></li>
+            <li><span class="rhythm-num">3</span><strong>Close the day</strong><span>Lock it in when you're done.</span></li>
         </ol>
     </section>
 
@@ -27,36 +27,36 @@
         <div class="guide-grid">
             <article class="card guide-card">
                 <h2>Today</h2>
-                <p>Your daily page: a mood, a thought and the day's plan in time blocks.</p>
-                <details><summary>More</summary><p>Add a few time blocks for the day, check them off as you go, and jot down notes whenever you feel like it. There’s no "right" way to fill it in — a single line is enough.</p></details>
+                <p>Your daily page: a mood, a journal entry, and the day's plan in time blocks.</p>
+                <details><summary>More about today</summary><p>Add a few time blocks (slots like 09:00 – 10:00 · Study), check them off as you go, and write a journal entry whenever you like. There’s no right way to fill it in. A single line is enough.</p></details>
             </article>
             <article class="card guide-card">
                 <h2>Evening reflection</h2>
-                <p>Close the day with two optional questions. Once closed, it stays as it was.</p>
-                <details><summary>More</summary><p>Write what drained you and one small thing you appreciate (both optional). Pick your mood and color on the Today page first, because they can’t be changed once the day is closed.</p></details>
+                <p>Close the day with two optional questions. Closing locks the day, so it can’t be edited afterward.</p>
+                <details><summary>More about evening reflection</summary><p>Write what drained you and one small thing you appreciate (both optional). Pick your mood and color on the Today page first, because they can’t be changed once the day is closed.</p></details>
             </article>
             <article class="card guide-card">
                 <h2>Calendar</h2>
-                <p>Every day at a glance, colored by mood.</p>
-                <details><summary>More</summary><p>Click any day to open it and add or review details.</p></details>
+                <p>Every day at a glance: the mood as an emoji, tinted with the day’s color.</p>
+                <details><summary>More about calendar</summary><p>Tap any day to open it and add or review details.</p></details>
             </article>
             <article class="card guide-card">
                 <h2>Week &amp; month</h2>
-                <p>A calm summary of what you recorded. No ranking.</p>
-                <details><summary>More</summary><p>The week page gives a gentle summary of the days you logged and links to your mood and completed-tasks charts. The month summary (reachable from the Calendar page) shows your dominant mood and a short reflection on the month as a whole.</p></details>
+                <p>See which days you checked in and how the month’s moods add up. No ranking.</p>
+                <details><summary>More about the week and month</summary><p>The week page summarizes the days you logged and links to your mood chart and a chart of finished time blocks. The month summary (reachable from the Calendar page) shows your most common mood and a short note on the month as a whole.</p></details>
             </article>
             <article class="card guide-card">
                 <h2>Search</h2>
-                <p>Find a day you're thinking of.</p>
-                <details><summary>More</summary><p>Look back through past notes by keyword, or filter by mood.</p></details>
+                <p>Find any day by what you wrote or how you felt.</p>
+                <details><summary>More about search</summary><p>Search your journal entries by keyword, or filter by mood.</p></details>
             </article>
             <article class="card guide-card">
                 <h2>Export your data</h2>
-                <p>Download everything you've written, any time.</p>
-                <details><summary>More</summary><p>From your <a href="{% url 'profile' %}">profile</a>, you get a file you can open in Excel, Google Sheets, or any spreadsheet app.</p></details>
+                <p>Download all your entries as spreadsheet files (CSV), any time.</p>
+                <details><summary>More about exporting</summary><p>From your <a href="{% url 'profile' %}">profile</a>, you get a file you can open in Excel, Google Sheets, or any spreadsheet app.</p></details>
             </article>
         </div>
-        <p class="cta-note" style="text-align:center; margin-top:1.8rem;">This app is still evolving. If something felt confusing, broken, or missing, tell us on the <a href="{% url 'feedback' %}">feedback page</a>. We read every message.</p>
+        <p class="cta-note" style="text-align:center; margin-top:1.8rem;">This app is still evolving. If something is confusing, broken, or missing, {% if user.is_authenticated %}tell us on the <a href="{% url 'feedback' %}">feedback page</a>{% else %}you can send feedback once you’ve logged in{% endif %}. We read every message.</p>
     </section>
 </div>
 {% endblock %}
