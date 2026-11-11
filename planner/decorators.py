@@ -24,7 +24,7 @@ def ratelimit_post(key_prefix, limit=10, period_seconds=300):
                 cache_key = f"ratelimit:{key_prefix}:{_client_ip(request)}"
                 attempts = cache.get(cache_key, 0)
                 if attempts >= limit:
-                    messages.error(request, "Too many attempts. Please try again in a few minutes 🤍")
+                    messages.error(request, "Too many attempts. Please try again in a few minutes.")
                     return redirect(request.path)
                 cache.set(cache_key, attempts + 1, period_seconds)
 

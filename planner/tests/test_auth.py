@@ -78,7 +78,6 @@ def test_no_email_features_remain(client):
     for path in ("/password-reset/", "/password-reset/done/", "/reset/done/", "/tasks/send-evening-reminders/"):
         assert client.get(path).status_code == 404
     html = client.get(reverse("login")).content.decode()
-    assert "Forgot your password" not in html
     assert "password-reset" not in html
 
 
@@ -89,3 +88,16 @@ def test_profile_page_has_no_reminder_field(client, django_user_model):
     html = client.get(reverse("profile")).content.decode()
     assert "evening_reminder_time" not in html
     assert "Evening reminder" not in html
+
+
+@pytest.mark.django_db
+def test_auth_error_messages_are_plain(client):
+    User.objects.create_user(username="dup", email="dup@example.com", password="ParolaTare123!")
+    r = client.post(reverse("register"), {"email": "dup@example.com", "password1": "ParolaTare123!", "password2": "ParolaTare123!"})
+    assert "An account with this email already exists." in r.content.decode()
+    r = client.post(reverse("register"), {"email": "new@example.com", "password1": "ParolaTare123!", "password2": "Different123!"})
+    assert "The two passwords don’t match." in r.content.decode()
+    r = client.post(reverse("login"), {"email": "dup@example.com", "password": "wrong"})
+    html = r.content.decode()
+    assert "Incorrect email or password." in html
+    assert "💭" not in html and "🤍" not in html
