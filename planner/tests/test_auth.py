@@ -101,3 +101,16 @@ def test_auth_error_messages_are_plain(client):
     html = r.content.decode()
     assert "Incorrect email or password." in html
     assert "💭" not in html and "🤍" not in html
+
+
+@pytest.mark.django_db
+def test_login_locks_after_repeated_failures_per_account(client):
+    from django.core.cache import cache
+    cache.clear()
+    User.objects.create_user(username="lk", email="lk@example.com", password="ParolaTare123!")
+    for i in range(10):
+        # a different forged IP each time must not reset the per-account counter
+        client.post(reverse("login"), {"email": "lk@example.com", "password": "bad"}, HTTP_X_FORWARDED_FOR=f"10.0.0.{i}")
+    r = client.post(reverse("login"), {"email": "lk@example.com", "password": "ParolaTare123!"}, HTTP_X_FORWARDED_FOR="10.9.9.9", follow=True)
+    assert "Too many failed attempts" in r.content.decode()
+    cache.clear()

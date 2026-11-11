@@ -9,6 +9,8 @@ from types import SimpleNamespace
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
+from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import Http404, HttpResponse
@@ -46,6 +48,14 @@ DAILY_MESSAGES = [
     "A few quiet lines can change how a day is remembered.",
     "You don't need a perfect plan to take a gentle step.",
 ]
+
+# Limits that keep one user from creating unbounded rows or text.
+MIN_DAY = date(2025, 11, 1)      # same floor the calendar already uses
+MAX_DAYS_AHEAD = 366
+NOTES_MAX = 10000
+REFLECTION_MAX = 5000
+LOGIN_FAIL_LIMIT = 10
+LOGIN_FAIL_WINDOW = 900          # seconds
 
 MONTH_NAMES = {
     1: "January",
@@ -151,10 +161,25 @@ def login_view(request):
     if request.user.is_authenticated:
         return redirect("home")
 
+    # The IP-based limiter above trusts X-Forwarded-For, which a client can
+    # forge. This second counter is keyed on the account being attacked, so
+    # guessing one account's password stays limited whatever IP is claimed.
+    email_key = None
+    if request.method == "POST":
+        attempted = (request.POST.get("email") or "").strip().lower()[:254]
+        email_key = f"loginfail:{attempted}"
+        if cache.get(email_key, 0) >= LOGIN_FAIL_LIMIT:
+            messages.error(request, "Too many failed attempts for this account. Please try again in a few minutes.")
+            return redirect("login")
+
     form = EmailAuthenticationForm(request.POST or None)
-    if request.method == "POST" and form.is_valid():
-        login(request, form.get_user())
-        return redirect("home")
+    if request.method == "POST":
+        if form.is_valid():
+            if email_key:
+                cache.delete(email_key)
+            login(request, form.get_user())
+            return redirect("home")
+        cache.set(email_key, cache.get(email_key, 0) + 1, LOGIN_FAIL_WINDOW)
 
     return render(request, "planner/auth/login.html", {"form": form})
 
@@ -341,6 +366,8 @@ def day_detail_view(request, year, month, day):
         selected_date = date(year, month, day)
     except ValueError:
         raise Http404("Invalid date")
+    if selected_date < MIN_DAY or selected_date > date.today() + timedelta(days=MAX_DAYS_AHEAD):
+        raise Http404("Date out of range")
     day_obj, _ = Day.objects.get_or_create(user=request.user, date=selected_date)
 
     message = None
@@ -378,22 +405,30 @@ def evening_reflection_view(request, year, month, day):
     reflection, _ = EveningReflection.objects.get_or_create(day=day_obj)
 
     if request.method == "POST":
-        mood = request.POST.get("mood")
-        color = request.POST.get("color")
-        day_obj.mood = mood[:20] if mood else day_obj.mood
-        day_obj.color = color[:20] if color else day_obj.color
-        day_obj.notes = request.POST.get("notes", day_obj.notes)
-        day_obj.save(update_fields=["mood", "color", "notes"])
+        # One transaction with the day row locked, so two simultaneous
+        # submits can't both "close" the same day.
+        with transaction.atomic():
+            day_obj = Day.objects.select_for_update().get(pk=day_obj.pk)
+            if day_obj.is_closed:
+                return redirect_to_day(day_obj)
 
-        reflection.drain = request.POST.get("drain", "")
-        reflection.small_win = request.POST.get("small_win", "")
-        reflection.save()
+            mood = request.POST.get("mood")
+            color = request.POST.get("color")
+            if mood in dict(Day.MOOD_CHOICES):
+                day_obj.mood = mood
+            if color in dict(Day.COLOR_CHOICES):
+                day_obj.color = color
+            day_obj.notes = request.POST.get("notes", day_obj.notes)[:NOTES_MAX]
 
-        assign_closing_quote(day_obj)
+            reflection.drain = request.POST.get("drain", "")[:REFLECTION_MAX]
+            reflection.small_win = request.POST.get("small_win", "")[:REFLECTION_MAX]
+            reflection.save()
 
-        day_obj.is_closed = True
-        day_obj.closed_at = timezone.now()
-        day_obj.save(update_fields=["is_closed", "closed_at", "closing_quote"])
+            assign_closing_quote(day_obj)
+
+            day_obj.is_closed = True
+            day_obj.closed_at = timezone.now()
+            day_obj.save()
 
         return redirect_to_day(day_obj)
 
@@ -435,7 +470,7 @@ def set_day_mood(request):
 def update_day_text(request):
     day = get_object_or_404(Day, id=request.POST.get("day_id"), user=request.user)
     if not day.is_closed:
-        day.notes = request.POST.get("notes", "")
+        day.notes = request.POST.get("notes", "")[:NOTES_MAX]
         day.save(update_fields=["notes"])
         messages.success(request, "Saved: journal entry")
     return redirect_to_day(day)
@@ -444,21 +479,26 @@ def update_day_text(request):
 @login_required
 def add_timeblock(request):
     day = get_object_or_404(Day, id=request.POST.get("day_id"), user=request.user)
+    if day.is_closed:
+        messages.error(request, "This day is closed and can’t be edited.")
+        return redirect_to_day(day)
     form = TimeBlockForm(request.POST)
     had_error = False
     if form.is_valid():
         start_time = form.cleaned_data["start_time"]
         end_time = form.cleaned_data["end_time"]
-        overlaps = day.time_blocks.filter(
-            start_time__lt=end_time, end_time__gt=start_time
-        ).exists()
+        with transaction.atomic():
+            Day.objects.select_for_update().get(pk=day.pk)
+            overlaps = day.time_blocks.filter(
+                start_time__lt=end_time, end_time__gt=start_time
+            ).exists()
+            if not overlaps:
+                block = form.save(commit=False)
+                block.day = day
+                block.save()
         if overlaps:
             messages.error(request, "That overlaps with a block you already have that day.")
             had_error = True
-        else:
-            block = form.save(commit=False)
-            block.day = day
-            block.save()
     else:
         had_error = True
         for error in form.non_field_errors():
@@ -482,6 +522,9 @@ def add_timeblock(request):
 @require_POST
 def toggle_timeblock(request, block_id):
     block = get_object_or_404(TimeBlock, id=block_id, day__user=request.user)
+    if block.day.is_closed:
+        messages.error(request, "This day is closed and can’t be edited.")
+        return redirect_to_day(block.day)
     block.completed = not block.completed
     block.save(update_fields=["completed"])
     return redirect_to_day(block.day)
@@ -492,6 +535,9 @@ def toggle_timeblock(request, block_id):
 def delete_timeblock(request, block_id):
     block = get_object_or_404(TimeBlock, id=block_id, day__user=request.user)
     day = block.day
+    if day.is_closed:
+        messages.error(request, "This day is closed and can’t be edited.")
+        return redirect_to_day(day)
     block.delete()
     return redirect_to_day(day)
 
@@ -560,7 +606,12 @@ def calendar_view(request, year=None, month=None):
 @login_required
 def weekly_balance_score_view(request):
     start, end, offset = get_week_range(request)
-    days = list(Day.objects.filter(user=request.user, date__range=[start, end]))
+    all_days = list(
+        Day.objects.filter(user=request.user, date__range=[start, end]).prefetch_related("time_blocks")
+    )
+    # A Day row exists as soon as a page is opened, so count only days that
+    # actually hold something.
+    days = [d for d in all_days if d.mood or d.color or d.notes or d.is_closed or d.time_blocks.all()]
     days_logged = len(days)
     mood_days = sum(bool(d.mood) for d in days)
     completed_tasks = TimeBlock.objects.filter(day__in=days, completed=True).count()

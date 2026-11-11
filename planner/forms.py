@@ -119,7 +119,7 @@ class ProfileForm(forms.ModelForm):
         fields = ["nickname", "bio"]
 
         labels = {
-            "nickname": "What should we call you?",
+            "nickname": "What should the app call you?",
             "bio": "About you",
         }
 

@@ -108,3 +108,23 @@ def test_cannot_toggle_another_users_timeblock(client, django_user_model):
     assert response.status_code == 404
     block.refresh_from_db()
     assert block.completed is False
+
+
+@pytest.mark.django_db
+def test_closed_day_rejects_time_block_changes(client, django_user_model):
+    from datetime import date, time
+    from planner.models import Day, TimeBlock
+    user = django_user_model.objects.create_user(username="lock1", password="pass12345")
+    client.force_login(user)
+    day = Day.objects.create(user=user, date=date.today(), is_closed=True)
+    block = TimeBlock.objects.create(day=day, title="Kept", start_time=time(9), end_time=time(10))
+
+    client.post(reverse("add_timeblock"), {"day_id": day.id, "title": "New", "start_time": "11:00", "end_time": "12:00"})
+    assert day.time_blocks.count() == 1
+
+    client.post(reverse("toggle_timeblock", args=[block.id]))
+    block.refresh_from_db()
+    assert block.completed is False
+
+    client.post(reverse("delete_timeblock", args=[block.id]))
+    assert TimeBlock.objects.filter(id=block.id).exists()

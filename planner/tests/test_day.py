@@ -97,3 +97,36 @@ def test_evening_reflection_redirects_once_day_closed(client, django_user_model)
     assert reflection.drain == "Original drain"
     assert reflection.small_win == "Original win"
 
+
+
+@pytest.mark.django_db
+def test_evening_ignores_invalid_mood_and_color(client, django_user_model):
+    user = django_user_model.objects.create_user(username="ev1", password="pass12345")
+    client.force_login(user)
+    day = Day.objects.create(user=user, date=date.today(), mood="good")
+    url = reverse("evening_reflection", args=[day.date.year, day.date.month, day.date.day])
+    client.post(url, {"mood": "<script>", "color": "nope", "notes": "x" * 20000})
+    day.refresh_from_db()
+    assert day.is_closed is True
+    assert day.mood == "good"          # invalid value ignored, previous kept
+    assert day.color is None
+    assert len(day.notes) == 10000     # capped
+
+
+@pytest.mark.django_db
+def test_day_detail_rejects_out_of_range_dates(client, django_user_model):
+    user = django_user_model.objects.create_user(username="rng1", password="pass12345")
+    client.force_login(user)
+    assert client.get(reverse("day_detail", args=[1999, 1, 1])).status_code == 404
+    assert client.get(reverse("day_detail", args=[date.today().year + 5, 1, 1])).status_code == 404
+    assert Day.objects.filter(user=user).count() == 0
+
+
+@pytest.mark.django_db
+def test_weekly_counts_only_days_with_content(client, django_user_model):
+    user = django_user_model.objects.create_user(username="wk1", password="pass12345")
+    client.force_login(user)
+    client.get(reverse("day_detail", args=[date.today().year, date.today().month, date.today().day]))  # empty row
+    assert client.get(reverse("weekly_score")).context["days_logged"] == 0
+    Day.objects.filter(user=user).update(mood="good")
+    assert client.get(reverse("weekly_score")).context["days_logged"] == 1

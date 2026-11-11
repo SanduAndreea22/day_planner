@@ -129,7 +129,20 @@ if DEBUG:
     # changes show up on refresh without running collectstatic every time.
     WHITENOISE_USE_FINDERS = True
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# Django 5.1+ ignores STATICFILES_STORAGE; STORAGES is the setting that counts.
+# Hashed, compressed static files in production (where collectstatic runs) give
+# every deploy new file names, so browsers never keep serving stale CSS.
+# Locally and in CI no collectstatic runs, so the plain storage is used there.
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {
+        "BACKEND": (
+            "whitenoise.storage.CompressedManifestStaticFilesStorage"
+            if DATABASE_URL
+            else "django.contrib.staticfiles.storage.StaticFilesStorage"
+        )
+    },
+}
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
