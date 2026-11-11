@@ -17,11 +17,11 @@
         >
         <select name="mood" style="padding:0.6rem 0.8rem; border-radius:var(--radius-md); border:1px solid var(--text-muted); background:var(--bg-card); color:var(--text-main);">
             <option value="">Any mood</option>
-            <option value="very_bad" {% if mood_filter == "very_bad" %}selected{% endif %}>😞 Very hard</option>
-            <option value="bad" {% if mood_filter == "bad" %}selected{% endif %}>😕 Hard</option>
-            <option value="neutral" {% if mood_filter == "neutral" %}selected{% endif %}>😐 Neutral</option>
-            <option value="good" {% if mood_filter == "good" %}selected{% endif %}>🙂 Good</option>
-            <option value="very_good" {% if mood_filter == "very_good" %}selected{% endif %}>😄 Very good</option>
+            <option value="very_bad" {% if mood_filter == "very_bad" %}selected{% endif %}>Very hard</option>
+            <option value="bad" {% if mood_filter == "bad" %}selected{% endif %}>Hard</option>
+            <option value="neutral" {% if mood_filter == "neutral" %}selected{% endif %}>Neutral</option>
+            <option value="good" {% if mood_filter == "good" %}selected{% endif %}>Good</option>
+            <option value="very_good" {% if mood_filter == "very_good" %}selected{% endif %}>Very good</option>
         </select>
         <button type="submit" class="button primary">Search</button>
     </form>

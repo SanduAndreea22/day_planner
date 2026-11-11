@@ -13,7 +13,7 @@ from django.core.cache import cache
 from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import redirect, render, get_object_or_404
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from .models import Day, TimeBlock, Quote, EveningReflection, UserProfile, Feedback
@@ -56,6 +56,14 @@ NOTES_MAX = 10000
 REFLECTION_MAX = 5000
 LOGIN_FAIL_LIMIT = 10
 LOGIN_FAIL_WINDOW = 900          # seconds
+
+DAY_COLORS = [
+    {"value": "red", "label": "Heavy", "desc": "a draining day"},
+    {"value": "yellow", "label": "Uneven", "desc": "ups and downs"},
+    {"value": "green", "label": "Light", "desc": "easy and open"},
+    {"value": "blue", "label": "Steady", "desc": "quiet and even"},
+    {"value": "purple", "label": "Vivid", "desc": "full of energy"},
+]
 
 MONTH_NAMES = {
     1: "January",
@@ -388,6 +396,11 @@ def day_detail_view(request, year, month, day):
         "streak": streak,
         "is_today": selected_date == date.today(),
         "is_past": selected_date < date.today(),
+        "mood_checkins": MOOD_CHECKINS,
+        "color_choices": DAY_COLORS,
+        "current_mood_label": dict(Day.MOOD_CHOICES).get(day_obj.mood, ""),
+        "current_checkin_label": {m["value"]: m["label"] for m in MOOD_CHECKINS}.get(day_obj.mood, ""),
+        "color_label": {c["value"]: c["label"] for c in DAY_COLORS}.get(day_obj.color, ""),
         "nickname": getattr(getattr(request.user, "profile", None), "nickname", ""),
         "prev_date": selected_date - timedelta(days=1),
         "next_date": selected_date + timedelta(days=1),
@@ -434,6 +447,17 @@ def evening_reflection_view(request, year, month, day):
 
     return render(request, "planner/evening.html", {"day": day_obj, "reflection": reflection})
 
+def _is_ajax(request):
+    return request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
+
+def _done(request, day, ok=True, error=""):
+    """JSON for in-page saves (no redirect, no queued flash message), else the usual redirect."""
+    if _is_ajax(request):
+        return JsonResponse({"ok": ok, "error": error}, status=200 if ok else 409)
+    return redirect_to_day(day)
+
+
 @login_required
 def set_day_color(request):
     if request.method != "POST":
@@ -457,23 +481,29 @@ def set_day_mood(request):
     day = get_object_or_404(Day, id=request.POST.get("day_id"), user=request.user)
     mood = request.POST.get("mood")
     if mood and mood not in dict(Day.MOOD_CHOICES):
-        messages.error(request, "Please choose one of the listed moods.")
-        return redirect_to_day(day)
+        if not _is_ajax(request):
+            messages.error(request, "Please choose one of the listed moods.")
+        return _done(request, day, ok=False, error="invalid")
     if mood:
         updated = Day.objects.filter(id=day.id, is_closed=False).update(mood=mood)
         if updated:
-            messages.success(request, "Saved: mood")
-    return redirect_to_day(day)
+            if not _is_ajax(request):
+                messages.success(request, "Saved: mood")
+        else:
+            return _done(request, day, ok=False, error="closed")
+    return _done(request, day)
 
 
 @login_required
 def update_day_text(request):
     day = get_object_or_404(Day, id=request.POST.get("day_id"), user=request.user)
-    if not day.is_closed:
-        day.notes = request.POST.get("notes", "")[:NOTES_MAX]
-        day.save(update_fields=["notes"])
+    if day.is_closed:
+        return _done(request, day, ok=False, error="closed")
+    day.notes = request.POST.get("notes", "")[:NOTES_MAX]
+    day.save(update_fields=["notes"])
+    if not _is_ajax(request):
         messages.success(request, "Saved: journal entry")
-    return redirect_to_day(day)
+    return _done(request, day)
 
 
 @login_required

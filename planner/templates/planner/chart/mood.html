@@ -8,7 +8,7 @@
 <div class="mood-card">
 
     <div class="mood-header">
-        <h2 class="title-gradient">Mood chart</h2>
+        <h1 class="title-gradient">Mood chart</h1>
         <div class="mood-period muted">{{ month_name }} {{ year }}</div>
         <div class="mood-nav">
             <a href="?month={{ month|add:'-1' }}&year={{ year }}">← Previous month</a>
@@ -41,13 +41,7 @@
             <span class="mood-date">{{ day.date|date:"d M" }}</span>
 
             <span class="mood-emoji">
-                {% if day.mood == "very_bad" %}😞
-                {% elif day.mood == "bad" %}😕
-                {% elif day.mood == "neutral" %}😐
-                {% elif day.mood == "good" %}🙂
-                {% elif day.mood == "very_good" %}😄
-                {% else %}–
-                {% endif %}
+                {% if day.mood %}{% include "planner/partials/mood_face.html" with mood=day.mood size=24 %}{% else %}–{% endif %}
             </span>
 
             <span class="mood-text">

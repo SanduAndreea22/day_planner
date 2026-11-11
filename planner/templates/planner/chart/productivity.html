@@ -9,7 +9,7 @@
 {% block content %}
 <div class="productivity-card">
 
-    <h2 class="title-gradient">Time blocks & mood</h2>
+    <h1 class="title-gradient">Time blocks & mood</h1>
 
     <p class="productivity-subtitle">Time blocks you finished each day, next to that day’s mood.</p>
 
@@ -30,12 +30,7 @@
         <div class="productivity-row mood-{{ item.mood|default:'none' }}">
             <div class="prod-date">{{ item.date|date:"D, d M" }}</div>
             <div class="prod-mood" title="Day’s mood">
-                {% if item.mood == "very_bad" %}😞
-                {% elif item.mood == "bad" %}😕
-                {% elif item.mood == "neutral" %}😐
-                {% elif item.mood == "good" %}🙂
-                {% elif item.mood == "very_good" %}😄
-                {% else %}–{% endif %}
+                {% if item.mood %}{% include "planner/partials/mood_face.html" with mood=item.mood size=24 %}{% else %}–{% endif %}
             </div>
             <div class="prod-value">
                 {% if item.completed == 0 %}

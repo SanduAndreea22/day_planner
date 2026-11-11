@@ -3,299 +3,220 @@
 
 {% block title %}My day{% endblock %}
 
-{% block content %}
-<div class="day-card day-page-card" style="
-    max-width:900px;
-    margin:2rem auto;
-    padding:2rem;
-    border-radius:var(--radius-lg);
-    background:var(--bg-card);
-    box-shadow:var(--shadow);
-    transition: background 0.5s, color 0.5s;
-">
-
-    {% if is_today and nickname %}<div style="text-align:center; margin-bottom:0.5rem; color:var(--text-muted);">Hi, {{ nickname }}</div>{% endif %}
-
-    <div class="day-nav" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem; font-size:0.95rem;">
-        <a href="{% url 'day_detail' prev_date.year prev_date.month prev_date.day %}">← Previous day</a>
-        {% if is_today %}<strong>Today</strong>{% else %}<a href="{% url 'today' %}">Go to today</a>{% endif %}
-        <a href="{% url 'day_detail' next_date.year next_date.month next_date.day %}">Next day →</a>
-    </div>
-
-    <h1 class="day-date-block" style="text-align:center; font-weight:600; font-family:var(--font-sans); font-size:1rem; letter-spacing:0; margin:0 0 1rem;">
-        <span class="date-part">{{ day.date|date:"l" }}</span>
-        <span class="date-part">{{ day.date|date:"d" }}</span>
-        <span class="date-part">{{ day.date|date:"F" }}</span>
-        <span class="date-part">{{ day.date|date:"Y" }}</span>
-    </h1>
-
-    {% if day.mood %}
-    <div class="day-mood-emoji" style="font-size:3rem; text-align:center; margin-bottom:1rem; transition: transform 0.3s;">
-        {% if day.mood == "very_bad" %}😞
-        {% elif day.mood == "bad" %}😕
-        {% elif day.mood == "neutral" %}😐
-        {% elif day.mood == "good" %}🙂
-        {% elif day.mood == "very_good" %}😄
-        {% endif %}
-    </div>
-    {% endif %}
-
-    {% if message %}
-        <div class="message gentle-message" style="text-align:center; color: var(--text-muted); margin-bottom:1rem;">
-            {{ message }}
-        </div>
-    {% endif %}
-
-    {% if day.is_closed %}
-        <div class="message closed-message" style="text-align:center; color: var(--text-muted); margin-bottom:1rem;">
-             This day is closed and can’t be edited.
-        </div>
-
-        {% include "planner/partials/day_summary.html" %}
-
-        {% if quote %}
-            <div class="gentle-recommendation" style="text-align:center; font-style:italic; margin-top:1rem;">
-                 {{ quote.text }}
-            </div>
-        {% endif %}
-
-    {% else %}
-        <div class="day-section" style="margin-bottom:1.8rem;">
-            <label style="font-weight:600;">{% if is_today %}How are you feeling today?{% elif is_past %}How did you feel that day?{% else %}How do you expect to feel?{% endif %}</label>
-            <div class="field-hint muted" style="color:var(--text-muted); font-size:0.85rem; margin-bottom:0.3rem;">Your overall mood. It shows as an emoji on the calendar.</div>
-
-            <div class="saved-field" id="mood-display" style="display:{% if day.mood %}flex{% else %}none{% endif %}; justify-content:space-between; align-items:center; padding:0.6rem 1rem; border-radius:var(--radius-md); background:rgba(183,201,181,0.3);">
-                <span>
-                    {% if day.mood == "very_bad" %}😞 Very hard
-                    {% elif day.mood == "bad" %}😕 Hard
-                    {% elif day.mood == "neutral" %}😐 Neutral
-                    {% elif day.mood == "good" %}🙂 Good
-                    {% elif day.mood == "very_good" %}😄 Very good
-                    {% endif %}
-                </span>
-                <button type="button" class="link-button" onclick="toggleEdit('mood')">Edit</button>
-            </div>
-
-            <form method="post" action="{% url 'set_day_mood' %}" id="mood-form" style="display:{% if day.mood %}none{% else %}block{% endif %};">
-                {% csrf_token %}
-                <input type="hidden" name="day_id" value="{{ day.id }}">
-                <select name="mood" required style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
-                    <option value="">Choose mood</option>
-                    <option value="very_bad" {% if day.mood == "very_bad" %}selected{% endif %}>😞 Very hard</option>
-                    <option value="bad" {% if day.mood == "bad" %}selected{% endif %}>😕 Hard</option>
-                    <option value="neutral" {% if day.mood == "neutral" %}selected{% endif %}>😐 Neutral</option>
-                    <option value="good" {% if day.mood == "good" %}selected{% endif %}>🙂 Good</option>
-                    <option value="very_good" {% if day.mood == "very_good" %}selected{% endif %}>😄 Very good</option>
-                </select>
-                <button type="submit" class="button primary" style="margin-top:0.5rem; width:100%; padding:0.7rem; border-radius:var(--radius-md); background:var(--primary); color:white;">Save</button>
-            </form>
-        </div>
-
-
-        <div class="day-section" style="margin-bottom:1.8rem;">
-            <label style="font-weight:600;">{% if is_today %}What kind of day is it?{% elif is_past %}What kind of day was it?{% else %}What kind of day will it be?{% endif %}</label>
-            <div class="field-hint muted" style="color:var(--text-muted); font-size:0.85rem; margin-bottom:0.3rem;">Pick one color for the day. It’s separate from mood and tints the day in the calendar.</div>
-
-            <div class="saved-field color-{{ day.color }}" id="color-display" style="display:{% if day.color %}flex{% else %}none{% endif %}; justify-content:space-between; align-items:center; padding:0.6rem 1rem; border-radius:var(--radius-md);">
-                <span style="display:inline-flex; align-items:center; gap:0.4rem;">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C7 8 4 12.5 4 16a8 8 0 0 0 16 0c0-3.5-3-8-8-14z"/></svg>
-                    {% if day.color == "red" %}Heavy
-                    {% elif day.color == "yellow" %}Uneven
-                    {% elif day.color == "green" %}Light
-                    {% elif day.color == "blue" %}Steady
-                    {% elif day.color == "purple" %}Vivid
-                    {% endif %}
-                </span>
-                <button type="button" class="link-button" onclick="toggleEdit('color')">Edit</button>
-            </div>
-
-            <form method="post" action="{% url 'set_day_color' %}" id="color-form" style="display:{% if day.color %}none{% else %}block{% endif %};">
-                {% csrf_token %}
-                <input type="hidden" name="day_id" value="{{ day.id }}">
-                <select name="color" required style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
-                    <option value="">Choose one</option>
-                    <option value="red" {% if day.color == "red" %}selected{% endif %}>Heavy — a draining day</option>
-                    <option value="yellow" {% if day.color == "yellow" %}selected{% endif %}>Uneven — ups and downs</option>
-                    <option value="green" {% if day.color == "green" %}selected{% endif %}>Light — easy and open</option>
-                    <option value="blue" {% if day.color == "blue" %}selected{% endif %}>Steady — quiet and even</option>
-                    <option value="purple" {% if day.color == "purple" %}selected{% endif %}>Vivid — full of energy</option>
-                </select>
-                <button type="submit" class="button primary" style="margin-top:0.5rem; width:100%; padding:0.7rem; border-radius:var(--radius-md); background:var(--primary); color:white;">Save</button>
-            </form>
-        </div>
-
-        <div class="day-section" style="margin-bottom:1.8rem;">
-            <label style="font-weight:600;">Journal entry</label>
-
-            <div class="saved-field" id="notes-display" style="display:{% if day.notes %}block{% else %}none{% endif %}; padding:0.6rem 1rem; border-radius:var(--radius-md); background:rgba(183,201,181,0.3);">
-                <div style="white-space:pre-wrap;">{{ day.notes }}</div>
-                <button type="button" class="link-button" onclick="toggleEdit('notes')" style="margin-top:0.5rem;">Edit</button>
-            </div>
-
-            <form method="post" action="{% url 'update_day_text' %}" id="notes-form" style="display:{% if day.notes %}none{% else %}block{% endif %};">
-                {% csrf_token %}
-                <input type="hidden" name="day_id" value="{{ day.id }}">
-                <textarea name="notes" rows="4" style="width:100%; padding:0.5rem; border-radius:var(--radius-md);" placeholder="Write a few lines about your day.">{{ day.notes }}</textarea>
-                <button type="submit" class="button primary" style="margin-top:0.5rem; width:100%; padding:0.7rem; border-radius:var(--radius-md); background:var(--primary); color:white;">Save</button>
-            </form>
-        </div>
-    {% endif %}
-
-    <div class="day-section" style="margin-bottom:1.8rem;">
-        <h3>Daily schedule</h3>
-        {% if time_blocks %}
-            {% for block in time_blocks %}
-                <div class="time-block {% if block.completed %}done{% endif %}" id="timeblock-{{ block.id }}" style="display:flex; justify-content:space-between; align-items:center; padding:0.7rem; border-radius:var(--radius-md); margin-bottom:0.5rem; background:var(--bg-card); box-shadow:var(--shadow); transition:transform 0.3s;">
-                    <div class="time">{{ block.start_time|time:"H:i" }} – {{ block.end_time|time:"H:i" }}</div>
-                    <div class="block-title">{{ block.title }}</div>
-                    {% if not day.is_closed %}
-                        <div class="actions">
-                            <form method="post" action="{% url 'toggle_timeblock' block.id %}" class="toggle-timeblock-form" style="display:inline;">
-                                {% csrf_token %}
-                                <button type="submit" class="link-button toggle-btn" title="Mark as done or not done">{% if block.completed %}Undo{% else %}Mark done{% endif %}</button>
-                            </form>
-                            <form method="post" action="{% url 'delete_timeblock' block.id %}" style="display:inline;" onsubmit="return confirm('Delete this block?')">
-                                {% csrf_token %}
-                                <button type="submit" class="link-button delete" title="Delete this block" aria-label="Delete this block">Delete</button>
-                            </form>
-                        </div>
-                    {% endif %}
-                </div>
-            {% endfor %}
-        {% else %}
-            <p class="muted" style="color: var(--text-muted);">You haven’t added anything {% if is_today %}today{% else %}to this day{% endif %} yet. You can start with a single time block.</p>
-        {% endif %}
-    </div>
-
-    {% if not day.is_closed %}
-        <div class="day-section" style="margin-bottom:1.8rem;">
-            <h3 id="new-block">New time block</h3>
-            <div id="new-block-errors"></div>
-            <p class="muted" style="color:var(--text-muted); font-size:0.9rem; margin:0 0 0.6rem;">A time block is a slot in your day, like 09:00 – 10:00 · Study.</p>
-            <form method="post" action="{% url 'add_timeblock' %}" id="add-block-form">
-                {% csrf_token %}
-                <input type="hidden" name="day_id" value="{{ day.id }}">
-                <div class="time-row" style="display:flex; gap:0.5rem; margin-bottom:0.5rem; align-items:flex-end;">
-                    <label style="flex:1; font-size:0.85rem;">Start
-                        <input type="time" name="start_time" required style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
-                    </label>
-                    <span style="padding-bottom:0.6rem;">–</span>
-                    <label style="flex:1; font-size:0.85rem;">End
-                        <input type="time" name="end_time" required style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
-                    </label>
-                </div>
-                <label style="display:block; font-size:0.85rem; margin-bottom:0.5rem;">What will you do?
-                    <input type="text" name="title" placeholder="e.g. Lunch with a friend" required style="width:100%; padding:0.5rem; border-radius:var(--radius-md);">
-                </label>
-                <button type="submit" class="button" style="width:100%; padding:0.7rem; border-radius:var(--radius-md); background:var(--secondary); color:white;">Add time block</button>
-            </form>
-        </div>
-
-        <div class="day-evening" style="text-align:center; margin-bottom:1.8rem;">
-            <a href="{% url 'evening_reflection' day.date.year day.date.month day.date.day %}" id="close-day-link" class="button" style="padding:0.7rem 1rem; border-radius:var(--radius-md); background:transparent; color:var(--primary); border:2px solid var(--primary); display:inline-block;" title="This locks the day in — it can't be edited afterward.">Close the day</a>
-            <div style="color:var(--text-muted); font-size:0.85rem; margin-top:0.5rem;">Closing locks the day — it can’t be edited afterward.</div>
-        </div>
-    {% endif %}
-
-    <div class="day-back" style="text-align:center; margin-top:2rem;">
-        <a href="{% url 'calendar' %}" style="color:var(--primary); text-decoration:none;">← Back to calendar</a>
-    </div>
-</div>
-
-<style>
-.time-block.done .block-title {
-    font-style: italic;
-    font-weight: bold;
-    opacity: 0.8;
-}
-
-.time-block { flex-wrap: wrap; gap: 0.5rem; }
-.time-block .block-title { flex: 1 1 140px; word-break: break-word; }
-.time-row label { min-width: 0; }
-.actions button {
-    min-width: 44px;
-    min-height: 44px;
-    cursor: pointer;
-    margin-left: 0.5rem;
-    font-size: 1.1rem;
-}
-
-.actions button:hover {
-    transform: scale(1.2);
-    transition: transform 0.2s;
-}
-
-.time-block.just-toggled {
-    animation: timeblock-pop 0.4s ease;
-}
-@keyframes timeblock-pop {
-    0% { transform: scale(1); }
-    35% { transform: scale(1.03); box-shadow: 0 0 0 3px var(--primary); }
-    100% { transform: scale(1); }
-}
-</style>
-
-<script>
-function toggleEdit(field) {
-    document.getElementById(field + '-display').style.display = 'none';
-    document.getElementById(field + '-form').style.display = 'block';
-}
-
-// Save an unsaved thought first, so saving mood/color or closing the day never wipes it.
-function saveNotesIfDirty() {
-    var nf = document.getElementById('notes-form');
-    var ta = nf && nf.querySelector('textarea');
-    if (!ta || ta.value === ta.defaultValue) return Promise.resolve();
-    return fetch(nf.action, { method: 'POST', body: new FormData(nf), headers: { 'X-Requested-With': 'XMLHttpRequest' } }).catch(function () {});
-}
-['mood-form', 'color-form', 'add-block-form'].forEach(function (id) {
-    var f = document.getElementById(id);
-    if (!f) return;
-    f.addEventListener('submit', function (event) {
-        var ta = document.querySelector('#notes-form textarea');
-        if (!ta || ta.value === ta.defaultValue) return;
-        event.preventDefault();
-        saveNotesIfDirty().then(function () { f.submit(); });
-    });
-});
-var closeLink = document.getElementById('close-day-link');
-if (closeLink) {
-    closeLink.addEventListener('click', function (event) {
-        var ta = document.querySelector('#notes-form textarea');
-        if (!ta || ta.value === ta.defaultValue) return;
-        event.preventDefault();
-        saveNotesIfDirty().then(function () { window.location = closeLink.href; });
-    });
-}
-
-// Errors from the new-block form show right above it, not at the top of the page.
-if (window.location.hash === '#new-block') {
-    var box = document.getElementById('new-block-errors');
-    document.querySelectorAll('.app-messages .app-message.error').forEach(function (m) { box.appendChild(m); });
-}
-
-document.querySelectorAll('.toggle-timeblock-form').forEach(function (form) {
-    form.addEventListener('submit', function (event) {
-        event.preventDefault();
-        var block = form.closest('.time-block');
-        var csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
-
-        fetch(form.action, {
-            method: 'POST',
-            headers: { 'X-CSRFToken': csrfToken, 'X-Requested-With': 'XMLHttpRequest' },
-        }).then(function (response) {
-            if (!response.ok) throw new Error('Request failed');
-            block.classList.toggle('done');
-            var tb = form.querySelector('.toggle-btn'); if (tb) tb.textContent = block.classList.contains('done') ? 'Undo' : 'Mark done';
-            block.classList.remove('just-toggled');
-            void block.offsetWidth;
-            block.classList.add('just-toggled');
-        }).catch(function () {
-            form.submit();
-        });
-    });
-});
-</script>
-
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'planner/home.css' %}">
+<link rel="stylesheet" href="{% static 'planner/day.css' %}">
 {% endblock %}
 
+{% block content %}
+<div class="day-card">
+
+    <nav class="day-nav" aria-label="Day navigation">
+        <a href="{% url 'day_detail' prev_date.year prev_date.month prev_date.day %}">← Previous day</a>
+        {% if not is_today %}<a href="{% url 'today' %}">Go to today</a>{% else %}<span></span>{% endif %}
+        <a href="{% url 'day_detail' next_date.year next_date.month next_date.day %}">Next day →</a>
+    </nav>
+
+    <header class="day-head">
+        <p class="eyebrow">{% if is_today %}Today{% if nickname %} · Hi, {{ nickname }}{% endif %}{% elif is_past %}Past day{% else %}Upcoming day{% endif %}</p>
+        <h1 class="day-title">{{ day.date|date:"l, j F Y" }}</h1>
+        {% if day.is_closed %}<p class="day-status">This day is closed and can’t be edited.</p>
+        {% elif message %}<p class="day-status">{{ message }}</p>{% endif %}
+    </header>
+
+    {% if day.is_closed %}
+        {% include "planner/partials/day_summary.html" %}
+    {% else %}
+
+    <section class="day-section" aria-labelledby="mood-title">
+        <h2 class="section-title" id="mood-title">{% if is_today %}How are you feeling today?{% elif is_past %}How did you feel that day?{% else %}How do you expect to feel?{% endif %}</h2>
+        <form method="post" action="{% url 'set_day_mood' %}" id="mood-form">
+            {% csrf_token %}
+            <input type="hidden" name="day_id" value="{{ day.id }}">
+            <ul class="mood-grid">
+                {% for mood in mood_checkins %}
+                <li class="mood-option mood-{{ mood.key }}{% if day.mood == mood.value %} is-selected{% endif %}">
+                    <button type="submit" name="mood" value="{{ mood.value }}" aria-pressed="{% if day.mood == mood.value %}true{% else %}false{% endif %}">
+                        {% include "planner/partials/mood_icon.html" with key=mood.key %}
+                        <span class="mood-text"><span class="mood-name">{{ mood.label }}</span></span>
+                    </button>
+                </li>
+                {% endfor %}
+            </ul>
+        </form>
+        <p class="field-hint">{% if current_checkin_label %}Check-in: {{ current_checkin_label }}. It shows as “{{ current_mood_label }}” in your calendar and charts.{% else %}Tap a mood. It’s saved right away.{% endif %}</p>
+    </section>
+
+    <section class="day-section" aria-labelledby="color-title">
+        <h2 class="section-title" id="color-title">{% if is_today %}What kind of day is it?{% elif is_past %}What kind of day was it?{% else %}What kind of day will it be?{% endif %}</h2>
+        <form method="post" action="{% url 'set_day_color' %}" id="color-form">
+            {% csrf_token %}
+            <input type="hidden" name="day_id" value="{{ day.id }}">
+            <div class="color-choices" role="group" aria-labelledby="color-title">
+                {% for c in color_choices %}
+                <button type="submit" name="color" value="{{ c.value }}" class="color-choice color-{{ c.value }}{% if day.color == c.value %} is-selected{% endif %}" aria-pressed="{% if day.color == c.value %}true{% else %}false{% endif %}">
+                    <span class="color-name">{{ c.label }}</span><span class="color-desc">{{ c.desc }}</span>
+                </button>
+                {% endfor %}
+            </div>
+        </form>
+        <p class="field-hint">Separate from mood. It tints the day in the calendar.</p>
+    </section>
+
+    <section class="day-section" aria-labelledby="entry-title">
+        <h2 class="section-title" id="entry-title">Journal entry</h2>
+        <form method="post" action="{% url 'update_day_text' %}" id="notes-form">
+            {% csrf_token %}
+            <input type="hidden" name="day_id" value="{{ day.id }}">
+            <label for="notes" class="visually-hidden">Journal entry</label>
+            <textarea id="notes" name="notes" rows="4" placeholder="Write a few lines about your day.">{{ day.notes }}</textarea>
+            <button type="submit" class="btn btn-primary">Save journal entry</button>
+        </form>
+    </section>
+
+    <section class="day-section" aria-labelledby="schedule-title">
+        <h2 class="section-title" id="schedule-title">Daily schedule</h2>
+        {% if time_blocks %}
+        <ul class="blocks">
+            {% for block in time_blocks %}
+            <li class="block {% if block.completed %}done{% endif %}" id="timeblock-{{ block.id }}">
+                <span class="block-time">{{ block.start_time|time:"H:i" }} – {{ block.end_time|time:"H:i" }}</span>
+                <span class="block-title">{{ block.title }}</span>
+                <span class="block-actions">
+                    <form method="post" action="{% url 'toggle_timeblock' block.id %}" class="toggle-timeblock-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-text toggle-btn" title="Mark as done or not done">{% if block.completed %}Undo{% else %}Mark done{% endif %}</button>
+                    </form>
+                    <button type="button" class="btn-text danger delete-block" data-url="{% url 'delete_timeblock' block.id %}" data-title="{{ block.title }}">Delete</button>
+                </span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="muted">You haven’t added anything {% if is_today %}today{% else %}to this day{% endif %} yet. A single time block is a good start.</p>
+        {% endif %}
+    </section>
+
+    <section class="day-section" aria-labelledby="new-block">
+        <h2 class="section-title" id="new-block">New time block</h2>
+        <div id="new-block-errors"></div>
+        <p class="field-hint" style="margin-top:0;">A time block is a slot in your day, like 09:00 – 10:00 · Study. Times use 24 hours.</p>
+        <form method="post" action="{% url 'add_timeblock' %}" id="add-block-form" class="block-form">
+            {% csrf_token %}
+            <input type="hidden" name="day_id" value="{{ day.id }}">
+            <div class="time-row">
+                <label>Start
+                    <input type="text" name="start_time" inputmode="numeric" placeholder="09:00" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" autocomplete="off" required>
+                </label>
+                <span class="time-dash" aria-hidden="true">–</span>
+                <label>End
+                    <input type="text" name="end_time" inputmode="numeric" placeholder="10:00" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" autocomplete="off" required>
+                </label>
+            </div>
+            <label>What will you do?
+                <input type="text" name="title" placeholder="e.g. Lunch with a friend" maxlength="100" required>
+            </label>
+            <button type="submit" class="btn btn-ghost">Add time block</button>
+        </form>
+    </section>
+
+    <section class="day-close">
+        <a href="{% url 'evening_reflection' day.date.year day.date.month day.date.day %}" id="close-day-link" class="btn btn-outline">Close the day</a>
+        <p class="field-hint">Closing locks the day. It can’t be edited afterward.</p>
+    </section>
+
+    {% endif %}
+
+    <p class="day-back"><a href="{% url 'calendar' %}">← Back to calendar</a></p>
+</div>
+
+<dialog id="delete-dialog" class="confirm-dialog" aria-labelledby="delete-dialog-title">
+    <form method="post" id="delete-dialog-form">
+        {% csrf_token %}
+        <h2 id="delete-dialog-title">Delete this time block?</h2>
+        <p class="muted" id="delete-dialog-text"></p>
+        <div class="dialog-actions">
+            <button type="button" class="btn btn-ghost" id="delete-cancel">Keep it</button>
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </div>
+    </form>
+</dialog>
+
+<script>
+(function () {
+    var notesForm = document.getElementById('notes-form');
+    var notes = notesForm && notesForm.querySelector('textarea');
+    var submitting = false;
+    function dirty() { return notes && notes.value !== notes.defaultValue; }
+
+    // Save an unsaved entry first, so choosing a mood/color or adding a block never wipes it.
+    function saveNotesIfDirty() {
+        if (!dirty()) return Promise.resolve();
+        return fetch(notesForm.action, { method: 'POST', body: new FormData(notesForm), headers: { 'X-Requested-With': 'XMLHttpRequest' } }).catch(function () {});
+    }
+    ['mood-form', 'color-form', 'add-block-form'].forEach(function (id) {
+        var f = document.getElementById(id);
+        if (!f) return;
+        f.addEventListener('submit', function (event) {
+            if (!dirty()) { submitting = true; return; }
+            event.preventDefault();
+            var submitter = event.submitter;
+            saveNotesIfDirty().then(function () {
+                submitting = true;
+                if (submitter && submitter.name) {
+                    var h = document.createElement('input'); h.type = 'hidden'; h.name = submitter.name; h.value = submitter.value; f.appendChild(h);
+                }
+                f.submit();
+            });
+        });
+    });
+    if (notesForm) notesForm.addEventListener('submit', function () { submitting = true; });
+
+    var closeLink = document.getElementById('close-day-link');
+    if (closeLink) closeLink.addEventListener('click', function (event) {
+        if (!dirty()) { submitting = true; return; }
+        event.preventDefault();
+        saveNotesIfDirty().then(function () { submitting = true; window.location = closeLink.href; });
+    });
+
+    // Warn before leaving the page with text that was never saved.
+    window.addEventListener('beforeunload', function (event) {
+        if (dirty() && !submitting) { event.preventDefault(); event.returnValue = ''; }
+    });
+
+    // Errors from the new-block form show right above it, not at the top of the page.
+    if (window.location.hash === '#new-block') {
+        var box = document.getElementById('new-block-errors');
+        document.querySelectorAll('.app-messages .app-message.error').forEach(function (m) { box.appendChild(m); });
+    }
+
+    // Mark done / Undo without a page reload.
+    document.querySelectorAll('.toggle-timeblock-form').forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            var block = form.closest('.block');
+            var csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+            fetch(form.action, { method: 'POST', headers: { 'X-CSRFToken': csrfToken, 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(function (response) {
+                    if (!response.ok) throw new Error('Request failed');
+                    block.classList.toggle('done');
+                    form.querySelector('.toggle-btn').textContent = block.classList.contains('done') ? 'Undo' : 'Mark done';
+                })
+                .catch(function () { form.submit(); });
+        });
+    });
+
+    // Delete: our own confirmation dialog instead of the browser's.
+    var dialog = document.getElementById('delete-dialog');
+    var dForm = document.getElementById('delete-dialog-form');
+    document.querySelectorAll('.delete-block').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            dForm.action = btn.dataset.url;
+            document.getElementById('delete-dialog-text').textContent = '“' + btn.dataset.title + '” will be removed from this day.';
+            if (dialog.showModal) { dialog.showModal(); } else if (window.confirm('Delete this time block?')) { dForm.submit(); }
+        });
+    });
+    document.getElementById('delete-cancel').addEventListener('click', function () { dialog.close(); });
+})();
+</script>
+{% endblock %}

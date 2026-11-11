@@ -329,13 +329,13 @@ input::placeholder, textarea::placeholder { color: var(--text-muted); }
 .color-blue { background: #C3D3DA !important; color: #343A35 !important; }
 .color-purple { background: #D8CEE6 !important; color: #343A35 !important; }
 
-/* Mood palette (very_bad..very_good): rose → sand → stone → sage → deep sage.
+/* Mood palette: each emotion keeps one hue everywhere (home tiles, strip, charts).
    Single definition shared by the home, charts and calendar. */
-.mood-very_bad { background: #E2A9B3 !important; color: #343A35 !important; }
-.mood-bad { background: #EBCFC3 !important; color: #343A35 !important; }
-.mood-neutral { background: #E4DFD4 !important; color: #343A35 !important; }
-.mood-good { background: #CBDAC9 !important; color: #343A35 !important; }
-.mood-very_good { background: #A9C2A7 !important; color: #343A35 !important; }
+.mood-very_bad { background: #C9D3DE !important; color: #343A35 !important; }   /* Sad */
+.mood-bad { background: #E8E3EF !important; color: #343A35 !important; }        /* Anxious */
+.mood-neutral { background: #E9BFC5 !important; color: #343A35 !important; }    /* Tired */
+.mood-good { background: #B7C9B5 !important; color: #343A35 !important; }       /* Calm */
+.mood-very_good { background: #E9D9B4 !important; color: #343A35 !important; }  /* Happy */
 .mood-none { background: rgba(109, 116, 105, 0.12) !important; color: var(--text-primary) !important; }
 
 .color-red .link-button, .color-blue .link-button, .color-yellow .link-button, .color-green .link-button, .color-purple .link-button, [class*="mood-"] .link-button { color: inherit; text-decoration: underline; }

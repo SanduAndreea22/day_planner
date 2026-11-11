@@ -189,3 +189,27 @@ body.dark .peek-tile.is-picked { outline-color: var(--ivory); }
 .note-label { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-right: 0.4rem; }
 .mood-key { display: flex; align-items: center; gap: 0.35rem; justify-content: center; margin-top: 0.8rem; font-size: 0.78rem; color: var(--text-muted); }
 .mood-key .dot { width: 14px; height: 14px; }
+
+/* ---------- Home: compact hero on phones, tappable pattern strip, collapsible patterns ---------- */
+.hero-member { padding-bottom: clamp(1rem, 3vw, 2rem); }
+.daily-note { margin: 1rem auto 0; display: flex; justify-content: center; text-align: left; }
+.entry-status { color: var(--text-muted); font-size: 0.9rem; }
+.pattern-card summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; min-height: 44px; }
+.pattern-card summary::-webkit-details-marker { display: none; }
+.pattern-card summary h3 { margin: 0; }
+.pattern-card summary::after { content: '▾'; color: var(--text-muted); transition: transform 0.2s; }
+.pattern-card:not([open]) summary::after { transform: rotate(-90deg); }
+.strip { flex-wrap: wrap; }
+.strip a { min-width: 0; flex: 1 1 calc(14.28% - 6px); }
+.mood-key { flex-wrap: wrap; row-gap: 0.4rem; column-gap: 0.9rem; }
+.key-item { display: inline-flex; align-items: center; gap: 0.35rem; }
+.bar-count { white-space: nowrap; }
+@media (max-width: 720px) {
+    .hero-member { padding-top: 1.2rem; }
+    .hero-member h1 { font-size: clamp(2.2rem, 11vw, 3rem); margin-bottom: 0.7rem; }
+    .hero-member .hero-sub { font-size: 1rem; margin-bottom: 0.4rem; }
+    .strip a { flex-basis: calc(14.28% - 6px); height: 44px; }
+    .stat-num { font-size: 2.4rem; }
+    .progress-grid .card { padding: 1.1rem; }
+}
+@media (max-width: 420px) { .bar-row { grid-template-columns: 4.6rem 1fr 4.4rem; } }

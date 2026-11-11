@@ -9,7 +9,7 @@
 <div class="sanctuary">
     <div class="sanctuary-bg" aria-hidden="true"></div>
 
-    <section class="hero rise d1" aria-labelledby="welcome-title">
+    <section class="hero hero-member rise d1" aria-labelledby="welcome-title">
         <p class="hero-date">{% if nickname %}Hi, {{ nickname }} · {% endif %}{{ today|date:"l, j F Y" }}</p>
         {% if is_first_visit %}
         <h1 id="welcome-title">Welcome to <em>yourself.</em></h1>
@@ -18,10 +18,7 @@
         <h1 id="welcome-title">Welcome back to <em>yourself.</em></h1>
         <p class="hero-sub">You don't have to have everything figured out today. Just start with how you feel.</p>
         {% endif %}
-        <p class="daily-note">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c0-6 .5-9 0-14"/><path d="M12 13c-3.5 0-6-2.2-6-6 3.8 0 6 2.4 6 6z"/><path d="M12 10c0-3.2 2-5.6 5.6-6 .2 3.6-2 6-5.6 6z"/></svg>
-            <span><span class="note-label">Today’s line</span> {{ daily_message }}</span>
-        </p>
+
     </section>
 
     <section class="section rise d2" aria-labelledby="checkin-title">
@@ -35,8 +32,9 @@
                     {% if current_checkin_label %}Today’s check-in: {{ current_checkin_label }}.{% else %}Today is closed.{% endif %}
                 </p>
                 <p class="mood-hint">This day is closed and can’t be edited. Tomorrow starts a new page.</p>
+                <p class="daily-note"><span><span class="note-label">Today’s line</span> {{ daily_message }}</span></p>
             {% else %}
-                <form method="post" action="{% url 'set_day_mood' %}" class="mood-form">
+                <form method="post" action="{% url 'set_day_mood' %}" class="mood-form" id="home-mood-form">
                     {% csrf_token %}
                     <input type="hidden" name="day_id" value="{{ day.id }}">
                     <ul class="mood-grid">
@@ -52,8 +50,12 @@
                         {% endfor %}
                     </ul>
                 </form>
-                <p class="mood-hint">
+                <p class="mood-hint" id="mood-status" aria-live="polite">
                     {% if current_checkin_label %}Today’s check-in: {{ current_checkin_label }}. It shows as “{{ current_mood_label }}” on your Today page and in your charts. You can change it any time before the day closes.{% else %}Tap a mood to save it to today.{% endif %}
+                </p>
+                <p class="daily-note" id="daily-note">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c0-6 .5-9 0-14"/><path d="M12 13c-3.5 0-6-2.2-6-6 3.8 0 6 2.4 6 6z"/><path d="M12 10c0-3.2 2-5.6 5.6-6 .2 3.6-2 6-5.6 6z"/></svg>
+                    <span><span class="note-label">Today’s line</span> <span id="daily-note-text">{{ daily_message }}</span></span>
                 </p>
             {% endif %}
         </div>
@@ -69,14 +71,14 @@
                 {% if day.is_closed %}
                     {% if day.notes %}<p style="white-space:pre-wrap; margin:0;">{{ day.notes }}</p>{% else %}<p class="muted" style="margin:0;">No journal entry for this day.</p>{% endif %}
                 {% else %}
-                    <form method="post" action="{% url 'update_day_text' %}">
+                    <form method="post" action="{% url 'update_day_text' %}" id="home-notes-form">
                         {% csrf_token %}
                         <input type="hidden" name="day_id" value="{{ day.id }}">
                         <label for="reflection-notes" class="visually-hidden">Your journal entry for today</label>
                         <textarea id="reflection-notes" name="notes" placeholder="Write a few lines about what you need today.">{{ day.notes }}</textarea>
-                        <div class="reflect-actions">
+                        <div class="reflect-actions"><span id="entry-status" class="entry-status" aria-live="polite"></span>
                             <button type="submit" class="btn btn-primary">Save journal entry</button>
-                            <a href="{% url 'today' %}">Open today's page</a>
+                            <a href="{% url 'today' %}">Open My day</a>
                         </div>
                     </form>
                 {% endif %}
@@ -84,7 +86,7 @@
         </div>
     </section>
 
-    <section class="section rise d4" aria-labelledby="progress-title">
+    <section class="section rise d4" id="progress-section" aria-labelledby="progress-title">
         <div class="section-head">
             <p class="eyebrow">Your recent days</p>
             <h2 id="progress-title">What you've recorded lately</h2>
@@ -117,19 +119,21 @@
             </div>
         </div>
 
-        <div class="card pattern-card">
-            <h3>Mood patterns</h3>
-            <p class="muted" style="margin:0;">The last 14 days, one square per day. Tap a square to open that day.</p>
+        <details class="card pattern-card" id="patterns" open>
+            <summary><h3>Mood patterns</h3></summary>
+            <p class="muted" style="margin:0.6rem 0 0;">The last 14 days, one square per day. Tap a square to open that day.</p>
             <div class="strip" role="list">
                 {% for d in mood_strip %}
                 <a role="listitem" href="{% url 'day_detail' d.date.year d.date.month d.date.day %}" class="{% if d.mood %}mood-{{ d.mood }}{% endif %}{% if d.is_today %} is-today{% endif %}" title="{{ d.date|date:'D j M' }}{% if d.label %} · {{ d.label }}{% else %} · no check-in{% endif %}" aria-label="{{ d.date|date:'l j F' }}{% if d.label %}, {{ d.label }}{% else %}, no check-in{% endif %}"></a>
                 {% endfor %}
             </div>
-            <div class="strip-legend"><span>{{ mood_strip.0.date|date:"j M" }}</span><span>Today</span></div>
+            <div class="strip-legend"><span>{{ mood_strip.0.date|date:"j M" }} → Today</span></div>
             <div class="mood-key" aria-label="Color key">
-                <span>Very hard</span>
-                <span class="dot mood-very_bad" aria-hidden="true"></span><span class="dot mood-bad" aria-hidden="true"></span><span class="dot mood-neutral" aria-hidden="true"></span><span class="dot mood-good" aria-hidden="true"></span><span class="dot mood-very_good" aria-hidden="true"></span>
-                <span>Very good</span>
+                <span class="key-item"><span class="dot mood-very_bad" aria-hidden="true"></span>Very hard</span>
+                <span class="key-item"><span class="dot mood-bad" aria-hidden="true"></span>Hard</span>
+                <span class="key-item"><span class="dot mood-neutral" aria-hidden="true"></span>Neutral</span>
+                <span class="key-item"><span class="dot mood-good" aria-hidden="true"></span>Good</span>
+                <span class="key-item"><span class="dot mood-very_good" aria-hidden="true"></span>Very good</span>
             </div>
 
             {% if mood_total %}
@@ -146,7 +150,7 @@
             {% else %}
             <p class="empty-note">Patterns appear here after your first check-ins.</p>
             {% endif %}
-        </div>
+        </details>
     </section>
 
     <section class="gentle" aria-label="A gentle reminder">
@@ -154,4 +158,62 @@
         <blockquote>You are allowed to take things one day at a time.</blockquote>
     </section>
 </div>
+<script>
+(function () {
+    var moodForm = document.getElementById('home-mood-form');
+    var notesForm = document.getElementById('home-notes-form');
+    var pattern = document.getElementById('patterns');
+    if (pattern && window.innerWidth < 720) pattern.removeAttribute('open');
+
+    // After a save, pull the fresh page and swap only the parts that changed.
+    function refreshFragments() {
+        return fetch(window.location.href, { headers: { 'X-Requested-With': 'fetch' }, credentials: 'same-origin' })
+            .then(function (r) { return r.text(); })
+            .then(function (html) {
+                var doc = new DOMParser().parseFromString(html, 'text/html');
+                ['mood-status', 'daily-note', 'progress-section'].forEach(function (id) {
+                    var fresh = doc.getElementById(id), cur = document.getElementById(id);
+                    if (fresh && cur) {
+                        if (id === 'progress-section') {
+                            var open = document.getElementById('patterns') && document.getElementById('patterns').open;
+                            cur.innerHTML = fresh.innerHTML;
+                            var p = document.getElementById('patterns');
+                            if (p && !open) p.removeAttribute('open');
+                        } else { cur.innerHTML = fresh.innerHTML; }
+                    }
+                });
+                var tiles = doc.querySelectorAll('#home-mood-form .mood-option');
+                document.querySelectorAll('#home-mood-form .mood-option').forEach(function (li, i) {
+                    var f = tiles[i]; if (!f) return;
+                    li.className = f.className;
+                    li.querySelector('button').setAttribute('aria-pressed', f.querySelector('button').getAttribute('aria-pressed'));
+                });
+            });
+    }
+    function post(form, extra) {
+        var data = new FormData(form);
+        if (extra) Object.keys(extra).forEach(function (k) { data.set(k, extra[k]); });
+        return fetch(form.action, { method: 'POST', body: data, credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(function (r) { return r.json(); });
+    }
+    if (moodForm) moodForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        var btn = event.submitter; if (!btn) return;
+        post(moodForm, { mood: btn.value }).then(function (res) {
+            if (!res.ok) { moodForm.submit(); return; }
+            return refreshFragments();
+        }).catch(function () { moodForm.submit(); });
+    });
+    if (notesForm) notesForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        var status = document.getElementById('entry-status');
+        post(notesForm).then(function (res) {
+            if (!res.ok) { notesForm.submit(); return; }
+            status.textContent = 'Saved.';
+            setTimeout(function () { status.textContent = ''; }, 3000);
+            return refreshFragments();
+        }).catch(function () { notesForm.submit(); });
+    });
+})();
+</script>
 {% endblock %}

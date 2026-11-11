@@ -1,153 +1,31 @@
 {% if day.is_closed %}
+<section class="day-summary" aria-label="Summary of this day">
+    <dl class="summary-list">
+        {% if day.mood %}
+        <div class="summary-row"><dt>Mood</dt>
+            <dd class="summary-pill">{% include "planner/partials/mood_face.html" with mood=day.mood size=18 %} {% if day.mood == "very_bad" %}Very hard{% elif day.mood == "bad" %}Hard{% elif day.mood == "neutral" %}Neutral{% elif day.mood == "good" %}Good{% elif day.mood == "very_good" %}Very good{% else %}{{ day.mood }}{% endif %}</dd></div>
+        {% endif %}
+        {% if day.color %}
+        <div class="summary-row"><dt>Day color</dt>
+            <dd class="summary-pill color-{{ day.color }}">{% if day.color == "red" %}Heavy{% elif day.color == "yellow" %}Uneven{% elif day.color == "green" %}Light{% elif day.color == "blue" %}Steady{% elif day.color == "purple" %}Vivid{% else %}{{ day.color }}{% endif %}</dd></div>
+        {% endif %}
+    </dl>
 
-<div class="day-summary-card read-only" style="
-    max-width:800px;
-    margin:2rem auto;
-    padding:1.8rem;
-    border-radius:var(--radius-lg);
-    background:var(--bg-card);
-    box-shadow:var(--shadow);
-    transition: background 0.5s, color 0.5s;
-">
-
-    <h4 class="summary-title" style="
-        font-size:1.5rem;
-        font-weight:700;
-        margin-bottom:0.5rem;
-        text-align:center;
-        color: var(--heading);
-    ">Summary of this day</h4>
-
-
-    {% if day.color %}
-    <div class="summary-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem; padding:0.5rem 1rem; border-radius:14px; background:var(--bg-card); box-shadow:0 5px 15px rgba(0,0,0,0.05);">
-        <span class="summary-label" style="font-weight:600;">What kind of day it was</span>
-        <span class="color-{{ day.color }}" style="font-weight:600; padding:0.15rem 0.6rem; border-radius:999px; display:inline-flex; align-items:center; gap:0.4rem;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C7 8 4 12.5 4 16a8 8 0 0 0 16 0c0-3.5-3-8-8-14z"/></svg>
-            {% if day.color == "red" %}Heavy
-            {% elif day.color == "yellow" %}Uneven
-            {% elif day.color == "green" %}Light
-            {% elif day.color == "blue" %}Steady
-            {% elif day.color == "purple" %}Vivid
-            {% else %}{{ day.color }}
-            {% endif %}
-        </span>
-    </div>
-    {% endif %}
-
-    {% if day.mood %}
-    <div class="summary-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem; padding:0.5rem 1rem; border-radius:14px; background:var(--bg-card); box-shadow:0 5px 15px rgba(0,0,0,0.05);">
-        <span class="summary-label" style="font-weight:600;">Mood</span>
-        <span class="mood-{{ day.mood }}" style="font-weight:600; padding:0.15rem 0.6rem; border-radius:999px;">
-            {% if day.mood == "very_bad" %}😞 Very hard
-            {% elif day.mood == "bad" %}😕 Hard
-            {% elif day.mood == "neutral" %}😐 Neutral
-            {% elif day.mood == "good" %}🙂 Good
-            {% elif day.mood == "very_good" %}😄 Very good
-            {% else %}{{ day.mood }}
-            {% endif %}
-        </span>
-    </div>
-    {% endif %}
-
-    {% if day.notes %}
-    <div class="summary-box" style="margin-top:1rem;">
-        <label style="font-weight:600;">Journal entry</label>
-        <div class="closed-box" style="
-            margin-top:0.3rem;
-            padding:0.7rem 1rem;
-            border-radius:14px;
-            background:var(--bg-card);
-            box-shadow:0 5px 15px rgba(0,0,0,0.05);
-            white-space:pre-wrap;
-        ">
-            {{ day.notes|linebreaks }}
-        </div>
-    </div>
-    {% endif %}
-
-    {% if reflection and reflection.drain %}
-    <div class="summary-box" style="margin-top:1rem;">
-        <label style="font-weight:600;">What drained your energy?</label>
-        <div class="closed-box" style="
-            margin-top:0.3rem;
-            padding:0.7rem 1rem;
-            border-radius:14px;
-            background:var(--bg-card);
-            box-shadow:0 5px 15px rgba(0,0,0,0.05);
-            white-space:pre-wrap;
-        ">
-            {{ reflection.drain|linebreaks }}
-        </div>
-    </div>
-    {% endif %}
-
-    {% if reflection and reflection.small_win %}
-    <div class="summary-box" style="margin-top:1rem;">
-        <label style="font-weight:600;">One small thing that went well</label>
-        <div class="closed-box" style="
-            margin-top:0.3rem;
-            padding:0.7rem 1rem;
-            border-radius:14px;
-            background:var(--bg-card);
-            box-shadow:0 5px 15px rgba(0,0,0,0.05);
-            white-space:pre-wrap;
-        ">
-            {{ reflection.small_win|linebreaks }}
-        </div>
-    </div>
-    {% endif %}
+    {% if day.notes %}<div class="summary-entry"><h2>Journal entry</h2><p>{{ day.notes|linebreaksbr }}</p></div>{% endif %}
+    {% if reflection and reflection.drain %}<div class="summary-entry"><h2>What drained your energy?</h2><p>{{ reflection.drain|linebreaksbr }}</p></div>{% endif %}
+    {% if reflection and reflection.small_win %}<div class="summary-entry"><h2>One small thing that went well</h2><p>{{ reflection.small_win|linebreaksbr }}</p></div>{% endif %}
 
     {% if time_blocks %}
-    <div class="day-summary-card" style="
-        max-width:800px;
-        margin:2rem auto;
-        padding:1.8rem;
-        border-radius:var(--radius-lg);
-        background:var(--bg-card);
-        box-shadow:var(--shadow);
-    ">
-        <h4 class="summary-title" style="
-            font-size:1.5rem;
-            font-weight:700;
-            margin-bottom:1rem;
-            text-align:center;
-            color: var(--heading);
-        ">Daily schedule</h4>
-
-        {% for block in time_blocks %}
-        <div class="time-block-summary {% if block.completed %}done{% endif %}" style="
-            display:flex;
-            justify-content:space-between;
-            padding:0.5rem 1rem;
-            margin-bottom:0.5rem;
-            border-radius:14px;
-            background:var(--bg-card);
-            box-shadow:0 5px 15px rgba(0,0,0,0.05);
-            {% if block.completed %}opacity:0.6; text-decoration:line-through;{% endif %}
-        ">
-            <span class="time" style="font-weight:500;">{{ block.start_time|time:'H:i' }} – {{ block.end_time|time:'H:i' }}</span>
-            <span class="title" style="font-weight:500;">{{ block.title }}</span>
-        </div>
-        {% endfor %}
+    <div class="summary-entry">
+        <h2>Daily schedule</h2>
+        <ul class="summary-blocks">
+            {% for block in time_blocks %}
+            <li class="{% if block.completed %}done{% endif %}"><span>{{ block.start_time|time:"H:i" }} – {{ block.end_time|time:"H:i" }}</span><span>{{ block.title }}{% if block.completed %} <span class="visually-hidden">(done)</span>{% endif %}</span></li>
+            {% endfor %}
+        </ul>
     </div>
     {% endif %}
 
-    {% if quote %}
-    <div class="gentle-recommendation" style="
-        max-width:800px;
-        margin:2rem auto 1rem auto;
-        text-align:center;
-        font-style:italic;
-        color:var(--text-muted);
-        font-size:1.1rem;
-    ">
-         {{ quote.text }}
-    </div>
-    {% endif %}
-
-
-</div>
+    {% if quote %}<p class="summary-quote">{{ quote.text }}</p>{% endif %}
+</section>
 {% endif %}
-
-

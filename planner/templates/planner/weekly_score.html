@@ -5,9 +5,9 @@
 {% block content %}
 <div class="weekly-card">
 
-    <div class="weekly-title title-gradient">
+    <h1 class="weekly-title title-gradient">
          Your week
-    </div>
+    </h1>
 
     <div class="weekly-subtitle muted">
         What you recorded this week, nothing more.
@@ -42,7 +42,7 @@
 
     <div class="weekly-hint muted">Go to:</div>
     <div class="weekly-actions">
-        <a href="{% url 'today' %}" class="button primary">Open today</a>
+        <a href="{% url 'today' %}" class="button primary">Open My day</a>
         <a href="{% url 'calendar' %}" class="button">Calendar</a>
     </div>
 

@@ -7,7 +7,7 @@
 
   <div class="calendar-header">
     <a href="{% url 'calendar_month' prev_year prev_month %}" class="nav-arrow" aria-label="Previous month">← Previous month</a>
-    <div class="calendar-title title-gradient">{{ month_name }} {{ year }}</div>
+    <h1 class="calendar-title title-gradient">{{ month_name }} {{ year }}</h1>
     <a href="{% url 'calendar_month' next_year next_month %}" class="nav-arrow" aria-label="Next month">Next month →</a>
   </div>
 
@@ -23,15 +23,10 @@
            {% if item.day.color %}color-{{ item.day.color }}{% endif %}
            {% if item.is_today %}today{% endif %}"
          {% if item.day.notes %}data-notes="{{ item.day.notes|escape }}" {% endif %}>
-        {% if item.day.notes %}<span class="day-note-mark" aria-label="Has a note">📝</span>{% endif %}
+        {% if item.day.notes %}<span class="day-note-mark" role="img" aria-label="Has a journal entry">{% include "planner/partials/note_icon.html" %}</span>{% endif %}
         <div class="day-number">{{ item.date.day }}</div>
         <div class="day-mood">
-          {% if item.day.mood == "very_bad" %}😞
-          {% elif item.day.mood == "bad" %}😕
-          {% elif item.day.mood == "neutral" %}😐
-          {% elif item.day.mood == "good" %}🙂
-          {% elif item.day.mood == "very_good" %}😄
-          {% endif %}
+          {% include "planner/partials/mood_face.html" with mood=item.day.mood size=20 %}
         </div>
       </a>
       {% else %}
@@ -42,7 +37,7 @@
   </div>
 
   <div class="calendar-legend muted">
-    Each day shows its mood as an emoji (📝 means there’s a journal entry) and is tinted with the day’s color:
+    Each day shows its mood as an emoji (a small note icon means there’s a journal entry) and is tinted with the day’s color:
     <span class="swatch color-red"></span>Heavy · <span class="swatch color-yellow"></span>Uneven · <span class="swatch color-green"></span>Light · <span class="swatch color-blue"></span>Steady · <span class="swatch color-purple"></span>Vivid.
     Tap a day to open it.
   </div>

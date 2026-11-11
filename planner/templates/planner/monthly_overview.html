@@ -7,7 +7,7 @@
 
     <div class="month-nav">
         <a class="month-btn" href="?year={{ year }}&month={{ month|add:'-1' }}" aria-label="Previous month">← Previous month</a>
-        <div class="month-label title-gradient">{{ month_name }} {{ year }}</div>
+        <h1 class="month-label title-gradient">Month overview: {{ month_name }} {{ year }}</h1>
         <a class="month-btn" href="?year={{ year }}&month={{ month|add:'1' }}" aria-label="Next month">Next month →</a>
     </div>
 
@@ -25,16 +25,10 @@
                         {% if not day.mood %}empty{% endif %}"
                  title="{% if day.notes %}{{ day.notes|truncatechars:50 }}{% else %}No notes for this day{% endif %}">
 
-                {% if day.notes %}<span class="day-note-mark" aria-label="Has a note">📝</span>{% endif %}
+                {% if day.notes %}<span class="day-note-mark" role="img" aria-label="Has a journal entry">{% include "planner/partials/note_icon.html" %}</span>{% endif %}
                 <div class="day-number">{{ day.date|date:"d" }}</div>
                 <div class="day-emoji">
-                    {% if day.mood == "very_bad" %}😞
-                    {% elif day.mood == "bad" %}😕
-                    {% elif day.mood == "neutral" %}😐
-                    {% elif day.mood == "good" %}🙂
-                    {% elif day.mood == "very_good" %}😄
-                    {% else %}·
-                    {% endif %}
+                    {% if day.mood %}{% include "planner/partials/mood_face.html" with mood=day.mood size=20 %}{% else %}·{% endif %}
                 </div>
             </a>
             {% else %}
@@ -50,7 +44,7 @@
 
     <div class="overview-actions">
         <a href="{% url 'calendar' %}" class="button">← Calendar</a>
-        <a href="{% url 'today' %}" class="button primary">Open today</a>
+        <a href="{% url 'today' %}" class="button primary">Open My day</a>
     </div>
 
 </div>
