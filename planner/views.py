@@ -23,10 +23,10 @@ from .forms import RegisterForm, EmailAuthenticationForm, TimeBlockForm, Profile
 from .decorators import ratelimit_post
 
 HOME_PREVIEW_CARDS = [
-    {"icon": "🌤", "title": "Today", "description": "Log a mood, a color and a thought, and plan the day in time blocks."},
-    {"icon": "🌙", "title": "Evening ritual", "description": "Close the day with two gentle questions. Once closed, it stays as it was."},
-    {"icon": "📅", "title": "Calendar", "description": "See every day at a glance, colored by how it felt."},
-    {"icon": "📈", "title": "Your Week", "description": "A gentle summary of how balanced the week felt. Not a grade."},
+    {"icon": "🌤", "title": "Today", "description": "Pick a mood, write a line, and add the day's plan as time blocks."},
+    {"icon": "🌙", "title": "Evening ritual", "description": "Close the day with two quiet questions: what drained you, and one small thing you appreciate. Once closed, the day stays exactly as it was."},
+    {"icon": "📅", "title": "Calendar", "description": "Every day as a small colored square, with the mood you picked. Tap one to read it."},
+    {"icon": "📈", "title": "Your Week", "description": "See which days you checked in and what you wrote, on one calm page. No ranking."},
 ]
 
 # The home check-in offers five emotions, but the existing Day.mood field is a
@@ -298,7 +298,9 @@ def home_view(request):
     if request.user.is_authenticated:
         return render(request, "planner/home_member.html", build_home_context(request.user, date.today()))
 
-    quote = _random_quote(Quote.objects.filter(active=True))
+    # A visitor has no mood yet, so only show the general (mood-less) quotes.
+    general = Quote.objects.filter(active=True, mood__isnull=True) | Quote.objects.filter(active=True, mood="")
+    quote = _random_quote(general) or _random_quote(Quote.objects.filter(active=True))
     return render(request, "planner/home.html", {
         "quote": quote,
         "today": date.today(),

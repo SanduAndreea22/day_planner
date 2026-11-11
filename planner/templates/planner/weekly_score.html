@@ -10,7 +10,7 @@
     </div>
 
     <div class="weekly-subtitle muted">
-        This score doesn’t define you. It’s just a gentle reflection.
+        A quiet look at what you chose to record this week. Nothing to win, nothing to catch up on.
     </div>
 
     <div class="weekly-nav">
@@ -19,25 +19,9 @@
         <a href="?offset={{ offset|add:1 }}" class="week-btn muted">Next week →</a>
     </div>
 
-    <div class="weekly-score-wrapper">
-        <div class="weekly-score-value"><span id="score-count">{{ score }}</span> <span>/ 100</span></div>
-        <div class="weekly-progress">
-            <div class="weekly-progress-fill" id="score-fill" style="width: 0%;" data-score="{{ score }}"></div>
-        </div>
+    <div class="weekly-message" style="font-family:var(--font-serif); font-size:1.8rem; line-height:1.25; margin:1.4rem auto; max-width:24ch;">
+        {{ message }}
     </div>
-
-    <div class="weekly-message">
-        {{ emoji }} {{ message }}
-    </div>
-
-    <div class="weekly-hint muted">
-        It’s not a grade or a competition. It just adds up what you logged this week.
-    </div>
-
-    <details class="weekly-how muted">
-        <summary>How is this calculated?</summary>
-        <p>Each day you logged adds 10, each mood entry adds 8, and each task you check off adds 2. The total stops at 100. Logging more is the only way it goes up; nothing ever subtracts.</p>
-    </details>
 
     <div class="weekly-details">
         <div class="detail-card">
@@ -151,16 +135,7 @@
 .weekly-actions { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
 </style>
 
-<script>
-(function () {
-    var fill = document.getElementById('score-fill');
-    var target = parseInt(fill.dataset.score, 10) || 0;
 
-    requestAnimationFrame(function () {
-        fill.style.width = target + '%';
-    });
-})();
-</script>
 {% endblock %}
 
 

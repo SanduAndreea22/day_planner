@@ -143,3 +143,5 @@ body.dark .step svg { color: var(--sage); }
 body.dark .peek-tile.is-picked { outline-color: var(--ivory); }
 .peek-note { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin: 1rem 0 0; }
 @media (max-width: 720px) { .peek-tile { flex-direction: row; justify-content: flex-start; gap: 1rem; padding: 0.9rem 1.1rem; } .peek-tile .mood-glyph { width: 32px; height: 32px; } }
+.audience { max-width: 34rem; margin: 1.2rem auto 0; font-family: var(--font-serif); font-style: italic; font-size: 1.25rem; line-height: 1.35; color: var(--heading); }
+.cta-note { max-width: 36rem; margin-left: auto; margin-right: auto; }

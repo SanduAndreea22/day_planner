@@ -92,3 +92,14 @@ def test_home_falls_back_without_quotes(client, django_user_model):
     user = django_user_model.objects.create_user(username="q2", password="pass12345")
     client.force_login(user)
     assert client.get(reverse("home")).status_code == 200
+
+
+@pytest.mark.django_db
+def test_guest_landing_only_shows_general_quotes(client):
+    from planner.models import Quote
+    Quote.objects.all().delete()
+    Quote.objects.create(text="General kindness.", mood=None)
+    Quote.objects.create(text="Mood specific.", mood="good")
+    for _ in range(5):
+        html = client.get(reverse("home")).content.decode()
+        assert "General kindness." in html and "Mood specific." not in html
