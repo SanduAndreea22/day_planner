@@ -109,7 +109,7 @@
             <div class="card lift">
                 <p class="stat-label">Days with journal entries</p>
                 <p class="stat-num">{{ notes_days }}</p>
-                <p class="stat-sub">{% if notes_days %}in the past 30 days. Every line counts.{% else %}A single line is a lovely place to begin.{% endif %}</p>
+                <p class="stat-sub">{% if notes_days %}in the past 30 days.{% else %}None yet. Your first entry will show up here.{% endif %}</p>
                 <p style="margin:1rem 0 0;"><a href="{% url 'search' %}">Browse your entries</a></p>
             </div>
             <div class="card lift">

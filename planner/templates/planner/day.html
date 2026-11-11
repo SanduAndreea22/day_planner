@@ -135,7 +135,7 @@
             <form method="post" action="{% url 'update_day_text' %}" id="notes-form" style="display:{% if day.notes %}none{% else %}block{% endif %};">
                 {% csrf_token %}
                 <input type="hidden" name="day_id" value="{{ day.id }}">
-                <textarea name="notes" rows="4" style="width:100%; padding:0.5rem; border-radius:var(--radius-md);" placeholder="One thought is enough. It doesn’t need to be perfect.">{{ day.notes }}</textarea>
+                <textarea name="notes" rows="4" style="width:100%; padding:0.5rem; border-radius:var(--radius-md);" placeholder="Write a few lines about your day.">{{ day.notes }}</textarea>
                 <button type="submit" class="button primary" style="margin-top:0.5rem; width:100%; padding:0.7rem; border-radius:var(--radius-md); background:var(--primary); color:white;">Save</button>
             </form>
         </div>

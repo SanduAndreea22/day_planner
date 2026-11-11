@@ -28,11 +28,11 @@
             <article class="card guide-card">
                 <h2>Today</h2>
                 <p>Your daily page: a mood, a journal entry, and the day's plan in time blocks.</p>
-                <details><summary>More about today</summary><p>Add a few time blocks (slots like 09:00 – 10:00 · Study), check them off as you go, and write a journal entry whenever you like. There’s no right way to fill it in. A single line is enough.</p></details>
+                <details><summary>More about today</summary><p>Add a few time blocks (slots like 09:00 – 10:00 · Study), check them off as you go, and write a journal entry whenever you like. There’s no right way to fill it in: use as much or as little as you like.</p></details>
             </article>
             <article class="card guide-card">
                 <h2>Evening reflection</h2>
-                <p>Close the day with two optional questions. Closing locks the day, so it can’t be edited afterward.</p>
+                <p>Close the day with two optional questions. Closing locks the day, so it can’t be edited afterward. Set your mood and color on Today first.</p>
                 <details><summary>More about evening reflection</summary><p>Write what drained you and one small thing you appreciate (both optional). Pick your mood and color on the Today page first, because they can’t be changed once the day is closed.</p></details>
             </article>
             <article class="card guide-card">
@@ -56,7 +56,7 @@
                 <details><summary>More about exporting</summary><p>From your <a href="{% url 'profile' %}">profile</a>, you get a file you can open in Excel, Google Sheets, or any spreadsheet app.</p></details>
             </article>
         </div>
-        <p class="cta-note" style="text-align:center; margin-top:1.8rem;">This app is still evolving. If something is confusing, broken, or missing, {% if user.is_authenticated %}tell us on the <a href="{% url 'feedback' %}">feedback page</a>{% else %}you can send feedback once you’ve logged in{% endif %}. We read every message.</p>
+        <p class="cta-note" style="text-align:center; margin-top:1.8rem;">This app is still evolving. If something is confusing, broken, or missing, {% if user.is_authenticated %}tell me on the <a href="{% url 'feedback' %}">feedback page</a>{% else %}you can send feedback once you’ve logged in{% endif %}. I read every message.</p>
     </section>
 </div>
 {% endblock %}

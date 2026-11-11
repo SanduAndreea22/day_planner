@@ -142,6 +142,6 @@ class FeedbackForm(forms.ModelForm):
             "message": forms.Textarea(attrs={
                 "rows": 5,
                 "maxlength": 1000,
-                "placeholder": "Tell us what's working, what's missing, or what felt off...",
+                "placeholder": "Tell me what's working, what's missing, or what felt off...",
             })
         }
