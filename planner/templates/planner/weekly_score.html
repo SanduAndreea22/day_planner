@@ -19,7 +19,7 @@
         <a href="?offset={{ offset|add:1 }}" class="week-btn muted">Next week →</a>
     </div>
 
-    <div class="weekly-message" style="font-family:var(--font-serif); font-size:1.8rem; line-height:1.25; margin:1.4rem auto; max-width:24ch;">
+    <div class="weekly-message" style="font-family:var(--font-serif); font-size:1.35rem; line-height:1.3; margin:1.2rem auto; max-width:30ch;">
         {{ message }}
     </div>
 
@@ -131,6 +131,8 @@
 .weekly-suggestion { font-style: italic; margin-bottom: 1.5rem; }
 
 .weekly-actions { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.weekly-details .detail-card { display: grid; gap: 0.2rem; text-align: center; padding: 1.1rem 1.4rem; min-width: 7.5rem; }
+.weekly-details .detail-card strong { font-family: var(--font-sans); font-weight: 300; font-size: 2.4rem; line-height: 1; color: var(--heading); }
 </style>
 
 

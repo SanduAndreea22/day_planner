@@ -213,3 +213,23 @@ body.dark .peek-tile.is-picked { outline-color: var(--ivory); }
     .progress-grid .card { padding: 1.1rem; }
 }
 @media (max-width: 420px) { .bar-row { grid-template-columns: 4.6rem 1fr 4.4rem; } }
+
+/* Stronger "selected" state for mood tiles */
+.mood-option.is-selected button { border-width: 2.5px; border-color: var(--charcoal); }
+.mood-option.is-selected button::after { content: '✓'; top: 8px; right: 10px; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--charcoal); color: var(--ivory); font-size: 0.8rem; }
+body.dark .mood-option.is-selected button::after { background: var(--ivory); color: var(--charcoal); }
+.next-link { font-weight: 500; }
+.demo-cal-day:disabled { opacity: 0.45; border: 1px dashed var(--border); cursor: not-allowed; }
+
+/* Landing: calmer audience line, clickable preview, tinted privacy band */
+.audience { font-family: var(--font-sans); font-style: normal; font-size: 0.95rem; color: var(--text-muted); max-width: 34rem; }
+a.peek-card { display: block; text-decoration: none; color: inherit; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+a.peek-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+a.peek-card:focus-visible { outline: 2px solid var(--secondary); outline-offset: 4px; }
+.tinted { background: var(--bg-soft); border-radius: var(--radius-lg); padding: clamp(1.4rem, 4vw, 2.4rem); }
+.tinted .trust-item { background: var(--bg-card); }
+
+/* How it works: the three steps are a plain row, not clickable-looking cards */
+.rhythm { gap: 0.5rem; }
+.rhythm li { background: none; border: none; padding: 0.4rem 0.3rem; }
+@media (max-width: 560px) { .rhythm { grid-template-columns: repeat(3, 1fr); } .rhythm li strong { font-size: 0.95rem; } .rhythm li span:last-child { font-size: 0.8125rem; } }

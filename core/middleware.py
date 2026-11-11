@@ -1,6 +1,6 @@
 class ContentSecurityPolicyMiddleware:
     """Restricts external resources to the hosts the app actually loads from
-    (Google Fonts, jsdelivr for Chart.js) instead of allowing any origin.
+    (Google Fonts; Chart.js is served locally) instead of allowing any origin.
 
     Inline <style>/<script> blocks are still allowed ('unsafe-inline') —
     templates use plenty of both, and moving to nonces/hashes for every one
@@ -13,7 +13,7 @@ class ContentSecurityPolicyMiddleware:
         "default-src 'self'; "
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
         "font-src 'self' https://fonts.gstatic.com; "
-        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+        "script-src 'self' 'unsafe-inline'; "
         "img-src 'self' data:; "
         "connect-src 'self'; "
         "frame-ancestors 'self'; "

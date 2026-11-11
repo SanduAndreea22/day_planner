@@ -23,9 +23,9 @@
 
         <div class="peek" aria-label="A preview of the daily check-in">
             <p class="peek-label">What a check-in looks like</p>
-            <div class="card peek-card" aria-hidden="true">
-                <p class="peek-title">How are you feeling today?</p>
-                <ul class="mood-grid">
+            <a class="card peek-card" href="{% url 'demo' %}" aria-label="Try the demo check-in">
+                <p class="peek-title" aria-hidden="true">How are you feeling today?</p>
+                <ul class="mood-grid" aria-hidden="true">
                     {% for mood in mood_checkins %}
                     <li class="mood-option mood-{{ mood.key }}">
                         <div class="peek-tile{% if mood.key == 'calm' %} is-picked{% endif %}">
@@ -35,8 +35,8 @@
                     </li>
                     {% endfor %}
                 </ul>
-            </div>
-            <p class="peek-note">This is a preview. In the app, tapping a mood saves it to today, and everything after that is optional. <a href="{% url 'demo' %}">Try it in the demo</a>.</p>
+            </a>
+            <p class="peek-note">Tap the card to try it. In the app, a tap saves your mood to today, and everything after that is optional.</p>
         </div>
     </header>
 
@@ -67,13 +67,14 @@
             <h2 id="example-title">One day, all in one place</h2>
         </div>
         <div class="card shot lift">
-            <img src="{% static 'planner/app-today.png' %}" width="760" height="878" loading="lazy"
-                 alt="The Today page: mood set to Good, day color Steady, a journal entry, and a daily schedule with three time blocks.">
+            <img src="{% static 'planner/app-today.png' %}" width="1040" height="1966" loading="lazy"
+                 alt="The Today page: five mood tiles with Calm selected, five day colors with Steady selected, and a journal entry.">
         </div>
         <p class="cta-note" style="text-align:center;">You can search every journal entry you've written and see each month's moods on one calendar. <a href="{% url 'guide' %}">See how it works</a>.</p>
+        <p class="cta-row" style="margin-top:1rem;"><a href="{% url 'demo' %}" class="btn btn-ghost">Try this yourself in the demo</a></p>
     </section>
 
-    <section class="section rise d3" aria-labelledby="trust-title">
+    <section class="section rise d3 tinted" aria-labelledby="trust-title">
         <div class="section-head">
             <p class="eyebrow">Your privacy</p>
             <h2 id="trust-title">What you write stays yours</h2>

@@ -36,14 +36,26 @@
     {% endfor %}
   </div>
 
-  <div class="calendar-legend muted">
-    Each day shows its mood as an emoji (a small note icon means there’s a journal entry) and is tinted with the day’s color:
-    <span class="swatch color-red"></span>Heavy · <span class="swatch color-yellow"></span>Uneven · <span class="swatch color-green"></span>Light · <span class="swatch color-blue"></span>Steady · <span class="swatch color-purple"></span>Vivid.
-    Tap a day to open it.
+  <div class="calendar-legend" aria-label="How to read the calendar">
+    <span class="legend-item">{% include "planner/partials/mood_face.html" with mood="good" size=16 %} mood</span>
+    <span class="legend-item">{% include "planner/partials/note_icon.html" %} journal entry</span>
+    <span class="legend-sep" aria-hidden="true"></span>
+    <span class="legend-item"><span class="swatch color-red"></span>Heavy</span>
+    <span class="legend-item"><span class="swatch color-yellow"></span>Uneven</span>
+    <span class="legend-item"><span class="swatch color-green"></span>Light</span>
+    <span class="legend-item"><span class="swatch color-blue"></span>Steady</span>
+    <span class="legend-item"><span class="swatch color-purple"></span>Vivid</span>
   </div>
 
+  <form class="calendar-jump" id="calendar-jump" aria-label="Jump to a month">
+    <label for="jump-month" class="visually-hidden">Month</label>
+    <select id="jump-month">{% for num, name in months %}<option value="{{ num }}" {% if num == month %}selected{% endif %}>{{ name }}</option>{% endfor %}</select>
+    <label for="jump-year" class="visually-hidden">Year</label>
+    <select id="jump-year">{% for y in years %}<option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>{% endfor %}</select>
+  </form>
+
   <div class="calendar-links">
-    <a href="{% url 'calendar' %}">Jump to this month</a> ·
+    <a href="{% url 'calendar' %}">Back to this month</a> ·
     <a href="{% url 'monthly_overview' %}?year={{ year }}&month={{ month }}">Month overview</a>
   </div>
 
@@ -179,6 +191,20 @@
 }
 
 </style>
+<style>
+.calendar-legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; justify-content: center; align-items: center; margin-top: 1rem; font-size: 0.875rem; color: var(--text-muted); }
+.legend-item { display: inline-flex; align-items: center; gap: 0.35rem; }
+.legend-sep { width: 1px; height: 1rem; background: var(--border); }
+.calendar-jump { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; }
+.calendar-jump select { min-width: 7rem; }
+</style>
+<script>
+(function () {
+    var m = document.getElementById('jump-month'), y = document.getElementById('jump-year');
+    function go() { window.location = '/calendar/' + y.value + '/' + m.value + '/'; }
+    m.addEventListener('change', go); y.addEventListener('change', go);
+})();
+</script>
 {% endblock %}
 
 

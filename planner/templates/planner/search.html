@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load planner_extras %}
 
 {% block title %}Search · Emotional Planner{% endblock %}
 
@@ -7,45 +8,76 @@
     <h1 class="title-gradient">Search your days</h1>
     <p class="updated-date">Find any day by what you wrote or how you felt.</p>
 
-    <form method="get" style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem;">
-        <input
-            type="text"
-            name="q"
-            value="{{ query }}"
-            placeholder="Search your journal entries"
-            style="flex:1; min-width:200px; padding:0.6rem 0.8rem; border-radius:var(--radius-md); border:1px solid var(--text-muted); background:var(--bg-card); color:var(--text-main);"
-        >
-        <select name="mood" style="padding:0.6rem 0.8rem; border-radius:var(--radius-md); border:1px solid var(--text-muted); background:var(--bg-card); color:var(--text-main);">
-            <option value="">Any mood</option>
-            <option value="very_bad" {% if mood_filter == "very_bad" %}selected{% endif %}>Very hard</option>
-            <option value="bad" {% if mood_filter == "bad" %}selected{% endif %}>Hard</option>
-            <option value="neutral" {% if mood_filter == "neutral" %}selected{% endif %}>Neutral</option>
-            <option value="good" {% if mood_filter == "good" %}selected{% endif %}>Good</option>
-            <option value="very_good" {% if mood_filter == "very_good" %}selected{% endif %}>Very good</option>
-        </select>
-        <button type="submit" class="button primary">Search</button>
+    <form method="get" class="search-form">
+        <div class="search-field">
+            <label for="q">Words in your journal entries</label>
+            <input id="q" type="search" name="q" value="{{ query }}" placeholder="e.g. walk">
+        </div>
+        <div class="search-field">
+            <label for="mood">Mood</label>
+            <select id="mood" name="mood">
+                <option value="">Any mood</option>
+                <option value="very_bad" {% if mood_filter == "very_bad" %}selected{% endif %}>Very hard</option>
+                <option value="bad" {% if mood_filter == "bad" %}selected{% endif %}>Hard</option>
+                <option value="neutral" {% if mood_filter == "neutral" %}selected{% endif %}>Neutral</option>
+                <option value="good" {% if mood_filter == "good" %}selected{% endif %}>Good</option>
+                <option value="very_good" {% if mood_filter == "very_good" %}selected{% endif %}>Very good</option>
+            </select>
+        </div>
+        <div class="search-actions">
+            <button type="submit" class="btn btn-primary">Search</button>
+            {% if query or mood_filter %}<a href="{% url 'search' %}" class="btn-text">Clear</a>{% endif %}
+        </div>
     </form>
 
     {% if query or mood_filter %}
-        <p class="updated-date">{% if days %}{{ days|length }} day{{ days|length|pluralize }} found{% else %}No days found.{% endif %}</p>
+        <p class="updated-date" role="status">{% if total %}{{ total }} day{{ total|pluralize }} found{% else %}No days found.{% endif %}</p>
     {% endif %}
 
     {% if days %}
-        <div style="display:flex; flex-direction:column; gap:0.5rem;">
+        <ul class="results">
             {% for day in days %}
-                <a href="{% url 'day_detail' day.date.year day.date.month day.date.day %}"
-                   style="display:flex; justify-content:space-between; gap:1rem; padding:0.7rem 1rem; border-radius:14px; background:rgba(183,201,181,0.3); text-decoration:none; color:var(--text-main);">
-                    <span style="font-weight:600; white-space:nowrap;">{{ day.date|date:"d M Y" }}</span>
-                    <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text-muted);">
-                        {% if day.notes %}{{ day.notes|truncatechars:80 }}{% else %}<em>No journal entry</em>{% endif %}
-                    </span>
+            <li>
+                <a href="{% url 'day_detail' day.date.year day.date.month day.date.day %}" class="result">
+                    <span class="result-date">{{ day.date|date:"d M Y" }}</span>
+                    <span class="result-mood">{% if day.mood %}<span class="dot mood-{{ day.mood }}" aria-hidden="true"></span><span class="visually-hidden">Mood: {{ day.mood }}</span>{% endif %}</span>
+                    <span class="result-text">{% if day.notes %}{{ day.notes|snippet:query }}{% else %}<em>No journal entry</em>{% endif %}</span>
                 </a>
+            </li>
             {% endfor %}
-        </div>
+        </ul>
+
+        {% if page.has_other_pages %}
+        <nav class="pager" aria-label="Pages of results">
+            {% if page.has_previous %}<a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page.previous_page_number }}">← Newer</a>{% else %}<span></span>{% endif %}
+            <span class="muted">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+            {% if page.has_next %}<a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page.next_page_number }}">Older →</a>{% else %}<span></span>{% endif %}
+        </nav>
+        {% endif %}
     {% elif query or mood_filter %}
         <p class="updated-date">Nothing matched. Try a different word.</p>
     {% else %}
-        <p class="updated-date">Type a word or pick a mood to search your days.</p>
+        <p class="updated-date">Nothing to show yet. Write a journal entry or pick a mood, and your days will appear here.</p>
     {% endif %}
 </div>
+
+<style>
+.search-form { display: grid; grid-template-columns: 1fr auto auto; gap: 0.8rem; align-items: end; margin-bottom: 1.2rem; }
+.search-field { display: grid; gap: 0.3rem; }
+.search-field label { font-size: 0.875rem; font-weight: 500; color: var(--text-muted); }
+.search-actions { display: flex; gap: 0.4rem; align-items: center; }
+.legal-card .results { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.result { display: grid; grid-template-columns: auto auto 1fr; gap: 0.2rem 0.8rem; align-items: center; padding: 0.6rem 1rem; min-height: 44px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-main); text-decoration: none; color: var(--text-main); }
+.result:hover { background: var(--bg-soft); }
+.result-date { font-weight: 600; white-space: nowrap; }
+.result-mood .dot { width: 12px; height: 12px; }
+.result-text { color: var(--text-muted); min-width: 0; overflow-wrap: anywhere; }
+.result-text mark { background: var(--rose); color: #343A35; padding: 0 0.15em; border-radius: 4px; }
+.pager { display: flex; justify-content: space-between; align-items: center; margin-top: 1.2rem; }
+@media (max-width: 640px) {
+    .search-form { grid-template-columns: 1fr; }
+    .result { grid-template-columns: auto 1fr; }
+    .result-text { grid-column: 1 / -1; }
+}
+</style>
 {% endblock %}

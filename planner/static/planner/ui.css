@@ -66,3 +66,59 @@ body .calendar-card, body .month-overview-card { max-width: 960px; }
 
 /* Real <h1>s: no default top margin inside cards */
 body h1 { margin-top: 0; }
+
+/* ---- Shared components (also used outside the home/day pages) ---- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; border: 1px solid transparent; cursor: pointer; font-family: inherit; text-decoration: none; transition: transform 0.25s ease, background 0.25s, box-shadow 0.25s, color 0.25s; }
+.btn-primary { background: var(--primary); color: var(--on-primary); box-shadow: var(--shadow); }
+.btn-primary:hover { background: var(--primary-hover); color: var(--on-primary); transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.btn-ghost { background: transparent; color: var(--text-main); border-color: var(--border); }
+.btn-ghost:hover { background: var(--bg-soft); color: var(--text-main); transform: translateY(-2px); }
+.btn-danger { background: var(--danger); color: #fff; }
+body.dark .btn-danger { color: #1f2421; }
+.btn-text { all: unset; box-sizing: border-box; min-height: 44px; padding: 0 0.7rem; display: inline-flex; align-items: center; border-radius: 10px; color: var(--primary); cursor: pointer; font-size: 0.95rem; }
+.btn-text:hover { background: var(--bg-soft); }
+.btn-text:focus-visible { outline: 2px solid var(--secondary); outline-offset: 2px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.dot { width: 12px; height: 12px; border-radius: 50%; flex: none; display: inline-block; }
+
+/* ---- "More" menu in the header ---- */
+.nav-more { position: relative; }
+.nav-more summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; min-height: 44px; }
+.nav-more summary::-webkit-details-marker { display: none; }
+.nav-more summary::after { content: '▾'; margin-left: 0.3rem; font-size: 0.8em; }
+.nav-more-list { position: absolute; top: calc(100% + 4px); right: 0; z-index: 60; min-width: 12rem; background: var(--bg-main); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow-hover); padding: 0.4rem; display: grid; }
+.nav-more-list a { padding: 0.7rem 0.9rem; border-radius: 10px; color: var(--text-main); text-decoration: none; min-height: 44px; box-sizing: border-box; display: flex; align-items: center; }
+.nav-more-list a:hover { background: var(--bg-soft); }
+@media (max-width: 960px) {
+    .nav-more-list { position: static; box-shadow: none; border: none; background: transparent; padding: 0 0 0 0.8rem; }
+}
+
+/* ---- Bottom tab bar on phones/tablets for signed-in users ---- */
+.tabbar { display: none; }
+@media (max-width: 960px) {
+    body.has-tabbar { padding-bottom: 68px; }
+    .tabbar { display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 55;
+        background: color-mix(in srgb, var(--bg-main) 94%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+        border-top: 1px solid var(--border); padding-bottom: env(safe-area-inset-bottom); }
+    .tabbar a { display: flex; align-items: center; justify-content: center; min-height: 56px; padding: 0 0.2rem; font-size: 0.8125rem; font-weight: 500; text-align: center; color: var(--text-muted); text-decoration: none; position: relative; }
+    .tabbar a[aria-current="page"] { color: var(--heading); }
+    .tabbar a[aria-current="page"]::before { content: ''; position: absolute; top: 0; left: 25%; right: 25%; height: 3px; border-radius: 0 0 3px 3px; background: var(--secondary); }
+}
+
+/* Login: the recovery hint has to be easy to see */
+.auth-recovery { margin-top: 1.4rem; padding: 0.8rem 1rem; border-left: 4px solid var(--secondary); border-radius: 8px; background: var(--bg-soft); text-align: left; font-size: 0.95rem; }
+.auth-recovery p { margin: 0; }
+body .form-error-global, body .field-error { font-weight: 500; }
+
+/* Legal pages: contents list */
+.toc { margin: 0 0 1.6rem; padding: 1rem 1.2rem; border: 1px solid var(--border); border-radius: 16px; background: var(--bg-main); }
+.toc-title { margin: 0 0 0.3rem; font-weight: 600; }
+.toc ol { margin: 0; padding-left: 1.3rem; columns: 2; column-gap: 2rem; }
+.toc li { padding: 0.15rem 0; break-inside: avoid; }
+.toc a { display: inline-block; min-height: 32px; line-height: 32px; }
+@media (max-width: 640px) { .toc ol { columns: 1; } .toc a { min-height: 44px; line-height: 44px; } }
+.legal-card h2[id] { scroll-margin-top: 90px; }
+
+/* Calendar: comfortable touch targets */
+body .calendar-links a { display: inline-flex; align-items: center; min-height: 44px; }
+body .calendar-day { min-height: 44px; }

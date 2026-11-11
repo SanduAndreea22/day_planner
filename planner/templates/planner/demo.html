@@ -35,6 +35,7 @@
                 <p class="mood-status" id="demo-reply-title">Your line for today</p>
                 <p class="demo-quote" id="demo-quote"></p>
                 <p class="mood-hint">In your account, this check-in is saved to today.</p>
+                <p class="mood-hint"><a href="#demo-month" class="next-link">Next: color your month ↓</a></p>
             </div>
         </div>
     </section>
@@ -48,6 +49,7 @@
         <div class="card demo-cal-card">
             <div class="demo-cal" id="demo-cal" role="grid" aria-label="Month calendar"></div>
             <p class="stat-sub" id="demo-cal-count" aria-live="polite" style="text-align:center; margin-top:1rem;"></p>
+            <p class="stat-sub" id="demo-cal-note" aria-live="polite" style="text-align:center; margin-top:0.2rem;"></p>
         </div>
     </section>
 
@@ -62,7 +64,7 @@
                 <label for="demo-note" class="visually-hidden">Your journal entry (not saved in the demo)</label>
                 <textarea id="demo-note" placeholder="Write a line about today. It won't be saved in the demo."></textarea>
                 <div class="reflect-actions">
-                    <button type="button" class="btn btn-primary" id="demo-write">Finish the demo</button>
+                    <button type="button" class="btn btn-primary" id="demo-write">See what you’d get with an account</button>
                 </div>
             </div>
         </div>
@@ -115,10 +117,16 @@
 
             document.getElementById('demo-quote').textContent = pick ? '“' + pick + '”' : '';
             selected = btn.dataset.mood;
+            var firstTime = month.hidden;
             reply.hidden = false;
             month.hidden = false;
             reflect.hidden = false;
             fillDay(todayCell);
+            document.getElementById('demo-cal-note').textContent = 'Today’s square now matches “' + btn.dataset.label + '”.';
+            if (firstTime) {
+                var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                setTimeout(function () { month.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }, 350);
+            }
         });
     });
 
@@ -142,7 +150,7 @@
         cell.type = 'button'; cell.className = 'demo-cal-day'; cell.textContent = d; cell.dataset.day = d;
         cell.setAttribute('role', 'gridcell');
         cell.setAttribute('aria-label', names[mon] + ' ' + d + ', no check-in');
-        if (d > today) { cell.disabled = true; }
+        if (d > today) { cell.disabled = true; cell.title = 'Future days can’t be filled in'; }
         if (d === today) { cell.classList.add('is-today'); todayCell = cell; }
         grid.appendChild(cell);
     }

@@ -1,7 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Mood chart · Emotional Planner{% endblock %}
 {% block extra_head %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="{% static 'planner/vendor/chart.umd.min.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -30,6 +31,7 @@
     <div class="mood-chart-wrapper">
         <canvas id="mood-chart" height="220" role="img" aria-label="Line chart of your mood across {{ month_name }} {{ year }}"></canvas>
     </div>
+    <p id="chart-fallback" class="muted" hidden>The chart couldn’t load. The list below shows the same days.</p>
     {% endif %}
 
     <div class="mood-list">
@@ -156,8 +158,8 @@ body.dark .mood-row { background: rgba(55, 65, 81, 0.6); }
 (function () {
     var MOOD_SCALE = { very_bad: 1, bad: 2, neutral: 3, good: 4, very_good: 5 };
     var MOOD_COLOR = {
-        very_bad: '#ef4444', bad: '#facc15', neutral: '#9ca3af',
-        good: '#4ade80', very_good: '#a78bfa'
+        very_bad: '#7C97B0', bad: '#9A8DB8', neutral: '#D98D9A',
+        good: '#7FA27D', very_good: '#D6B764'
     };
     var MOOD_LABEL = {
         1: 'Very hard', 2: 'Hard', 3: 'Neutral', 4: 'Good', 5: 'Very good'
@@ -175,6 +177,11 @@ body.dark .mood-row { background: rgba(55, 65, 81, 0.6); }
 
     var muted = getComputedStyle(document.body).getPropertyValue('--text-muted').trim();
 
+    if (typeof Chart === 'undefined') {
+        var fb = document.getElementById('chart-fallback'); if (fb) fb.hidden = false;
+        var cv = document.getElementById('mood-chart'); if (cv) cv.parentNode.hidden = true;
+        return;
+    }
     new Chart(document.getElementById('mood-chart'), {
         type: 'line',
         data: {

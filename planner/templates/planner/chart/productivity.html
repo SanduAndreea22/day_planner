@@ -3,7 +3,7 @@
 
 {% block title %}Time blocks & mood · Emotional Planner{% endblock %}
 {% block extra_head %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="{% static 'planner/vendor/chart.umd.min.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -23,6 +23,7 @@
     <div class="productivity-chart-wrapper">
         <canvas id="productivity-chart" height="200" role="img" aria-label="Bar chart of finished time blocks per day, {{ start|date:'d M' }} to {{ end|date:'d M' }}"></canvas>
     </div>
+    <p id="chart-fallback" class="muted" hidden>The chart couldn’t load. The list below shows the same days.</p>
     {% endif %}
 
     <div class="productivity-list">
@@ -131,8 +132,8 @@
 <script>
 (function () {
     var MOOD_COLOR = {
-        very_bad: '#ef4444', bad: '#facc15', neutral: '#9ca3af',
-        good: '#4ade80', very_good: '#a78bfa', none: '#d1d5db'
+        very_bad: '#7C97B0', bad: '#9A8DB8', neutral: '#D98D9A',
+        good: '#7FA27D', very_good: '#D6B764', none: '#d1d5db'
     };
 
     var rows = [
@@ -143,6 +144,11 @@
 
     var muted = getComputedStyle(document.body).getPropertyValue('--text-muted').trim();
 
+    if (typeof Chart === 'undefined') {
+        var fb = document.getElementById('chart-fallback'); if (fb) fb.hidden = false;
+        var cv = document.getElementById('productivity-chart'); if (cv) cv.parentNode.hidden = true;
+        return;
+    }
     new Chart(document.getElementById('productivity-chart'), {
         type: 'bar',
         data: {

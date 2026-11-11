@@ -32,6 +32,16 @@
         Two optional questions, then the day is locked.
     </div>
 
+    <div class="evening-summary">
+        <p class="evening-summary-title">How this day looks right now</p>
+        <ul>
+            <li><span>Mood</span><strong>{% if day.mood %}{% include "planner/partials/mood_face.html" with mood=day.mood size=16 %} {% if day.mood == "very_bad" %}Very hard{% elif day.mood == "bad" %}Hard{% elif day.mood == "neutral" %}Neutral{% elif day.mood == "good" %}Good{% elif day.mood == "very_good" %}Very good{% endif %}{% else %}Not set{% endif %}</strong></li>
+            <li><span>Day color</span><strong>{% if day.color == "red" %}Heavy{% elif day.color == "yellow" %}Uneven{% elif day.color == "green" %}Light{% elif day.color == "blue" %}Steady{% elif day.color == "purple" %}Vivid{% else %}Not set{% endif %}</strong></li>
+            <li><span>Journal entry</span><strong>{% if day.notes %}Written{% else %}None yet{% endif %}</strong></li>
+        </ul>
+        <p class="evening-summary-note">These can’t be changed after you close the day. <a href="{% url 'day_detail' day.date.year day.date.month day.date.day %}">Change them on My day first</a>.</p>
+    </div>
+
     <form method="post" class="evening-form" id="evening-form" style="display:flex; flex-direction:column; gap:1.5rem;">
         {% csrf_token %}
 
@@ -45,7 +55,7 @@
                 name="drain"
                 rows="3"
                 placeholder="Anything, even something small…"
-                style="padding:0.5rem; border-radius:14px; border:1px solid #ccc; resize:none; transition: box-shadow 0.3s;"
+                style="resize:vertical;"
             >{{ reflection.drain }}</textarea>
         </div>
 
@@ -55,41 +65,15 @@
                 name="small_win"
                 rows="3"
                 placeholder="A gesture, a thought, a break…"
-                style="padding:0.5rem; border-radius:14px; border:1px solid #ccc; resize:none; transition: box-shadow 0.3s;"
+                style="resize:vertical;"
             >{{ reflection.small_win }}</textarea>
         </div>
 
-        <div style="text-align:center; color:var(--text-muted); font-size:0.9rem;">Once you close the day, it can’t be edited afterward.</div>
+        <p class="evening-lock" role="note"><strong>Closing locks this day.</strong> It can’t be edited afterward.</p>
 
-        <div class="evening-actions" style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-top:1rem;">
-            <button type="submit" class="button primary" style="
-                padding:0.7rem 1.2rem;
-                border-radius:14px;
-                background:var(--primary);
-                color:white;
-                font-weight:600;
-                flex:1;
-                min-width:140px;
-                transition: transform 0.2s, box-shadow 0.2s;
-            ">
-                Close the day 
-            </button>
-
-            <a href="{% url 'day_detail' day.date.year day.date.month day.date.day %}" class="button" style="
-                padding:0.7rem 1.2rem;
-                border-radius:14px;
-                background:transparent;
-                color:var(--primary);
-                border:2px solid var(--primary);
-                font-weight:600;
-                flex:1;
-                min-width:140px;
-                text-align:center;
-                text-decoration:none;
-                transition: transform 0.2s, box-shadow 0.2s;
-            ">
-                Back to this day
-            </a>
+        <div class="evening-actions">
+            <button type="submit" class="btn btn-primary">Close the day</button>
+            <a href="{% url 'day_detail' day.date.year day.date.month day.date.day %}" class="btn btn-ghost">Back to this day</a>
         </div>
     </form>
 </div>
@@ -123,6 +107,14 @@
 .evening-card.closing .evening-moon {
     animation: evening-breathe 0.7s ease-in-out;
 }
+.evening-summary { border: 1px solid var(--border); border-radius: 18px; background: var(--bg-main); padding: 1rem 1.2rem; margin-bottom: 1.5rem; }
+.evening-summary-title { font-family: var(--font-serif); font-size: 1.3rem; margin: 0 0 0.4rem; }
+.evening-summary ul { list-style: none; margin: 0; padding: 0; }
+.evening-summary li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.35rem 0; border-bottom: 1px solid var(--border); }
+.evening-summary li strong { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 500; }
+.evening-summary-note { margin: 0.7rem 0 0; font-size: 0.95rem; color: var(--text-muted); }
+.evening-lock { margin: 0; padding: 0.8rem 1rem; border-left: 4px solid var(--secondary); border-radius: 8px; background: var(--bg-soft); }
+.evening-actions { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin-top: 0.5rem; }
 </style>
 
 <script>

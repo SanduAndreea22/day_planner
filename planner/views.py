@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
+from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import redirect, render, get_object_or_404
@@ -582,6 +583,7 @@ def calendar_view(request, year=None, month=None):
 
     if year < 2025 or (year == 2025 and month < 11):
         year, month = 2025, 11
+        messages.info(request, "The calendar starts in November 2025.")
 
     first_weekday, total_days = monthrange(year, month)
     start_day = (first_weekday + 1) % 7
@@ -620,6 +622,8 @@ def calendar_view(request, year=None, month=None):
         next_year += 1
 
     return render(request, "planner/calendar.html", {
+        "months": [(n, MONTH_NAMES[n]) for n in range(1, 13)],
+        "years": list(range(2025, today.year + 2)),
         "year": year,
         "month": month,
         "days": days,
@@ -691,6 +695,14 @@ def monthly_overview_view(request):
     dominant_mood = Counter(moods).most_common(1)[0][0] if moods else None
 
     mood_labels = dict(Day.MOOD_CHOICES)
+    counts = Counter(moods)
+    mood_patterns = [
+        {"value": value, "label": label, "count": counts.get(value, 0),
+         "percent": round(counts.get(value, 0) * 100 / len(moods)) if moods else 0}
+        for value, label in reversed(Day.MOOD_CHOICES)
+    ]
+    notes_days = sum(1 for d in logged_days if d.notes.strip())
+    blocks_done = TimeBlock.objects.filter(day__in=logged_days, completed=True).count()
     mood_count = len(moods)
     if mood_count == 0:
         interpretation = "No moods logged this month yet."
@@ -709,6 +721,10 @@ def monthly_overview_view(request):
         "icon": icon,
         "interpretation": interpretation,
         "total_days": sum(1 for d in logged_days if d.mood or d.color or d.notes or d.is_closed),
+        "mood_days": mood_count,
+        "notes_days": notes_days,
+        "blocks_done": blocks_done,
+        "mood_patterns": mood_patterns,
     })
 
 
@@ -750,12 +766,22 @@ def search_view(request):
         days = days.filter(notes__icontains=query)
     if mood_filter:
         days = days.filter(mood=mood_filter)
-    days = days.order_by("-date")[:100]
+    if not query and not mood_filter:
+        # Browsing: skip days that hold nothing (a Day row exists as soon as a page is opened).
+        days = days.exclude((Q(mood__isnull=True) | Q(mood="")) & Q(notes=""))
+    days = days.order_by("-date")
+
+    page = Paginator(days, 20).get_page(request.GET.get("page"))
+    keep = request.GET.copy()
+    keep.pop("page", None)
 
     return render(request, "planner/search.html", {
-        "days": days,
+        "days": list(page.object_list),
+        "page": page,
+        "total": page.paginator.count,
         "query": query,
         "mood_filter": mood_filter,
+        "querystring": keep.urlencode(),
     })
 
 

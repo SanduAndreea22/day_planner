@@ -1,6 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Month overview · Emotional Planner{% endblock %}
+
+{% block extra_head %}<link rel="stylesheet" href="{% static 'planner/home.css' %}">{% endblock %}
 
 {% block content %}
 <div class="month-overview-card">
@@ -11,40 +14,35 @@
         <a class="month-btn" href="?year={{ year }}&month={{ month|add:'1' }}" aria-label="Next month">Next month →</a>
     </div>
 
-    <div class="weekdays">
-        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div>
-        <div>Thu</div><div>Fri</div><div>Sat</div>
+    <p class="overview-lead">{{ interpretation }}</p>
+
+    <div class="progress-grid">
+        <div class="card"><p class="stat-label">Days logged</p><p class="stat-num">{{ total_days }}</p><p class="stat-sub">in {{ month_name }}</p></div>
+        <div class="card"><p class="stat-label">Days with a mood</p><p class="stat-num">{{ mood_days }}</p><p class="stat-sub">in {{ month_name }}</p></div>
+        <div class="card"><p class="stat-label">Journal entries</p><p class="stat-num">{{ notes_days }}</p><p class="stat-sub">{{ blocks_done }} time block{{ blocks_done|pluralize }} finished</p></div>
     </div>
 
-    <div class="month-grid">
-        {% for day in days %}
-            {% if day %}
-            <a href="{% url 'day_detail' day.date.year day.date.month day.date.day %}"
-                 class="day-card
-                        {% if day.color %}color-{{ day.color }}{% endif %}
-                        {% if not day.mood %}empty{% endif %}"
-                 title="{% if day.notes %}{{ day.notes|truncatechars:50 }}{% else %}No notes for this day{% endif %}">
-
-                {% if day.notes %}<span class="day-note-mark" role="img" aria-label="Has a journal entry">{% include "planner/partials/note_icon.html" %}</span>{% endif %}
-                <div class="day-number">{{ day.date|date:"d" }}</div>
-                <div class="day-emoji">
-                    {% if day.mood %}{% include "planner/partials/mood_face.html" with mood=day.mood size=20 %}{% else %}·{% endif %}
-                </div>
-            </a>
-            {% else %}
-            <div class="day-card empty-slot"></div>
-            {% endif %}
-        {% endfor %}
-    </div>
-
-    <div class="overview-summary">
-        <p><strong>{{ total_days }}</strong> day{{ total_days|pluralize }} logged this month.</p>
-        <p class="muted">{{ interpretation }}</p>
+    <div class="card pattern-card" style="margin-top:1.1rem;">
+        <h2 class="section-title" style="font-size:1.4rem;">Moods this month</h2>
+        {% if mood_days %}
+        <div class="bars">
+            {% for p in mood_patterns %}
+            <div class="bar-row">
+                <span>{{ p.label }}</span>
+                <span class="bar-track"><span class="bar-fill mood-{{ p.value }}" style="width:{{ p.percent }}%"></span></span>
+                <span class="bar-count">{{ p.count }} day{{ p.count|pluralize }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-note">No moods logged this month yet.</p>
+        {% endif %}
     </div>
 
     <div class="overview-actions">
-        <a href="{% url 'calendar' %}" class="button">← Calendar</a>
+        <a href="{% url 'calendar_month' year month %}" class="button">See it on the calendar</a>
         <a href="{% url 'today' %}" class="button primary">Open My day</a>
+        <a href="{% url 'mood_chart' %}?year={{ year }}&month={{ month }}" class="button">Mood chart</a>
     </div>
 
 </div>
@@ -137,6 +135,8 @@ a.day-card { text-decoration: none; color: inherit; display: block; position: re
         gap: 0.5rem;
     }
 }
+.overview-lead { text-align: center; font-family: var(--font-serif); font-size: 1.6rem; line-height: 1.25; margin: 1.2rem auto; max-width: 34ch; }
+.overview-actions { display: flex; gap: 0.7rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem; }
 </style>
 {% endblock %}
 

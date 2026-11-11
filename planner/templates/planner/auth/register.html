@@ -10,7 +10,7 @@
         Create your private journal. You’ll be logged in right away, with no email confirmation needed.
     </p>
 
-    <form method="post" class="auth-form">
+    <form method="post" class="auth-form" novalidate>
         {% csrf_token %}
 
         <div class="form-group">
@@ -43,8 +43,9 @@
         <label class="show-password muted"><input type="checkbox" id="show-password"> Show passwords</label>
 
         {% if form.non_field_errors %}
-            <div class="form-error-global">{{ form.non_field_errors.0 }}</div>
+            <div class="form-error-global" role="alert">{{ form.non_field_errors.0 }}</div>
         {% endif %}
+        {% if form.errors %}<p class="muted" style="font-size:0.9rem; margin:0 0 1rem;">For your security, the password fields were cleared. Please type them again.</p>{% endif %}
 
         <p class="muted auth-terms">
             By creating an account, you agree to our
