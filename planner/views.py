@@ -19,10 +19,10 @@ from .forms import RegisterForm, EmailAuthenticationForm, TimeBlockForm, Profile
 from .decorators import ratelimit_post
 
 HOME_PREVIEW_CARDS = [
-    {"icon": "🌤", "title": "Today", "description": "Pick a mood, write a line, and add the day's plan as time blocks."},
-    {"icon": "🌙", "title": "Evening ritual", "description": "Close the day with two quiet questions: what drained you, and one small thing you appreciate. Once closed, the day stays exactly as it was."},
-    {"icon": "📅", "title": "Calendar", "description": "Every day as a small colored square, with the mood you picked. Tap one to read it."},
-    {"icon": "📈", "title": "Your Week", "description": "See which days you checked in and what you wrote, on one calm page. No ranking."},
+    {"icon": "🌤", "title": "Today", "description": "Pick a mood, write a journal entry, and plan the day in time blocks: slots like 09:00 – 10:00 · Study."},
+    {"icon": "🌙", "title": "Evening reflection", "description": "Close the day with two optional questions: what drained you, and one small thing you appreciate. Closing locks the day, so it can't be edited afterward."},
+    {"icon": "📅", "title": "Calendar", "description": "A month at a glance. Each day shows the mood you picked as an emoji, tinted with the day's color. Tap a day to open it."},
+    {"icon": "📈", "title": "Your week", "description": "See which days you checked in and how many time blocks you finished. No ranking."},
 ]
 
 # The home check-in offers five emotions, but the existing Day.mood field is a

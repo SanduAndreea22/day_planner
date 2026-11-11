@@ -10,18 +10,19 @@
     <div class="sanctuary-bg" aria-hidden="true"></div>
 
     <header class="hero rise d1">
-        <p class="eyebrow">A private digital journal</p>
+        <p class="eyebrow">Mood journal and day planner</p>
         <h1>Notice how your days <em>actually</em> feel.</h1>
-        <p class="hero-sub">A private journal for your days: tap how you feel, write a few lines, plan the day in small blocks. Free, and only yours.</p>
+        <p class="hero-sub">Tap how you feel, write a few lines, and plan your day in time blocks. Everything stays private to your account.</p>
         <div class="cta-row">
             <a href="{% url 'register' %}" class="btn btn-primary">Create free account</a>
-            <a href="{% url 'demo' %}" class="btn btn-ghost">Try it, no account</a>
+            <a href="{% url 'demo' %}" class="btn btn-ghost">Try the demo</a>
         </div>
-        <p class="cta-note">Free today, under a minute, just an email and a password. If optional paid plans ever appear, the features you use now stay free. <a href="{% url 'login' %}">Already here? Log in</a></p>
-        <p class="audience">For anyone who wants a quiet place to check in with themselves. A few lines a day, no streaks, no scores.</p>
+        <p class="cta-note">Free to use. Sign-up takes under a minute: just an email and a password.</p>
+        <p class="cta-note" style="margin-top:0.3rem;">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+        <p class="audience">A short daily check-in for anyone who wants a private record of how their days go. It never scores or ranks you.</p>
 
         <div class="peek" aria-label="A preview of the daily check-in">
-            <p class="peek-label">A peek inside</p>
+            <p class="peek-label">What a check-in looks like</p>
             <div class="card peek-card" aria-hidden="true">
                 <p class="peek-title">How are you feeling today?</p>
                 <ul class="mood-grid">
@@ -35,14 +36,14 @@
                     {% endfor %}
                 </ul>
             </div>
-            <p class="peek-note">One tap to check in. Everything after that is optional.</p>
+            <p class="peek-note">This is a preview. In the app, tapping a mood saves it to today, and everything after that is optional. <a href="{% url 'demo' %}">Try it in the demo</a>.</p>
         </div>
     </header>
 
     <section class="section rise d2" aria-labelledby="how-title">
         <div class="section-head">
-            <p class="eyebrow">What's inside</p>
-            <h2 id="how-title">Everything you need to slow down</h2>
+            <p class="eyebrow">What you get</p>
+            <h2 id="how-title">Four pages, one daily routine</h2>
         </div>
         <div class="steps">
             {% for card in preview_cards %}
@@ -62,14 +63,14 @@
 
     <section class="section rise d3" id="example-day" aria-labelledby="example-title">
         <div class="section-head">
-            <p class="eyebrow">Inside the app</p>
-            <h2 id="example-title">One day, held gently</h2>
+            <p class="eyebrow">The Today page</p>
+            <h2 id="example-title">One day, all in one place</h2>
         </div>
         <div class="card shot lift">
             <img src="{% static 'planner/app-today.png' %}" width="760" height="878" loading="lazy"
                  alt="The Today page: mood set to Good, day color Calm, a short thought, and a daily schedule with three time blocks.">
         </div>
-        <p class="cta-note" style="text-align:center;">Unlike a notebook, you can search every day you've written and see your moods side by side across the month. <a href="{% url 'guide' %}">How it works</a></p>
+        <p class="cta-note" style="text-align:center;">You can search every journal entry you've written and see each month's moods on one calendar. <a href="{% url 'guide' %}">See how it works</a>.</p>
     </section>
 
     <section class="section rise d3" aria-labelledby="trust-title">
@@ -78,17 +79,18 @@
             <h2 id="trust-title">What you write stays yours</h2>
         </div>
         <div class="trust">
-            <div class="trust-item"><strong>No trackers</strong><span>No analytics or advertising trackers.</span></div>
-            <div class="trust-item"><strong>Yours to take</strong><span>Export or delete your data any time.</span></div>
-            <div class="trust-item"><strong>Not medical</strong><span>A journal, not a therapy or medical service.</span></div>
+            <div class="trust-item"><strong>No ad tracking</strong><span>No analytics or advertising trackers.</span></div>
+            <div class="trust-item"><strong>Export or delete</strong><span>Download everything you wrote, or delete your account, any time.</span></div>
+            <div class="trust-item"><strong>A journal, not therapy</strong><span>Emotional Planner is not a medical or mental health service.</span></div>
         </div>
-        <p class="trust-links" style="max-width:42rem; margin-left:auto; margin-right:auto;">Your journal is stored in a Postgres database hosted on Neon, and the app runs on Render. Only essential cookies are used, so there is no cookie banner. </p>
+        <p class="trust-links" style="max-width:42rem; margin-left:auto; margin-right:auto;">Your entries are stored in a database hosted on Neon, and the app runs on Render. We only use the cookies needed to keep you logged in.</p>
         <p class="trust-links"><a href="{% url 'privacy_policy' %}">Privacy Policy</a> · <a href="{% url 'terms' %}">Terms of Service</a></p>
     </section>
 
     <section class="gentle" aria-label="A gentle note">
+        <p class="eyebrow" style="text-align:center;">A thought to keep</p>
         {% if quote %}<p class="closing-quote">“{{ quote.text }}”</p>{% else %}<p class="closing-quote">Today, it's enough just to be here.</p>{% endif %}
-        <div class="cta-row"><a href="{% url 'register' %}" class="btn btn-primary">Begin with how you feel</a></div>
+        <div class="cta-row"><a href="{% url 'register' %}" class="btn btn-primary">Create free account</a></div>
     </section>
 </div>
 {% endblock %}

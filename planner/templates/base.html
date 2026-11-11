@@ -98,7 +98,7 @@
                     <a href="{{ profile_url }}" class="nav-item" {% if request.path == profile_url %}aria-current="page"{% endif %}>Profile</a>
                     <a href="{% url 'logout' %}" class="nav-item logout">Log out</a>
                 {% else %}
-                    <a href="{% url 'demo' %}" class="nav-item" {% if request.path == '/demo/' %}aria-current="page"{% endif %}>Try it</a>
+                    <a href="{% url 'demo' %}" class="nav-item" {% if request.path == '/demo/' %}aria-current="page"{% endif %}>Try the demo</a>
                     <a href="{{ guide_url }}" class="nav-item" {% if request.path == guide_url %}aria-current="page"{% endif %}>How it works</a>
                     <a href="{{ login_url }}" class="nav-item" {% if request.path == login_url %}aria-current="page"{% endif %}>Log in</a>
                     <a href="{% url 'register' %}" class="nav-item highlight nav-cta-dup">Create account</a>
@@ -123,12 +123,14 @@
         <div class="footer-sprig" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c0-6 .5-9 0-14"/><path d="M12 13c-3.5 0-6-2.2-6-6 3.8 0 6 2.4 6 6z"/><path d="M12 10c0-3.2 2-5.6 5.6-6 .2 3.6-2 6-5.6 6z"/></svg></div>
         {% block footer_cards %}
         <div class="footer-cards">
+            {% if user.is_authenticated %}
             <div class="footer-card">You’ve done enough today.</div>
-            <div class="footer-card">Rest is productive.</div>
+            <div class="footer-card">Rest counts too.</div>
             <div class="footer-card">Tomorrow is a new day.</div>
+            {% endif %}
         </div>
         {% endblock %}
-        <div class="footer-meta muted">© {% now "Y" %} Andreea Sandu · Emotional Planner · private · no comparisons</div>
+        <div class="footer-meta muted">© {% now "Y" %} Andreea Sandu · Emotional Planner</div>
         <div class="footer-meta muted">
             <a href="{% url 'guide' %}">How it works</a> · {% if user.is_authenticated %}<a href="{% url 'feedback' %}">Feedback</a> · {% endif %}<a href="{% url 'privacy_policy' %}">Privacy Policy</a> · <a href="{% url 'terms' %}">Terms of Service</a>
         </div>
