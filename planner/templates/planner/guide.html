@@ -1,50 +1,62 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}How it works · Emotional Planner{% endblock %}
+{% block title %}How it works{% endblock %}
+
+{% block extra_head %}<link rel="stylesheet" href="{% static 'planner/home.css' %}">{% endblock %}
 
 {% block content %}
-<div class="legal-card">
-    <h1 class="title-gradient">How Emotional Planner works</h1>
-    <p class="updated-date">A short tour — no pressure to use everything at once.</p>
+<div class="sanctuary">
+    <div class="sanctuary-bg" aria-hidden="true"></div>
 
-    <h2>Today</h2>
-    <p>
-        Your daily page. Add a few time blocks for the day, check them off as you go, and jot down
-        notes whenever you feel like it. There’s no "right" way to fill it in — a single line is enough.
-    </p>
+    <header class="hero rise d1" style="padding-bottom: 1.5rem;">
+        <p class="eyebrow">A short tour</p>
+        <h1 style="max-width: 16ch;">How Emotional Planner works</h1>
+        <p class="hero-sub">No pressure to use everything at once. A single line is enough.</p>
+    </header>
 
-    <h2>Evening reflection</h2>
-    <p>
-        Close the day gently: write what drained you and one small thing you appreciate (both optional). Pick your mood and color on the Today page first, because they can’t be changed once the day is closed. Once a day is closed, it’s locked in as-is — a quiet snapshot of how it went. You
-        can turn on an evening reminder email for this in your <a href="{% url 'profile' %}">profile</a>.
-    </p>
+    <section class="rise d2" aria-label="The daily rhythm">
+        <ol class="rhythm">
+            <li><span class="rhythm-num">1</span><strong>Check in</strong><span>Tap how you feel.</span></li>
+            <li><span class="rhythm-num">2</span><strong>Write a line</strong><span>One thought is enough.</span></li>
+            <li><span class="rhythm-num">3</span><strong>Close the day</strong><span>When you're ready, gently.</span></li>
+        </ol>
+    </section>
 
-    <h2>Calendar</h2>
-    <p>
-        See every day at a glance, colored by mood. Click any day to open it and add or review details.
-    </p>
-
-    <h2>Week &amp;  Month</h2>
-    <p>
-        The weekly score is a gentle summary of how balanced the week felt — not a grade. From the Week page you can also open your mood and productivity charts. The month summary
-        (reachable from the Calendar page) shows your dominant mood and a short reflection on the month as a whole.
-    </p>
-
-    <h2>Search</h2>
-    <p>
-        Look back through past notes by keyword, or filter by mood, to find a day you’re thinking of.
-    </p>
-
-    <h2>Export your data</h2>
-    <p>
-        From your <a href="{% url 'profile' %}">profile</a>, you can download everything you’ve written,
-        any time — a file you can open in Excel, Google Sheets, or any spreadsheet app.
-    </p>
-
-    <h2>Feedback</h2>
-    <p>
-        This app is still evolving. If something felt confusing, broken, or missing, tell us on the
-        <a href="{% url 'feedback' %}">feedback page</a> — we read every message.
-    </p>
+    <section class="section rise d3" aria-label="Features">
+        <div class="guide-grid">
+            <article class="card guide-card">
+                <h2>Today</h2>
+                <p>Your daily page: a mood, a thought and the day's plan in time blocks.</p>
+                <details><summary>More</summary><p>Add a few time blocks for the day, check them off as you go, and jot down notes whenever you feel like it. There’s no "right" way to fill it in — a single line is enough.</p></details>
+            </article>
+            <article class="card guide-card">
+                <h2>Evening reflection</h2>
+                <p>Close the day with two optional questions. Once closed, it stays as it was.</p>
+                <details><summary>More</summary><p>Write what drained you and one small thing you appreciate (both optional). Pick your mood and color on the Today page first, because they can’t be changed once the day is closed. You can turn on an evening reminder email in your <a href="{% url 'profile' %}">profile</a>.</p></details>
+            </article>
+            <article class="card guide-card">
+                <h2>Calendar</h2>
+                <p>Every day at a glance, colored by mood.</p>
+                <details><summary>More</summary><p>Click any day to open it and add or review details.</p></details>
+            </article>
+            <article class="card guide-card">
+                <h2>Week &amp; month</h2>
+                <p>A calm summary of what you recorded. No ranking.</p>
+                <details><summary>More</summary><p>The week page gives a gentle summary of the days you logged and links to your mood and productivity charts. The month summary (reachable from the Calendar page) shows your dominant mood and a short reflection on the month as a whole.</p></details>
+            </article>
+            <article class="card guide-card">
+                <h2>Search</h2>
+                <p>Find a day you're thinking of.</p>
+                <details><summary>More</summary><p>Look back through past notes by keyword, or filter by mood.</p></details>
+            </article>
+            <article class="card guide-card">
+                <h2>Export your data</h2>
+                <p>Download everything you've written, any time.</p>
+                <details><summary>More</summary><p>From your <a href="{% url 'profile' %}">profile</a>, you get a file you can open in Excel, Google Sheets, or any spreadsheet app.</p></details>
+            </article>
+        </div>
+        <p class="cta-note" style="text-align:center; margin-top:1.8rem;">This app is still evolving. If something felt confusing, broken, or missing, tell us on the <a href="{% url 'feedback' %}">feedback page</a>. We read every message.</p>
+    </section>
 </div>
 {% endblock %}

@@ -145,3 +145,27 @@ body.dark .peek-tile.is-picked { outline-color: var(--ivory); }
 @media (max-width: 720px) { .peek-tile { flex-direction: row; justify-content: flex-start; gap: 1rem; padding: 0.9rem 1.1rem; } .peek-tile .mood-glyph { width: 32px; height: 32px; } }
 .audience { max-width: 34rem; margin: 1.2rem auto 0; font-family: var(--font-serif); font-style: italic; font-size: 1.25rem; line-height: 1.35; color: var(--heading); }
 .cta-note { max-width: 36rem; margin-left: auto; margin-right: auto; }
+
+/* ---------- Guide ---------- */
+.rhythm { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; max-width: 760px; margin: 0 auto; padding: 0; }
+.rhythm li { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; text-align: center; padding: 1.2rem 0.8rem; border-radius: 20px; background: var(--bg-card); border: 1px solid var(--border); }
+.rhythm li span:last-child { color: var(--text-muted); font-size: 0.92rem; }
+.rhythm-num { width: 2rem; height: 2rem; border-radius: 50%; display: grid; place-items: center; background: var(--rose); color: #343A35; font-family: var(--font-serif); font-size: 1.15rem; margin-bottom: 0.4rem; }
+.guide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.1rem; }
+.guide-card { padding: 1.6rem; }
+.guide-card h2 { font-size: 1.6rem; margin: 0 0 0.4rem; }
+.guide-card p { margin: 0 0 0.6rem; color: var(--text-muted); }
+.guide-card details { margin-top: 0.4rem; }
+.guide-card summary { cursor: pointer; color: var(--primary); font-weight: 500; font-size: 0.92rem; }
+.guide-card details p { margin-top: 0.6rem; color: var(--text-main); }
+@media (max-width: 560px) { .rhythm { grid-template-columns: 1fr; } }
+
+/* ---------- Trust band + screenshot (landing) ---------- */
+.trust { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; max-width: 900px; margin: 0 auto; }
+.trust-item { text-align: center; padding: 1.2rem 1rem; border-radius: 20px; background: var(--bg-card); border: 1px solid var(--border); }
+.trust-item strong { display: block; font-family: var(--font-serif); font-size: 1.25rem; font-weight: 500; margin-bottom: 0.2rem; color: var(--heading); }
+.trust-item span { color: var(--text-muted); font-size: 0.9rem; }
+.trust-links { text-align: center; margin-top: 1rem; font-size: 0.92rem; }
+.shot { max-width: 560px; margin: 0 auto; padding: 0.6rem; overflow: hidden; }
+.shot img { display: block; width: 100%; height: auto; border-radius: 20px; }
+@media (max-width: 640px) { .trust { grid-template-columns: 1fr; } }

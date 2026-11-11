@@ -62,17 +62,27 @@
 
     <section class="section rise d3" id="example-day" aria-labelledby="example-title">
         <div class="section-head">
-            <p class="eyebrow">Example of one day</p>
+            <p class="eyebrow">Inside the app</p>
             <h2 id="example-title">One day, held gently</h2>
         </div>
-        <div class="card example lift">
-            <div class="example-row"><span>Mood</span><strong>Good</strong></div>
-            <div class="example-row"><span>Color of the day</span><strong class="pill color-blue">Calm</strong></div>
-            <div class="example-row"><span>A thought</span><em>“Slow morning, good walk.”</em></div>
-            <div class="example-row"><span>Schedule</span><strong>12:30 – 13:30 · Lunch with a friend</strong></div>
+        <div class="card shot lift">
+            <img src="{% static 'planner/app-today.png' %}" width="760" height="878" loading="lazy"
+                 alt="The Today page: mood set to Good, day color Calm, a short thought, and a daily schedule with three time blocks.">
         </div>
-        <p class="cta-note" style="text-align:center; font-style:italic;">A sample entry to show how a day looks. Not a real person's.</p>
-        <p class="cta-note" style="text-align:center;">Unlike a notebook, you can search every day you've written and see your moods side by side across the month. Everything stays private, and you can export it all, any time. <a href="{% url 'guide' %}">How it works</a></p>
+        <p class="cta-note" style="text-align:center;">Unlike a notebook, you can search every day you've written and see your moods side by side across the month. <a href="{% url 'guide' %}">How it works</a></p>
+    </section>
+
+    <section class="section rise d3" aria-labelledby="trust-title">
+        <div class="section-head">
+            <p class="eyebrow">Your privacy</p>
+            <h2 id="trust-title">What you write stays yours</h2>
+        </div>
+        <div class="trust">
+            <div class="trust-item"><strong>No trackers</strong><span>No analytics or advertising trackers.</span></div>
+            <div class="trust-item"><strong>Yours to take</strong><span>Export or delete your data any time.</span></div>
+            <div class="trust-item"><strong>Not medical</strong><span>A journal, not a therapy or medical service.</span></div>
+        </div>
+        <p class="trust-links"><a href="{% url 'privacy_policy' %}">Privacy Policy</a> · <a href="{% url 'terms' %}">Terms of Service</a></p>
     </section>
 
     <section class="gentle" aria-label="A gentle note">

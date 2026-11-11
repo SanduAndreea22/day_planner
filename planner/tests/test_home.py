@@ -106,7 +106,8 @@ def test_guest_landing_only_shows_general_quotes(client):
 
 
 @pytest.mark.django_db
-def test_landing_labels_example_day_as_sample(client):
+def test_landing_shows_app_screenshot_and_trust_facts(client):
     html = client.get(reverse("home")).content.decode()
-    assert "Example of one day" in html
-    assert "Not a real person" in html
+    assert "app-today.png" in html
+    assert "No analytics or advertising trackers." in html
+    assert reverse("privacy_policy") in html
