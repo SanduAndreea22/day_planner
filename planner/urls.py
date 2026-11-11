@@ -1,7 +1,5 @@
-from django.urls import path, reverse_lazy
-from django.contrib.auth import views as auth_views
+from django.urls import path
 from django.views.generic import TemplateView
-from .decorators import ratelimit_post
 from .views import (
     home_view,
     demo_view,
@@ -27,7 +25,6 @@ from .views import (
     delete_account_view,
     search_view,
     export_data_view,
-    send_evening_reminders_view,
 )
 
 urlpatterns = [
@@ -56,28 +53,6 @@ urlpatterns = [
     path('delete-account/', delete_account_view, name='delete_account'),
     path('search/', search_view, name='search'),
     path('export-data/', export_data_view, name='export_data'),
-    path('tasks/send-evening-reminders/', send_evening_reminders_view, name='send_evening_reminders'),
-
-    path('password-reset/', ratelimit_post('password_reset', limit=5, period_seconds=3600)(auth_views.PasswordResetView.as_view(
-        template_name='planner/auth/password_reset.html',
-        email_template_name='planner/email/password_reset_email.txt',
-        html_email_template_name='planner/email/password_reset_email.html',
-        subject_template_name='planner/email/password_reset_subject.txt',
-        success_url=reverse_lazy('password_reset_done'),
-    )), name='password_reset'),
-
-    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(
-        template_name='planner/auth/password_reset_done.html',
-    ), name='password_reset_done'),
-
-    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
-        template_name='planner/auth/password_reset_confirm.html',
-        success_url=reverse_lazy('password_reset_complete'),
-    ), name='password_reset_confirm'),
-
-    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(
-        template_name='planner/auth/password_reset_complete.html',
-    ), name='password_reset_complete'),
 
     path('how-it-works/', TemplateView.as_view(
         template_name='planner/guide.html',

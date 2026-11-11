@@ -133,45 +133,6 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-EMAIL_BACKEND = os.getenv(
-    "EMAIL_BACKEND",
-    "django.core.mail.backends.console.EmailBackend"
-)
-
-EMAIL_HOST = os.getenv("EMAIL_HOST", "")
-EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587")) if EMAIL_HOST else None
-EMAIL_USE_TLS = True if EMAIL_HOST else False
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
-BREVO_API_KEY = os.getenv("BREVO_API_KEY", "")
-
-# Shared secret for the /tasks/send-evening-reminders/ endpoint, called by an
-# external scheduler (e.g. a GitHub Actions cron workflow) since free hosting
-# tiers don't reliably support background cron jobs.
-TASK_SECRET = os.getenv("TASK_SECRET", "")
-
-DEFAULT_FROM_EMAIL = os.getenv(
-    "DEFAULT_FROM_EMAIL",
-    "Emotional Planner <no-reply@example.com>"
-)
-
-# Both are silently no-op when empty (Brevo emails simply aren't sent, the
-# reminder endpoint always 403s) rather than raising, so a missing value in
-# production can go unnoticed for a long time. Surface it loudly at boot.
-if DATABASE_URL:
-    if not BREVO_API_KEY:
-        print(
-            "WARNING: BREVO_API_KEY is not set — password reset and evening "
-            "reminder emails will silently fail to send.",
-            file=sys.stderr,
-        )
-    if not TASK_SECRET:
-        print(
-            "WARNING: TASK_SECRET is not set — /tasks/send-evening-reminders/ "
-            "will reject every request, so evening reminders will never go out.",
-            file=sys.stderr,
-        )
-
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"

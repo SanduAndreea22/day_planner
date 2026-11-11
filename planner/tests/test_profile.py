@@ -29,11 +29,9 @@ def test_profile_view_post_updates_profile(client, django_user_model):
     response = client.post(reverse("profile"), {
         "nickname": "Andi",
         "bio": "Testing my profile",
-        "evening_reminder_time": "20:30",
     })
 
     assert response.status_code == 200
     profile = UserProfile.objects.get(user=user)
     assert profile.nickname == "Andi"
     assert profile.bio == "Testing my profile"
-    assert str(profile.evening_reminder_time) == "20:30:00"

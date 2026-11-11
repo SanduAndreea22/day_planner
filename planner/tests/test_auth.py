@@ -70,3 +70,22 @@ def test_login_lands_on_home(client):
     assert response.status_code == 302
     assert response.url == reverse("home")
     assert client.get(reverse("today")).status_code == 302  # Today still reachable
+
+
+@pytest.mark.django_db
+def test_no_email_features_remain(client):
+    """The app sends no email: no reset routes, no reminder endpoint, no forgot link."""
+    for path in ("/password-reset/", "/password-reset/done/", "/reset/done/", "/tasks/send-evening-reminders/"):
+        assert client.get(path).status_code == 404
+    html = client.get(reverse("login")).content.decode()
+    assert "Forgot your password" not in html
+    assert "password-reset" not in html
+
+
+@pytest.mark.django_db
+def test_profile_page_has_no_reminder_field(client, django_user_model):
+    user = django_user_model.objects.create_user(username="np1", password="pass12345")
+    client.force_login(user)
+    html = client.get(reverse("profile")).content.decode()
+    assert "evening_reminder_time" not in html
+    assert "Evening reminder" not in html

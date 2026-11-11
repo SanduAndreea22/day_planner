@@ -1,23 +1,18 @@
 import csv
-import hmac
 import io
 import zipfile
 from collections import Counter
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from calendar import monthrange
 from random import choice
 from types import SimpleNamespace
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from django.core.mail import send_mail
 from django.db.models import Q
 from django.shortcuts import redirect, render, get_object_or_404
-from django.http import Http404, HttpResponse, HttpResponseForbidden
-from django.urls import reverse
+from django.http import Http404, HttpResponse
 from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from .models import Day, TimeBlock, Quote, EveningReflection, UserProfile, Feedback
 from .forms import RegisterForm, EmailAuthenticationForm, TimeBlockForm, ProfileForm, FeedbackForm
@@ -734,67 +729,3 @@ def export_data_view(request):
     response = HttpResponse(buffer.getvalue(), content_type="application/zip")
     response["Content-Disposition"] = 'attachment; filename="emotional_planner_export.zip"'
     return response
-
-
-@csrf_exempt
-@require_POST
-def send_evening_reminders_view(request):
-    expected = f"Bearer {settings.TASK_SECRET}"
-    provided = request.META.get("HTTP_AUTHORIZATION", "")
-    if not settings.TASK_SECRET or not hmac.compare_digest(provided, expected):
-        return HttpResponseForbidden("Forbidden")
-
-    window_end = timezone.localtime()
-    window_start = window_end - timedelta(minutes=15)
-
-    profiles = UserProfile.objects.exclude(evening_reminder_time__isnull=True).select_related("user")
-    matching_profiles = []
-    for profile in profiles:
-        reminder_time = profile.evening_reminder_time
-        # Combine against both the window's start and end date, since a
-        # window spanning midnight (e.g. 23:45-00:00) would otherwise miss a
-        # reminder time that falls on the earlier day. The start is
-        # exclusive / end inclusive so consecutive 15-minute cron runs never
-        # both match the same reminder time.
-        reminder_candidates = {
-            timezone.make_aware(datetime.combine(d, reminder_time), window_end.tzinfo)
-            for d in (window_start.date(), window_end.date())
-        }
-        if any(window_start < candidate <= window_end for candidate in reminder_candidates):
-            matching_profiles.append(profile)
-
-    # One query for all matching users' today-Days instead of one per profile.
-    closed_user_ids = set(
-        Day.objects.filter(
-            user_id__in=[p.user_id for p in matching_profiles],
-            date=window_end.date(),
-            is_closed=True,
-        ).values_list("user_id", flat=True)
-    )
-
-    sent = 0
-    for profile in matching_profiles:
-        if profile.user_id in closed_user_ids:
-            continue
-        # Guards against two overlapping cron runs (a retried/delayed
-        # GitHub Actions call landing next to a fresh one) both matching the
-        # same window for the same profile and double-sending.
-        if profile.last_evening_reminder_sent_at and profile.last_evening_reminder_sent_at > window_start:
-            continue
-
-        sent_count = send_mail(
-            subject="🌙 A gentle nudge for your evening reflection",
-            message=(
-                "No pressure — whenever you're ready, your day is waiting for you.\n\n"
-                + request.build_absolute_uri(reverse("today"))
-            ),
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[profile.user.email],
-            fail_silently=True,
-        )
-        if sent_count:
-            sent += 1
-            profile.last_evening_reminder_sent_at = window_end
-            profile.save(update_fields=["last_evening_reminder_sent_at"])
-
-    return HttpResponse(f"Sent {sent} reminder(s).")

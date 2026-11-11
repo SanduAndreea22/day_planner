@@ -45,15 +45,6 @@
             </div>
         </div>
 
-        <div class="form-group">
-            {{ form.evening_reminder_time.label_tag }}
-            {{ form.evening_reminder_time }}
-            <small class="form-hint">{{ form.evening_reminder_time.help_text }}</small>
-            {% if form.evening_reminder_time.errors %}
-                <div class="field-error">{{ form.evening_reminder_time.errors.0 }}</div>
-            {% endif %}
-        </div>
-
         <div class="profile-actions">
             <button type="submit" class="button primary profile-button">
                 Save
