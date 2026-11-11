@@ -1,4 +1,4 @@
-# 🌸 Emotional Planner
+# Emotional Planner
 
 A Django web app for organizing your day around **emotional wellbeing and gentle reflection**, not toxic productivity. Log how a day felt, close it with a small ritual, and see the pattern over time — without streak-shaming or guilt if you miss a day.
 
@@ -9,23 +9,24 @@ A Django web app for organizing your day around **emotional wellbeing and gentle
 
 ## What this project demonstrates
 
-Underneath the calm interface is a fully production-shaped app: a test suite running in CI on every push, and an error-monitoring hook ready to switch on with one environment variable.
+Underneath the calm interface is a production-shaped app: a test suite and migration check running in CI on every push, a collectstatic test that guards the deploy, and an error-monitoring hook ready to switch on with one environment variable.
 
-- **Streak logic that respects the app's own philosophy.** `compute_streak()` counts consecutive days *only* where the user actually engaged (mood, color, notes, or a closed day) — not just days the row exists — and it's shown gently ("🌿 X days in a row you've written something"), only once it reaches 2+ days, never as a guilt trip if it breaks.
-- **A weekly balance score that's additive, not punitive**: `min(days_logged*10 + mood_days*8 + completed_tasks*2, 100)`, capped at 100 and framed on-screen as *"This score doesn't define you. It's just a gentle reflection."*
+- **No scores, no streaks.** The week and month pages only show what was recorded (days, moods, journal entries, finished time blocks), never a grade or a ranking.
+- **Check-in without leaving the page.** The Home page saves a mood or a journal entry in place; the five emotions map onto the stored five-step mood scale, so calendar and charts keep working.
+- **A no-account demo** (`/demo/`) that reads the saved quotes and stores nothing.
 
 ## Features
 
 **Daily planning**
-- "Today" view: log a mood, a color, free-text notes, and time-blocked tasks for the day
-- Evening reflection ritual: a short close-of-day prompt (what drained you / one small win), with a gentle animated transition when you close the day, and a rotating closing quote matched to your mood
+- Home: a daily check-in (five emotions), a reflection prompt, and a quiet look at recent days
+- "My day": mood, day color, a journal entry, and time-blocked tasks for any day in range
+- Evening reflection: a short close-of-day prompt (what drained you / one small thing that went well). Closing locks the day, and a closing quote matched to the mood is saved with it
 
 **Looking back**
-- Calendar and monthly overview of logged days
-- Mood chart and productivity chart (Chart.js), colored by the day's mood — with the same data available as a plain list underneath, for accessibility
-- Weekly balance score, with a plain-language explanation of how it adds up
-- Gentle streak indicator, shown only on "Today" and only when it means something
-- Search past days by note content or filter by mood
+- Calendar (mood icon and day color per day) and a monthly overview with mood counts
+- Mood chart and time-blocks chart (Chart.js, served locally), with the same data as a plain list underneath and a text fallback if the chart can't load
+- "Your week": days logged, time blocks finished, moods logged
+- Search past days by journal text (matches highlighted, paginated) or filter by mood
 
 **Account & data**
 - Email + password authentication, no email confirmation required (keeps it reliable on free hosting)
@@ -37,10 +38,10 @@ Underneath the calm interface is a fully production-shaped app: a test suite run
 
 - **Backend:** Django 5.2
 - **Database:** PostgreSQL (production), SQLite (local dev)
-- **Charts:** Chart.js
+- **Charts:** Chart.js 4 (vendored in `planner/static/planner/vendor/`, MIT license header kept)
 - **Error monitoring:** Sentry — a no-op until `SENTRY_DSN` is set
 - **Static files:** WhiteNoise
-- **Testing/CI:** pytest + `manage.py test` (43 tests), GitHub Actions runs the suite on every push
+- **Testing/CI:** pytest (`requirements-dev.txt`), GitHub Actions runs `check`, `makemigrations --check` and the suite on Python 3.11 and 3.13
 - **Hosting:** Render
 
 ## Architecture
@@ -49,7 +50,7 @@ Two apps: `core` (project settings) and `planner` (everything else — models, v
 
 | Model | Purpose |
 |---|---|
-| `Day` | One row per user per date (`unique_together`) — mood, color, notes, rest-day flag, closed state |
+| `Day` | One row per user per date (`unique_together`) — mood, color, notes, closed state |
 | `TimeBlock` | Scheduled tasks within a day, with completion state |
 | `EveningReflection` | The end-of-day ritual prompt, one-to-one with a closed `Day` |
 | `UserProfile` | Nickname and a short bio (the table still has two unused reminder columns, see notes) |
@@ -71,6 +72,11 @@ migrate` against the production database (Neon Postgres, via `DATABASE_URL`):
 3. Keep the backup until you've confirmed the app works correctly after the
    migration.
 
+## Dependencies
+
+- `requirements.txt` — what runs in production (this is what the host and the Docker image install).
+- `requirements-dev.txt` — adds the test tools (`pytest`, `pytest-django`, `coverage`) on top.
+
 ## Running locally
 
 ```bash
@@ -78,7 +84,7 @@ git clone https://github.com/SanduAndreea22/day_planner.git
 cd day_planner
 python -m venv venv
 venv\Scripts\activate        # or: source venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 cp .env.example .env         # fill in your own values
 python manage.py migrate
 python manage.py runserver
@@ -89,7 +95,7 @@ Sentry is optional for local dev and stays off without `SENTRY_DSN`. The app doe
 Run the test suite with:
 
 ```bash
-python manage.py test
+pytest
 ```
 
 ## 👩‍💻 Author
@@ -97,4 +103,4 @@ python manage.py test
 **Andreea Sandu**
 LinkedIn: [linkedin.com/in/andreealuizasandu](https://linkedin.com/in/andreealuizasandu)
 
-✨ *Made with calm & a lot of debugging.* ✨
+*Made with calm & a lot of debugging.*

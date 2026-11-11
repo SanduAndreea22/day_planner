@@ -50,12 +50,10 @@ body.dark .sanctuary-bg::before, body.dark .sanctuary-bg::after { opacity: 0.12;
 body.dark .mood-option.is-selected button { border-color: var(--ivory); }
 .mood-glyph { transition: transform 0.4s ease; }
 .mood-name { font-family: var(--font-serif); font-size: 1.45rem; font-weight: 500; line-height: 1; }
-.mood-saved-as { font-size: 0.74rem; letter-spacing: 0.04em; opacity: 0.8; }
 .mood-happy { --tile: #E9D9B4; } .mood-calm { --tile: #B7C9B5; } .mood-sad { --tile: #C9D3DE; }
 .mood-anxious { --tile: #E8E3EF; } .mood-tired { --tile: #E9BFC5; }
 .mood-hint { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin: 1.2rem 0 0; }
 .mood-status { text-align: center; margin: 1.2rem 0 0; font-family: var(--font-serif); font-size: 1.3rem; }
-.mood-readonly { opacity: 0.9; }
 
 /* ---------- Reflection ---------- */
 .reflect { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(1.5rem, 4vw, 3rem); align-items: center; background: linear-gradient(135deg, var(--lavender), var(--bg-card) 70%); }
@@ -105,11 +103,6 @@ body.dark .step svg { color: var(--sage); }
 .step p { margin: 0; color: var(--text-muted); font-size: 0.95rem; }
 .lift { transition: transform 0.35s ease, box-shadow 0.35s ease; }
 .lift:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
-.example { max-width: 540px; margin: 0 auto; }
-.example-row { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 0.7rem 0; }
-.example-row + .example-row { border-top: 1px solid var(--border); }
-.example-row span { color: var(--text-muted); }
-.pill { display: inline-block; padding: 0.15rem 0.8rem; border-radius: 99px; font-size: 0.88rem; }
 .closing-quote { text-align: center; font-family: var(--font-serif); font-style: italic; font-size: clamp(1.4rem, 3vw, 1.9rem); color: var(--text-muted); max-width: 30ch; margin: 0 auto; }
 
 /* ---------- Entrance ---------- */

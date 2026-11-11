@@ -40,7 +40,6 @@ body .nav-arrow, body .month-btn, body .week-btn, body .mood-nav a, body .day-na
 body .nav-arrow:hover, body .month-btn:hover, body .week-btn:hover, body .mood-nav a:hover, body .day-nav a:hover {
     text-decoration: underline; transform: none; color: var(--primary-hover);
 }
-body .link-button { min-height: 44px; padding: 0 0.6rem; display: inline-flex; align-items: center; }
 body .nav-logo { min-height: 44px; }
 body .nav-item.dark-toggle { min-width: 44px; min-height: 44px; }
 body .nav-hamburger { min-height: 44px; }

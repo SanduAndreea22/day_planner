@@ -1,13 +1,12 @@
 from pathlib import Path
 import os
-import sys
 from dotenv import load_dotenv
 import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()  # pentru .env local
 
-_INSECURE_SECRET_KEY = "dev-secret-key-local-only"
+_INSECURE_SECRET_KEY = "dev-secret-key-local-only"  # nosec B105: dev-only default; refused when DATABASE_URL is set
 SECRET_KEY = os.getenv("SECRET_KEY", _INSECURE_SECRET_KEY)
 
 DEBUG = os.getenv("DEBUG", "False") == "True"

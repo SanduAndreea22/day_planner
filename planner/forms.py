@@ -95,8 +95,8 @@ class EmailAuthenticationForm(forms.Form):
 
         try:
             user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            raise ValidationError("Incorrect email or password.")
+        except User.DoesNotExist as exc:
+            raise ValidationError("Incorrect email or password.") from exc
 
         user = authenticate(username=user.username, password=password)
 

@@ -7,9 +7,9 @@ class QuoteAdmin(admin.ModelAdmin):
     list_filter = ("active", "mood")
     search_fields = ("text",)
 
+    @admin.display(description="Text")
     def short_text(self, obj):
         return obj.text[:50]
-    short_text.short_description = "Text"
 
 @admin.register(Day)
 class DayAdmin(admin.ModelAdmin):

@@ -50,7 +50,7 @@ class Day(models.Model):
         ("red", "Heavy"),
         ("yellow", "Uneven"),
         ("green", "Light"),
-        ("blue", "Calm"),
+        ("blue", "Steady"),
         ("purple", "Vivid"),
     ]
 
@@ -117,14 +117,14 @@ class TimeBlock(models.Model):
     class Meta:
         ordering = ["start_time"]
 
+    def __str__(self):
+        return f"{self.title} ({self.start_time}–{self.end_time})"
+
     def clean(self):
         if self.start_time and self.end_time and self.end_time <= self.start_time:
             raise ValidationError(
                 "End time must be after start time."
             )
-
-    def __str__(self):
-        return f"{self.title} ({self.start_time}–{self.end_time})"
 
 class Feedback(models.Model):
     user = models.ForeignKey(

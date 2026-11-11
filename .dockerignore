@@ -1,0 +1,17 @@
+# Keep secrets, local data and repo history out of the image.
+.git
+.github
+.env
+.env.*
+!.env.example
+*.sqlite3
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+.coverage
+htmlcov
+staticfiles
+venv
+.idea
+.vscode

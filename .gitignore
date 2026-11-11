@@ -18,3 +18,14 @@ venv/
 .idea/
 .vscode/
 .DS_Store
+
+# 🧱 Generated / build output
+staticfiles/
+.pytest_cache/
+.ruff_cache/
+htmlcov/
+*.log
+
+# 🔐 More local env files
+.env.*
+!.env.example

@@ -4,7 +4,7 @@ import zipfile
 from collections import Counter
 from datetime import date, timedelta
 from calendar import monthrange
-from random import choice
+from secrets import choice
 from types import SimpleNamespace
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -17,15 +17,15 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.http import Http404, HttpResponse, JsonResponse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
-from .models import Day, TimeBlock, Quote, EveningReflection, UserProfile, Feedback
+from .models import Day, TimeBlock, Quote, EveningReflection, UserProfile
 from .forms import RegisterForm, EmailAuthenticationForm, TimeBlockForm, ProfileForm, FeedbackForm
 from .decorators import ratelimit_post
 
 HOME_PREVIEW_CARDS = [
-    {"icon": "🌤", "title": "Today", "description": "Pick a mood, write a journal entry, and plan the day in time blocks: slots like 09:00 – 10:00 · Study."},
-    {"icon": "🌙", "title": "Evening reflection", "description": "Close the day with two optional questions: what drained you, and one small thing you appreciate. Closing locks the day, so it can't be edited afterward."},
-    {"icon": "📅", "title": "Calendar", "description": "A month at a glance. Each day shows the mood you picked as an emoji, tinted with the day's color. Tap a day to open it."},
-    {"icon": "📈", "title": "Your week", "description": "See which days you checked in and how many time blocks you finished. No ranking."},
+    {"title": "Today", "description": "Pick a mood, write a journal entry, and plan the day in time blocks: slots like 09:00 – 10:00 · Study."},
+    {"title": "Evening reflection", "description": "Close the day with two optional questions: what drained you, and one small thing you appreciate. Closing locks the day, so it can't be edited afterward."},
+    {"title": "Calendar", "description": "A month at a glance. Each day shows the mood you picked as an emoji, tinted with the day's color. Tap a day to open it."},
+    {"title": "Your week", "description": "See which days you checked in and how many time blocks you finished. No ranking."},
 ]
 
 # The home check-in offers five emotions, but the existing Day.mood field is a
@@ -83,29 +83,6 @@ MONTH_NAMES = {
 
 def redirect_to_day(day):
     return redirect("day_detail", year=day.date.year, month=day.date.month, day=day.date.day)
-
-def compute_streak(user):
-    today = date.today()
-    # A single query for a generous lookback window instead of one query per
-    # day in the loop below — a year-plus streak used to mean hundreds of
-    # individual round-trips to the database.
-    cutoff = today - timedelta(days=400)
-    days_by_date = {
-        day.date: day
-        for day in Day.objects.filter(user=user, date__gte=cutoff, date__lte=today)
-    }
-
-    streak = 0
-    current = today
-    while True:
-        day = days_by_date.get(current)
-        if day is None:
-            break
-        if not (day.mood or day.color or day.notes or day.is_closed):
-            break
-        streak += 1
-        current -= timedelta(days=1)
-    return streak
 
 def _random_quote(queryset):
     # Picks a random id in Python instead of ORDER BY RANDOM(), which sorts
@@ -373,8 +350,8 @@ def today_view(request):
 def day_detail_view(request, year, month, day):
     try:
         selected_date = date(year, month, day)
-    except ValueError:
-        raise Http404("Invalid date")
+    except ValueError as exc:
+        raise Http404("Invalid date") from exc
     if selected_date < MIN_DAY or selected_date > date.today() + timedelta(days=MAX_DAYS_AHEAD):
         raise Http404("Date out of range")
     day_obj, _ = Day.objects.get_or_create(user=request.user, date=selected_date)
@@ -386,7 +363,6 @@ def day_detail_view(request, year, month, day):
         message = "This day hasn't happened yet. Plan it as loosely as you like."
 
     reflection = EveningReflection.objects.filter(day=day_obj).first()
-    streak = compute_streak(request.user) if selected_date == date.today() else None
 
     return render(request, "planner/day.html", {
         "day": day_obj,
@@ -394,7 +370,6 @@ def day_detail_view(request, year, month, day):
         "message": message,
         "quote": day_obj.closing_quote,
         "reflection": reflection,
-        "streak": streak,
         "is_today": selected_date == date.today(),
         "is_past": selected_date < date.today(),
         "mood_checkins": MOOD_CHECKINS,
@@ -411,8 +386,8 @@ def day_detail_view(request, year, month, day):
 def evening_reflection_view(request, year, month, day):
     try:
         selected_date = date(year, month, day)
-    except ValueError:
-        raise Http404("Invalid date")
+    except ValueError as exc:
+        raise Http404("Invalid date") from exc
     day_obj = get_object_or_404(Day, user=request.user, date=selected_date)
     if day_obj.is_closed:
         return redirect_to_day(day_obj)
@@ -650,8 +625,6 @@ def weekly_balance_score_view(request):
     mood_days = sum(bool(d.mood) for d in days)
     completed_tasks = TimeBlock.objects.filter(day__in=days, completed=True).count()
 
-    score = min(days_logged * 10 + mood_days * 8 + completed_tasks * 2, 100)
-
     if days_logged == 0:
         message, suggestion = "Nothing recorded this week.", "You can start with a single day."
     elif days_logged < 3:
@@ -660,7 +633,6 @@ def weekly_balance_score_view(request):
         message, suggestion = "You checked in on several days this week.", ""
 
     return render(request, "planner/weekly_score.html", {
-        "score": score,
         "message": message,
         "suggestion": suggestion,
         "days_logged": days_logged,
@@ -710,7 +682,6 @@ def monthly_overview_view(request):
         interpretation = f"{mood_count} day{'s' if mood_count != 1 else ''} with a mood logged so far."
     else:
         interpretation = f"Most days with a mood were “{mood_labels[dominant_mood]}”."
-    icon = ""
 
     return render(request, "planner/monthly_overview.html", {
         "days": days,
@@ -718,7 +689,6 @@ def monthly_overview_view(request):
         "month": month,
         "month_name": MONTH_NAMES[month],
         "dominant_mood": dominant_mood,
-        "icon": icon,
         "interpretation": interpretation,
         "total_days": sum(1 for d in logged_days if d.mood or d.color or d.notes or d.is_closed),
         "mood_days": mood_count,

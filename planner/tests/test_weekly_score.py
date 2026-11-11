@@ -27,6 +27,6 @@ def test_weekly_balance_score_view(client, django_user_model):
     assert response.context["days_logged"] == 3
     assert response.context["completed_tasks"] == 3
     assert response.context["mood_days"] == 3
-    assert response.context["score"] > 0
+    assert "score" not in response.context
     assert "message" in response.context
 
