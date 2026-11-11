@@ -50,3 +50,23 @@ def test_profile_view(client):
     response = client.get(url)
     assert response.status_code == 200
     assert b"profile" in response.content
+
+
+@pytest.mark.django_db
+def test_register_lands_on_home(client):
+    response = client.post(reverse("register"), {
+        "email": "newbie@example.com",
+        "password1": "ParolaTare123!",
+        "password2": "ParolaTare123!",
+    })
+    assert response.status_code == 302
+    assert response.url == reverse("home")
+
+
+@pytest.mark.django_db
+def test_login_lands_on_home(client):
+    User.objects.create_user(username="user9", email="user9@example.com", password="ParolaTare123!")
+    response = client.post(reverse("login"), {"email": "user9@example.com", "password": "ParolaTare123!"})
+    assert response.status_code == 302
+    assert response.url == reverse("home")
+    assert client.get(reverse("today")).status_code == 302  # Today still reachable

@@ -140,25 +140,25 @@ def get_week_range(request):
 @ratelimit_post('register', limit=5, period_seconds=3600)
 def register_view(request):
     if request.user.is_authenticated:
-        return redirect("today")
+        return redirect("home")
 
     form = RegisterForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         user = form.save()
         login(request, user)
-        return redirect("today")
+        return redirect("home")
 
     return render(request, "planner/auth/register.html", {"form": form})
 
 @ratelimit_post('login', limit=10, period_seconds=300)
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect("today")
+        return redirect("home")
 
     form = EmailAuthenticationForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         login(request, form.get_user())
-        return redirect("today")
+        return redirect("home")
 
     return render(request, "planner/auth/login.html", {"form": form})
 
