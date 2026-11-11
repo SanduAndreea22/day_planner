@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Try it, no account{% endblock %}
+{% block title %}Demo{% endblock %}
 
 {% block extra_head %}<link rel="stylesheet" href="{% static 'planner/home.css' %}">{% endblock %}
 
@@ -10,9 +10,9 @@
     <div class="sanctuary-bg" aria-hidden="true"></div>
 
     <header class="hero rise d1" style="padding-bottom: 1.5rem;">
-        <p class="eyebrow">Try it, no account</p>
-        <h1 style="max-width: 14ch;">Check in. Right now.</h1>
-        <p class="hero-sub">Pick how you feel and see what the app gives back. Nothing you do here is saved or sent anywhere. It stays in this tab.</p>
+        <p class="eyebrow">Demo · nothing is saved</p>
+        <h1 style="max-width: 14ch;">Try a daily check-in</h1>
+        <p class="hero-sub">Pick how you feel and see what Emotional Planner shows you next. Nothing here is saved or sent anywhere. It all stays in this browser tab.</p>
     </header>
 
     <section class="section rise d2" style="margin-top: 1rem;" aria-labelledby="demo-checkin">
@@ -32,18 +32,18 @@
                 {% endfor %}
             </ul>
             <div id="demo-reply" class="demo-reply" aria-live="polite" hidden>
-                <p class="mood-status" id="demo-reply-title"></p>
+                <p class="mood-status" id="demo-reply-title">Your line for today</p>
                 <p class="demo-quote" id="demo-quote"></p>
-                <p class="mood-hint">In your own planner, this check-in is added to today's page and shows up in your calendar and mood patterns.</p>
+                <p class="mood-hint">In your account, this check-in is saved to today.</p>
             </div>
         </div>
     </section>
 
     <section class="section rise d3" id="demo-month" aria-labelledby="demo-month-title" hidden>
         <div class="section-head">
-            <p class="eyebrow">Your month</p>
+            <p class="eyebrow">Step 2 · Your month</p>
             <h2 id="demo-month-title"><span id="demo-month-name"></span></h2>
-            <p>Each check-in colors a day. Pick a mood above, then tap any day to fill it in, and watch the month take shape.</p>
+            <p>Each check-in colors a day. Choose a mood above, then tap a past day to color it. Future days stay locked.</p>
         </div>
         <div class="card demo-cal-card">
             <div class="demo-cal" id="demo-cal" role="grid" aria-label="Month calendar"></div>
@@ -54,15 +54,15 @@
     <section class="section rise d3" id="demo-reflect" aria-labelledby="demo-reflect-title" hidden>
         <div class="card reflect">
             <div>
-                <p class="eyebrow">Step 2 · Today's reflection</p>
+                <p class="eyebrow">Step 3 · Today's reflection</p>
                 <h2 id="demo-reflect-title" class="visually-hidden">Today's reflection</h2>
                 <p class="reflect-prompt">What is one thing you need more of today?</p>
             </div>
             <div>
                 <label for="demo-note" class="visually-hidden">Your journal entry (not saved in the demo)</label>
-                <textarea id="demo-note" placeholder="Rest, quiet, a kind word… write whatever comes."></textarea>
+                <textarea id="demo-note" placeholder="Write a line about today. It won't be saved in the demo."></textarea>
                 <div class="reflect-actions">
-                    <button type="button" class="btn btn-primary" id="demo-write">Write a journal entry</button>
+                    <button type="button" class="btn btn-primary" id="demo-write">Finish the demo</button>
                 </div>
             </div>
         </div>
@@ -70,8 +70,8 @@
 
     <section class="section" id="demo-done" aria-live="polite" hidden>
         <div class="card" style="text-align:center;">
-            <h2 style="margin-top:0;">That's the whole idea.</h2>
-            <p class="muted" style="max-width:34rem; margin:0 auto 1.2rem;">In a free account, your check-ins and lines are kept in your private journal, with a calendar, a week view and search. This demo didn't save anything.</p>
+            <h2 style="margin-top:0;">That's the demo.</h2>
+            <p class="muted" style="max-width:34rem; margin:0 auto 1.2rem;">With a free account, your check-ins and journal entries are saved to a private journal, with a calendar, a week view and search. Nothing from this demo was saved.</p>
             <div class="cta-row" style="margin-top:0;">
                 <a href="{% url 'register' %}" class="btn btn-primary">Create free account</a>
                 <a href="{% url 'login' %}" class="btn btn-ghost">Log in</a>
@@ -113,7 +113,6 @@
             }
             last[key] = pick;
 
-            document.getElementById('demo-reply-title').textContent = 'You chose “' + btn.dataset.label + '”.';
             document.getElementById('demo-quote').textContent = pick ? '“' + pick + '”' : '';
             selected = btn.dataset.mood;
             reply.hidden = false;
@@ -153,7 +152,7 @@
         cell.classList.add('mood-' + selected, 'is-filled');
         cell.setAttribute('aria-label', names[mon] + ' ' + cell.dataset.day + ', ' + labels[selected]);
         var n = grid.querySelectorAll('.is-filled').length;
-        document.getElementById('demo-cal-count').textContent = n + (n === 1 ? ' day' : ' days') + ' checked in. In your own planner this stays, and each day opens to read it later.';
+        document.getElementById('demo-cal-count').textContent = n + (n === 1 ? ' day' : ' days') + ' colored. In an account, each one is saved and you can open it later.';
     }
     grid.addEventListener('click', function (ev) {
         var cell = ev.target.closest('.demo-cal-day');
