@@ -14,6 +14,7 @@ class RegisterForm(forms.ModelForm):
 
     password1 = forms.CharField(
         label="Password",
+        max_length=128,
         widget=forms.PasswordInput(attrs={
             "placeholder": "Enter your password",
             "autocomplete": "new-password"
@@ -22,6 +23,7 @@ class RegisterForm(forms.ModelForm):
 
     password2 = forms.CharField(
         label="Confirm password",
+        max_length=128,
         widget=forms.PasswordInput(attrs={
             "placeholder": "Confirm your password",
             "autocomplete": "new-password"
@@ -53,7 +55,13 @@ class RegisterForm(forms.ModelForm):
         if p1 and p2:
             if p1 != p2:
                 raise ValidationError("The two passwords don’t match. Please try again.")
-            validate_password(p1)
+            # Pass the user so the "too similar to your email" check actually runs,
+            # and attach the messages to the field so every one of them is shown.
+            self.instance.email = cleaned_data.get("email", "")
+            try:
+                validate_password(p1, self.instance)
+            except ValidationError as exc:
+                self.add_error("password1", exc)
 
         return cleaned_data
 
@@ -82,6 +90,7 @@ class EmailAuthenticationForm(forms.Form):
     )
     password = forms.CharField(
         label="Password",
+        max_length=128,
         widget=forms.PasswordInput(attrs={"placeholder": "Enter your password"})
     )
 

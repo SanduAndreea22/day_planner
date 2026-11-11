@@ -170,7 +170,10 @@ def login_view(request):
     return render(request, "planner/auth/login.html", {"form": form})
 
 def logout_view(request):
-    logout(request)
+    # Only a POST (with CSRF token) logs out; a plain GET, e.g. from an <img> on
+    # another site, just goes home and leaves the session alone.
+    if request.method == "POST":
+        logout(request)
     return redirect("home")
 
 @login_required

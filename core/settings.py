@@ -11,13 +11,17 @@ SECRET_KEY = os.getenv("SECRET_KEY", _INSECURE_SECRET_KEY)
 
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = os.getenv(
-    "ALLOWED_HOSTS",
-    "127.0.0.1,localhost"
-).split(",")
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+    if host.strip()
+]
 
 _csrf_trusted_origins = os.getenv("CSRF_TRUSTED_ORIGINS")
-CSRF_TRUSTED_ORIGINS = _csrf_trusted_origins.split(",") if _csrf_trusted_origins else []
+CSRF_TRUSTED_ORIGINS = (
+    [origin.strip() for origin in _csrf_trusted_origins.split(",") if origin.strip()]
+    if _csrf_trusted_origins else []
+)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -39,6 +43,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "core.middleware.ContentSecurityPolicyMiddleware",
+    "core.middleware.PrivatePagesNoStoreMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"

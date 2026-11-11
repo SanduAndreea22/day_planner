@@ -39,6 +39,8 @@
         .nav-item.highlight { background: var(--primary); color: var(--on-primary); }
         .nav-item.highlight:hover { background: var(--primary-hover); color: var(--on-primary); }
         .nav-item.logout { color: var(--text-muted); }
+        .nav-logout { display: contents; }
+        button.nav-item.logout { background: none; border: none; font: inherit; font-size: 0.93rem; font-weight: 500; cursor: pointer; }
         .nav-item.dark-toggle { background: none; cursor: pointer; border: none; font-size: 1.05rem; line-height: 1; padding: 0.55rem 0.7rem; color: var(--text-muted); }
         .nav-item.dark-toggle:hover { background: var(--bg-soft); color: var(--text-main); }
 
@@ -106,7 +108,7 @@
                         </div>
                     </details>
                     <a href="{{ profile_url }}" class="nav-item" {% if request.path == profile_url %}aria-current="page"{% endif %}>Profile</a>
-                    <a href="{% url 'logout' %}" class="nav-item logout">Log out</a>
+                    <form method="post" action="{% url 'logout' %}" class="nav-logout">{% csrf_token %}<button type="submit" class="nav-item logout">Log out</button></form>
                 {% else %}
                     <a href="{% url 'demo' %}" class="nav-item" {% if request.path == '/demo/' %}aria-current="page"{% endif %}>Try the demo</a>
                     <a href="{{ guide_url }}" class="nav-item" {% if request.path == guide_url %}aria-current="page"{% endif %}>How it works</a>

@@ -34,8 +34,14 @@ def test_login_logout(client):
     response = client.post(login_url, {"email": "user1@example.com", "password": "ParolaTare123!"})
     assert response.status_code == 302
 
+    # A GET (e.g. an <img> on another site) must not log anyone out.
     response = client.get(logout_url)
     assert response.status_code == 302
+    assert "_auth_user_id" in client.session
+
+    response = client.post(logout_url)
+    assert response.status_code == 302
+    assert "_auth_user_id" not in client.session
 
 @pytest.mark.django_db
 def test_profile_view(client):
@@ -114,3 +120,48 @@ def test_login_locks_after_repeated_failures_per_account(client):
     r = client.post(reverse("login"), {"email": "lk@example.com", "password": "ParolaTare123!"}, HTTP_X_FORWARDED_FOR="10.9.9.9", follow=True)
     assert "Too many failed attempts" in r.content.decode()
     cache.clear()
+
+
+@pytest.mark.django_db
+def test_logout_post_requires_csrf_token(django_user_model):
+    from django.test import Client
+    user = django_user_model.objects.create_user(username="csrf1", password="pass12345")
+    strict = Client(enforce_csrf_checks=True)
+    strict.force_login(user)
+    assert strict.post(reverse("logout")).status_code == 403
+    assert "_auth_user_id" in strict.session
+
+
+@pytest.mark.django_db
+def test_signed_in_pages_are_not_stored_by_browsers(client, django_user_model):
+    user = django_user_model.objects.create_user(username="nc1", password="pass12345")
+    assert "no-store" not in client.get(reverse("home")).get("Cache-Control", "")   # public landing
+    client.force_login(user)
+    cc = client.get(reverse("search"))["Cache-Control"]
+    assert "no-store" in cc and "private" in cc
+
+
+@pytest.mark.django_db
+def test_register_rejects_password_similar_to_email(client):
+    r = client.post(reverse("register"), {
+        "email": "andreeasandu@example.com",
+        "password1": "andreeasandu",
+        "password2": "andreeasandu",
+    })
+    assert r.status_code == 200                      # re-rendered with errors, not redirected
+    assert not User.objects.filter(email="andreeasandu@example.com").exists()
+    assert "too similar" in r.content.decode()
+
+
+@pytest.mark.django_db
+def test_register_shows_every_password_problem(client):
+    r = client.post(reverse("register"), {"email": "x1@example.com", "password1": "123", "password2": "123"})
+    html = r.content.decode()
+    assert "too short" in html and "entirely numeric" in html
+
+
+@pytest.mark.django_db
+def test_password_length_is_capped(client):
+    r = client.post(reverse("register"), {"email": "long@example.com", "password1": "A1!" * 500, "password2": "A1!" * 500})
+    assert r.status_code == 200
+    assert not User.objects.filter(email="long@example.com").exists()
