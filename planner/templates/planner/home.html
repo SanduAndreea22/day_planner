@@ -12,12 +12,30 @@
     <header class="hero rise d1">
         <p class="eyebrow">A private digital journal</p>
         <h1>Notice how your days <em>actually</em> feel.</h1>
-        <p class="hero-sub">Log a mood, write a thought, close the day with a small ritual. A few lines is enough.</p>
+        <p class="hero-sub">A private journal for your days: tap how you feel, write a few lines, plan the day in small blocks. Free, and only yours.</p>
         <div class="cta-row">
             <a href="{% url 'register' %}" class="btn btn-primary">Create free account</a>
             <a href="#example-day" class="btn btn-ghost">See an example day</a>
         </div>
         <p class="cta-note">Free, under a minute, just an email and a password. <a href="{% url 'login' %}">Already here? Log in</a></p>
+
+        <div class="peek" aria-label="A preview of the daily check-in">
+            <p class="peek-label">A peek inside</p>
+            <div class="card peek-card" aria-hidden="true">
+                <p class="peek-title">How are you feeling today?</p>
+                <ul class="mood-grid">
+                    {% for mood in mood_checkins %}
+                    <li class="mood-option mood-{{ mood.key }}">
+                        <div class="peek-tile{% if mood.key == 'calm' %} is-picked{% endif %}">
+                            {% include "planner/partials/mood_icon.html" with key=mood.key %}
+                            <span class="mood-text"><span class="mood-name">{{ mood.label }}</span></span>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <p class="peek-note">One tap to check in. Everything after that is optional.</p>
+        </div>
     </header>
 
     <section class="section rise d2" aria-labelledby="how-title">

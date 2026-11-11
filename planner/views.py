@@ -303,6 +303,7 @@ def home_view(request):
         "quote": quote,
         "today": date.today(),
         "preview_cards": HOME_PREVIEW_CARDS,
+        "mood_checkins": MOOD_CHECKINS,
     })
 
 @login_required
