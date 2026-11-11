@@ -12,6 +12,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
+from django.db.models import Q
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.urls import reverse
@@ -276,7 +277,13 @@ def build_home_context(user, today):
 
     latest = sorted((d for d in recent if d.mood), key=lambda d: d.date, reverse=True)[:3]
 
+    # "Welcome back" only makes sense once there is something to come back to.
+    has_history = Day.objects.filter(user=user).exclude(
+        (Q(mood__isnull=True) | Q(mood="")) & Q(notes="") & Q(is_closed=False)
+    ).exists()
+
     return {
+        "is_first_visit": not has_history,
         "day": day_obj,
         "today": today,
         "daily_message": _daily_quote_text(day_obj, today),

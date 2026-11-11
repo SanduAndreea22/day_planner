@@ -19,7 +19,7 @@ def test_member_home_shows_checkin_and_reflection(client, django_user_model):
     response = client.get(reverse("home"))
     assert response.status_code == 200
     html = response.content.decode()
-    assert "Welcome back to" in html
+    assert "Welcome to" in html and "Welcome back to" not in html  # brand-new account
     assert "How are you feeling today?" in html
     assert "What is one thing you need more of today?" in html
     assert "You are allowed to take things one day at a time." in html
@@ -133,3 +133,21 @@ def test_demo_is_public_and_saves_nothing(client):
 @pytest.mark.django_db
 def test_landing_links_to_demo(client):
     assert reverse("demo") in client.get(reverse("home")).content.decode()
+
+
+@pytest.mark.django_db
+def test_returning_user_sees_welcome_back(client, django_user_model):
+    user = django_user_model.objects.create_user(username="r1", password="pass12345")
+    Day.objects.create(user=user, date=date.today() - timedelta(days=3), mood="good")
+    client.force_login(user)
+    html = client.get(reverse("home")).content.decode()
+    assert "Welcome back to" in html
+
+
+@pytest.mark.django_db
+def test_first_visit_ends_after_first_checkin(client, django_user_model):
+    user = django_user_model.objects.create_user(username="r2", password="pass12345")
+    client.force_login(user)
+    assert client.get(reverse("home")).context["is_first_visit"] is True
+    Day.objects.filter(user=user, date=date.today()).update(mood="good")
+    assert client.get(reverse("home")).context["is_first_visit"] is False

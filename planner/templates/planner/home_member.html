@@ -11,8 +11,13 @@
 
     <section class="hero rise d1" aria-labelledby="welcome-title">
         <p class="hero-date">{{ today|date:"l, j F Y" }}</p>
+        {% if is_first_visit %}
+        <h1 id="welcome-title">Welcome to <em>yourself.</em></h1>
+        <p class="hero-sub">This is your private space. There is nothing to catch up on and nothing to get right. Just start with how you feel.{% if nickname %} <span class="visually-hidden">Hi, {{ nickname }}.</span>{% endif %}</p>
+        {% else %}
         <h1 id="welcome-title">Welcome back to <em>yourself.</em></h1>
         <p class="hero-sub">You don't have to have everything figured out today. Just start with how you feel.{% if nickname %} <span class="visually-hidden">Hi, {{ nickname }}.</span>{% endif %}</p>
+        {% endif %}
         <p class="daily-note">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c0-6 .5-9 0-14"/><path d="M12 13c-3.5 0-6-2.2-6-6 3.8 0 6 2.4 6 6z"/><path d="M12 10c0-3.2 2-5.6 5.6-6 .2 3.6-2 6-5.6 6z"/></svg>
             <span>{{ daily_message }}</span>

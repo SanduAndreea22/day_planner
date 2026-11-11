@@ -39,6 +39,18 @@
         </div>
     </section>
 
+    <section class="section rise d3" id="demo-month" aria-labelledby="demo-month-title" hidden>
+        <div class="section-head">
+            <p class="eyebrow">Your month</p>
+            <h2 id="demo-month-title"><span id="demo-month-name"></span></h2>
+            <p>Each check-in colors a day. Pick a mood above, then tap any day to fill it in, and watch the month take shape.</p>
+        </div>
+        <div class="card demo-cal-card">
+            <div class="demo-cal" id="demo-cal" role="grid" aria-label="Month calendar"></div>
+            <p class="stat-sub" id="demo-cal-count" aria-live="polite" style="text-align:center; margin-top:1rem;"></p>
+        </div>
+    </section>
+
     <section class="section rise d3" id="demo-reflect" aria-labelledby="demo-reflect-title" hidden>
         <div class="card reflect">
             <div>
@@ -59,7 +71,7 @@
     <section class="section" id="demo-done" aria-live="polite" hidden>
         <div class="card" style="text-align:center;">
             <h2 style="margin-top:0;">That's the whole idea.</h2>
-            <p class="muted" style="max-width:34rem; margin:0 auto 1.2rem;">In a free account, this check-in and your line are kept in your private journal, with a calendar, a week view and search. This demo didn't save anything.</p>
+            <p class="muted" style="max-width:34rem; margin:0 auto 1.2rem;">In a free account, your check-ins and lines are kept in your private journal, with a calendar, a week view and search. This demo didn't save anything.</p>
             <div class="cta-row" style="margin-top:0;">
                 <a href="{% url 'register' %}" class="btn btn-primary">Create free account</a>
                 <a href="{% url 'login' %}" class="btn btn-ghost">Log in</a>
@@ -81,6 +93,8 @@
     var reflect = document.getElementById('demo-reflect');
     var done = document.getElementById('demo-done');
     var last = {};
+    var month = document.getElementById('demo-month');
+    var selected = null;
 
     tiles.forEach(function (btn) {
         btn.addEventListener('click', function () {
@@ -101,9 +115,49 @@
 
             document.getElementById('demo-reply-title').textContent = 'You chose “' + btn.dataset.label + '”.';
             document.getElementById('demo-quote').textContent = pick ? '“' + pick + '”' : '';
+            selected = btn.dataset.mood;
             reply.hidden = false;
+            month.hidden = false;
             reflect.hidden = false;
+            fillDay(todayCell);
         });
+    });
+
+
+    // ---- Mini calendar (client-side only, nothing stored) ----
+    var now = new Date();
+    var year = now.getFullYear(), mon = now.getMonth(), today = now.getDate();
+    var names = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    document.getElementById('demo-month-name').textContent = names[mon] + ' ' + year;
+    var grid = document.getElementById('demo-cal');
+    var labels = {happy: 'Happy', calm: 'Calm', tired: 'Tired', anxious: 'Anxious', sad: 'Sad'};
+    var todayCell = null;
+    ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(function (d) {
+        var h = document.createElement('div'); h.className = 'demo-cal-head'; h.textContent = d; h.setAttribute('role', 'columnheader'); grid.appendChild(h);
+    });
+    var first = (new Date(year, mon, 1).getDay() + 6) % 7;
+    for (var i = 0; i < first; i++) { var e = document.createElement('div'); e.setAttribute('aria-hidden', 'true'); grid.appendChild(e); }
+    var daysInMonth = new Date(year, mon + 1, 0).getDate();
+    for (var d = 1; d <= daysInMonth; d++) {
+        var cell = document.createElement('button');
+        cell.type = 'button'; cell.className = 'demo-cal-day'; cell.textContent = d; cell.dataset.day = d;
+        cell.setAttribute('role', 'gridcell');
+        cell.setAttribute('aria-label', names[mon] + ' ' + d + ', no check-in');
+        if (d > today) { cell.disabled = true; }
+        if (d === today) { cell.classList.add('is-today'); todayCell = cell; }
+        grid.appendChild(cell);
+    }
+    function fillDay(cell) {
+        if (!cell || !selected) return;
+        Object.keys(labels).forEach(function (k) { cell.classList.remove('mood-' + k); });
+        cell.classList.add('mood-' + selected, 'is-filled');
+        cell.setAttribute('aria-label', names[mon] + ' ' + cell.dataset.day + ', ' + labels[selected]);
+        var n = grid.querySelectorAll('.is-filled').length;
+        document.getElementById('demo-cal-count').textContent = n + (n === 1 ? ' day' : ' days') + ' checked in. In your own planner this stays, and each day opens to read it later.';
+    }
+    grid.addEventListener('click', function (ev) {
+        var cell = ev.target.closest('.demo-cal-day');
+        if (cell && !cell.disabled) fillDay(cell);
     });
 
     document.getElementById('demo-write').addEventListener('click', function () {
