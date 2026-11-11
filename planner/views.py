@@ -294,6 +294,25 @@ def build_home_context(user, today):
     }
 
 
+def demo_view(request):
+    """Try the daily check-in without an account.
+
+    Read-only: it only reads the saved quotes. Nothing the visitor does on the
+    page is sent to or stored on the server (all interaction is client-side).
+    """
+    active = Quote.objects.filter(active=True)
+    general = list(active.filter(mood__isnull=True).values_list("text", flat=True)) or \
+        list(active.filter(mood="").values_list("text", flat=True))
+    quotes = {}
+    for item in MOOD_CHECKINS:
+        matched = list(active.filter(mood=item["value"]).values_list("text", flat=True))
+        quotes[item["key"]] = matched or general or DAILY_MESSAGES
+    return render(request, "planner/demo.html", {
+        "mood_checkins": MOOD_CHECKINS,
+        "demo_quotes": quotes,
+    })
+
+
 def home_view(request):
     if request.user.is_authenticated:
         return render(request, "planner/home_member.html", build_home_context(request.user, date.today()))

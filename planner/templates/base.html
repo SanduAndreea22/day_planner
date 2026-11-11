@@ -98,6 +98,7 @@
                     <a href="{{ profile_url }}" class="nav-item" {% if request.path == profile_url %}aria-current="page"{% endif %}>Profile</a>
                     <a href="{% url 'logout' %}" class="nav-item logout">Log out</a>
                 {% else %}
+                    <a href="{% url 'demo' %}" class="nav-item" {% if request.path == '/demo/' %}aria-current="page"{% endif %}>Try it</a>
                     <a href="{{ guide_url }}" class="nav-item" {% if request.path == guide_url %}aria-current="page"{% endif %}>How it works</a>
                     <a href="{{ login_url }}" class="nav-item" {% if request.path == login_url %}aria-current="page"{% endif %}>Log in</a>
                     <a href="{% url 'register' %}" class="nav-item highlight nav-cta-dup">Create account</a>
@@ -127,8 +128,7 @@
             <div class="footer-card">Tomorrow is a new day.</div>
         </div>
         {% endblock %}
-        <div class="footer-meta muted">© Emotional Planner · private · no comparisons</div>
-        <div class="footer-meta muted">Made by Andreea Sandu</div>
+        <div class="footer-meta muted">© {% now "Y" %} Andreea Sandu · Emotional Planner · private · no comparisons</div>
         <div class="footer-meta muted">
             <a href="{% url 'guide' %}">How it works</a> · {% if user.is_authenticated %}<a href="{% url 'feedback' %}">Feedback</a> · {% endif %}<a href="{% url 'privacy_policy' %}">Privacy Policy</a> · <a href="{% url 'terms' %}">Terms of Service</a>
         </div>

@@ -15,7 +15,7 @@
         <p class="hero-sub">A private journal for your days: tap how you feel, write a few lines, plan the day in small blocks. Free, and only yours.</p>
         <div class="cta-row">
             <a href="{% url 'register' %}" class="btn btn-primary">Create free account</a>
-            <a href="#example-day" class="btn btn-ghost">See an example day</a>
+            <a href="{% url 'demo' %}" class="btn btn-ghost">Try it, no account</a>
         </div>
         <p class="cta-note">Free today, under a minute, just an email and a password. If optional paid plans ever appear, the features you use now stay free. <a href="{% url 'login' %}">Already here? Log in</a></p>
         <p class="audience">For anyone who wants a quiet place to check in with themselves. A few lines a day, no streaks, no scores.</p>
@@ -82,6 +82,7 @@
             <div class="trust-item"><strong>Yours to take</strong><span>Export or delete your data any time.</span></div>
             <div class="trust-item"><strong>Not medical</strong><span>A journal, not a therapy or medical service.</span></div>
         </div>
+        <p class="trust-links" style="max-width:42rem; margin-left:auto; margin-right:auto;">Your journal is stored in a Postgres database hosted on Neon, and the app runs on Render. Only essential cookies are used, so there is no cookie banner. </p>
         <p class="trust-links"><a href="{% url 'privacy_policy' %}">Privacy Policy</a> · <a href="{% url 'terms' %}">Terms of Service</a></p>
     </section>
 

@@ -111,3 +111,25 @@ def test_landing_shows_app_screenshot_and_trust_facts(client):
     assert "app-today.png" in html
     assert "No analytics or advertising trackers." in html
     assert reverse("privacy_policy") in html
+
+
+@pytest.mark.django_db
+def test_demo_is_public_and_saves_nothing(client):
+    from planner.models import Quote
+    Quote.objects.all().delete()
+    Quote.objects.create(text="Hard days pass.", mood="very_bad")
+    Quote.objects.create(text="General kindness.", mood=None)
+    before = Day.objects.count()
+    response = client.get(reverse("demo"))
+    assert response.status_code == 200
+    html = response.content.decode()
+    assert "Hard days pass." in html          # sad tile -> very_bad quote
+    assert "General kindness." in html        # fallback for moods without quotes
+    assert "<form" not in html                # nothing can be posted
+    assert "csrfmiddlewaretoken" not in html
+    assert Day.objects.count() == before
+
+
+@pytest.mark.django_db
+def test_landing_links_to_demo(client):
+    assert reverse("demo") in client.get(reverse("home")).content.decode()

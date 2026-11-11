@@ -4,6 +4,7 @@ from django.views.generic import TemplateView
 from .decorators import ratelimit_post
 from .views import (
     home_view,
+    demo_view,
     today_view,
     day_detail_view,
     calendar_view,
@@ -31,6 +32,7 @@ from .views import (
 
 urlpatterns = [
     path('', home_view, name='home'),
+    path('demo/', demo_view, name='demo'),
     path('today/', today_view, name='today'),
     path('day/<int:year>/<int:month>/<int:day>/', day_detail_view, name='day_detail'),
     path('calendar/', calendar_view, name='calendar'),
