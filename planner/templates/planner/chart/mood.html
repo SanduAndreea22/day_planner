@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Mood · Emotional Planner{% endblock %}
+{% block title %}Mood chart · Emotional Planner{% endblock %}
 {% block extra_head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 {% endblock %}
@@ -8,7 +8,7 @@
 <div class="mood-card">
 
     <div class="mood-header">
-        <h2 class="title-gradient">Mood</h2>
+        <h2 class="title-gradient">Mood chart</h2>
         <div class="mood-period muted">{{ month_name }} {{ year }}</div>
         <div class="mood-nav">
             <a href="?month={{ month|add:'-1' }}&year={{ year }}">← Previous month</a>
@@ -16,16 +16,13 @@
         </div>
     </div>
 
-    <p class="mood-subtitle">
-        Observe gently, without judgment.<br>
-        <em>Just looking is already a good start.</em>
-    </p>
+    <p class="mood-subtitle">A look at your moods this month. No judgment.</p>
 
-    {% if most_common_mood %}
+    {% if most_common_mood and mood_count >= 3 %}
     <div class="mood-summary">
-        Most logged days were
+        Most days with a mood were
         <strong>
-            {% if most_common_mood == "very_bad" %}very difficult{% elif most_common_mood == "bad" %}hard{% elif most_common_mood == "neutral" %}neutral{% elif most_common_mood == "good" %}good{% elif most_common_mood == "very_good" %}very good{% endif %}</strong>.
+            {% if most_common_mood == "very_bad" %}very hard{% elif most_common_mood == "bad" %}hard{% elif most_common_mood == "neutral" %}neutral{% elif most_common_mood == "good" %}good{% elif most_common_mood == "very_good" %}very good{% endif %}</strong>.
     </div>
     {% endif %}
 
@@ -49,31 +46,30 @@
                 {% elif day.mood == "neutral" %}😐
                 {% elif day.mood == "good" %}🙂
                 {% elif day.mood == "very_good" %}😄
-                {% else %}🌙
+                {% else %}–
                 {% endif %}
             </span>
 
             <span class="mood-text">
-                {% if day.mood == "very_bad" %}Very difficult
+                {% if day.mood == "very_bad" %}Very hard
                 {% elif day.mood == "bad" %}Hard
                 {% elif day.mood == "neutral" %}Neutral
                 {% elif day.mood == "good" %}Good
                 {% elif day.mood == "very_good" %}Very good
-                {% else %}No mood notes
+                {% else %}No mood logged
                 {% endif %}
             </span>
 
         </a>
         {% empty %}
-            <p class="muted">No days logged this period.</p>
+            <p class="muted">No days logged this month.</p>
         {% endfor %}
     </div>
 
-    <p class="mood-footer"> Observing is already a first step.</p>
 
     <div class="mood-actions">
         <a href="{% url 'calendar' %}" class="button primary">Calendar</a>
-        <a href="{% url 'monthly_overview' %}?month={{ month }}&year={{ year }}" class="button">← Month summary</a>
+        <a href="{% url 'monthly_overview' %}?month={{ month }}&year={{ year }}" class="button">← Month overview</a>
     </div>
 
 </div>

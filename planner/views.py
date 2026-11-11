@@ -183,7 +183,7 @@ def feedback_view(request):
             feedback = form.save(commit=False)
             feedback.user = request.user
             feedback.save()
-            messages.success(request, "Thank you — your feedback was sent")
+            messages.success(request, "Thank you. Your feedback was sent.")
             return redirect("feedback")
     else:
         form = FeedbackForm()
@@ -202,7 +202,7 @@ def delete_account_view(request):
             user = request.user
             logout(request)
             user.delete()
-            messages.success(request, "Your account and all your data have been permanently deleted. Take care")
+            messages.success(request, "Your account and all your data have been permanently deleted.")
             return redirect("home")
         messages.error(request, "Incorrect password — your account was not deleted.")
         return redirect("delete_account")
@@ -345,9 +345,9 @@ def day_detail_view(request, year, month, day):
 
     message = None
     if selected_date < date.today():
-        message = "Past day. You can reflect at your own pace"
+        message = "This day has passed. You can still add or review entries."
     elif selected_date > date.today():
-        message = "Future day. It doesn't need to be clear yet"
+        message = "This day hasn't happened yet. Plan it as loosely as you like."
 
     reflection = EveningReflection.objects.filter(day=day_obj).first()
     streak = compute_streak(request.user) if selected_date == date.today() else None
@@ -360,6 +360,7 @@ def day_detail_view(request, year, month, day):
         "reflection": reflection,
         "streak": streak,
         "is_today": selected_date == date.today(),
+        "is_past": selected_date < date.today(),
         "nickname": getattr(getattr(request.user, "profile", None), "nickname", ""),
         "prev_date": selected_date - timedelta(days=1),
         "next_date": selected_date + timedelta(days=1),
@@ -405,12 +406,12 @@ def set_day_color(request):
     day = get_object_or_404(Day, id=request.POST.get("day_id"), user=request.user)
     color = request.POST.get("color")
     if color and color not in dict(Day.COLOR_CHOICES):
-        messages.error(request, "That's not a valid color option.")
+        messages.error(request, "Please choose one of the listed day colors.")
         return redirect_to_day(day)
     if color:
         updated = Day.objects.filter(id=day.id, is_closed=False).update(color=color)
         if updated:
-            messages.success(request, "Saved")
+            messages.success(request, "Saved: day color")
     return redirect_to_day(day)
 
 
@@ -421,12 +422,12 @@ def set_day_mood(request):
     day = get_object_or_404(Day, id=request.POST.get("day_id"), user=request.user)
     mood = request.POST.get("mood")
     if mood and mood not in dict(Day.MOOD_CHOICES):
-        messages.error(request, "That's not a valid mood option.")
+        messages.error(request, "Please choose one of the listed moods.")
         return redirect_to_day(day)
     if mood:
         updated = Day.objects.filter(id=day.id, is_closed=False).update(mood=mood)
         if updated:
-            messages.success(request, "Saved")
+            messages.success(request, "Saved: mood")
     return redirect_to_day(day)
 
 
@@ -436,7 +437,7 @@ def update_day_text(request):
     if not day.is_closed:
         day.notes = request.POST.get("notes", "")
         day.save(update_fields=["notes"])
-        messages.success(request, "Saved")
+        messages.success(request, "Saved: journal entry")
     return redirect_to_day(day)
 
 
@@ -469,7 +470,7 @@ def add_timeblock(request):
             for error in errors:
                 text = str(error)
                 text = text[0].lower() + text[1:] if text else text
-                messages.error(request, f"{label} — {text}")
+                messages.error(request, f"{label}: {text}")
     response = redirect_to_day(day)
     if had_error:
         # Land on the form so the error shows right next to it, not off-screen at the top.
@@ -566,24 +567,16 @@ def weekly_balance_score_view(request):
 
     score = min(days_logged * 10 + mood_days * 8 + completed_tasks * 2, 100)
 
-    if score < 30:
-        message, emoji = "It was tough. It's enough that you were here.", "🫶"
-    elif score < 70:
-        message, emoji = "You had some balanced moments. It's okay.", "🌿"
-    else:
-        message, emoji = "A week with good resources.", "💗"
-
     if days_logged == 0:
-        suggestion = "Maybe next week starts with just one logged day."
+        message, suggestion = "Nothing recorded this week.", "You can start with a single day."
     elif days_logged < 3:
-        suggestion = "Next time, add a small thought."
+        message, suggestion = "A few days recorded this week.", "A mood or a journal entry on any day adds to this page."
     else:
-        suggestion = "Keep going at your own pace."
+        message, suggestion = "You checked in on several days this week.", ""
 
     return render(request, "planner/weekly_score.html", {
         "score": score,
         "message": message,
-        "emoji": emoji,
         "suggestion": suggestion,
         "days_logged": days_logged,
         "completed_tasks": completed_tasks,
@@ -616,16 +609,15 @@ def monthly_overview_view(request):
     moods = [d.mood for d in logged_days if d.mood]
     dominant_mood = Counter(moods).most_common(1)[0][0] if moods else None
 
-    interpretation_map = {
-        "very_bad": ("🌧️", "The month was challenging."),
-        "bad": ("🌥️", "There were several tough days."),
-        "neutral": ("🌤️", "A stable month, no extremes."),
-        "good": ("🌱", "You had several good days."),
-        "very_good": ("🌸", "A month with nice emotional resources."),
-        None: ("🌙", "Every day counts, even the unwritten ones."),
-    }
-
-    icon, interpretation = interpretation_map.get(dominant_mood, ("🌙", "Every day counts, even the unwritten ones."))
+    mood_labels = dict(Day.MOOD_CHOICES)
+    mood_count = len(moods)
+    if mood_count == 0:
+        interpretation = "No moods logged this month yet."
+    elif mood_count < 3:
+        interpretation = f"{mood_count} day{'s' if mood_count != 1 else ''} with a mood logged so far."
+    else:
+        interpretation = f"Most days with a mood were “{mood_labels[dominant_mood]}”."
+    icon = ""
 
     return render(request, "planner/monthly_overview.html", {
         "days": days,
@@ -635,7 +627,7 @@ def monthly_overview_view(request):
         "dominant_mood": dominant_mood,
         "icon": icon,
         "interpretation": interpretation,
-        "total_days": len(logged_days),
+        "total_days": sum(1 for d in logged_days if d.mood or d.color or d.notes or d.is_closed),
     })
 
 
@@ -653,6 +645,7 @@ def mood_chart_view(request):
         "month": month,
         "month_name": MONTH_NAMES[month],
         "most_common_mood": most_common_mood,
+        "mood_count": len(moods),
     })
 
 

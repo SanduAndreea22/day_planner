@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Tasks & Mood · Emotional Planner{% endblock %}
+{% block title %}Time blocks & mood · Emotional Planner{% endblock %}
 {% block extra_head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 {% endblock %}
@@ -9,12 +9,9 @@
 {% block content %}
 <div class="productivity-card">
 
-    <h2 class="title-gradient">Tasks & Mood</h2>
+    <h2 class="title-gradient">Time blocks & mood</h2>
 
-    <p class="productivity-subtitle">
-        How many things you completed <strong>regardless of how you felt</strong>.<br>
-        <span class="muted">Productivity doesn’t cancel your emotions.</span>
-    </p>
+    <p class="productivity-subtitle">Time blocks you finished each day, next to that day’s mood.</p>
 
     <div class="week-nav">
         <a class="week-btn" href="?offset={{ offset|add:-1 }}">← Previous week</a>
@@ -24,7 +21,7 @@
 
     {% if data %}
     <div class="productivity-chart-wrapper">
-        <canvas id="productivity-chart" height="200" role="img" aria-label="Bar chart of completed tasks per day, {{ start|date:'d M' }} to {{ end|date:'d M' }}"></canvas>
+        <canvas id="productivity-chart" height="200" role="img" aria-label="Bar chart of finished time blocks per day, {{ start|date:'d M' }} to {{ end|date:'d M' }}"></canvas>
     </div>
     {% endif %}
 
@@ -38,13 +35,13 @@
                 {% elif item.mood == "neutral" %}😐
                 {% elif item.mood == "good" %}🙂
                 {% elif item.mood == "very_good" %}😄
-                {% else %}🌙{% endif %}
+                {% else %}–{% endif %}
             </div>
             <div class="prod-value">
                 {% if item.completed == 0 %}
-                    No completed tasks
+                    No time blocks finished
                 {% else %}
-                    {{ item.completed }} task{{ item.completed|pluralize }}
+                    {{ item.completed }} time block{{ item.completed|pluralize }} finished
                 {% endif %}
             </div>
         </div>
@@ -55,12 +52,9 @@
 
     <div class="productivity-actions">
         <a href="{% url 'calendar' %}" class="button primary">Calendar</a>
-        <a href="{% url 'weekly_score' %}" class="button">← Weekly Score</a>
+        <a href="{% url 'weekly_score' %}" class="button">← Your week</a>
     </div>
 
-    <p class="productivity-final">
-         Even small steps tell a story.
-    </p>
 </div>
 
 <style>
@@ -172,7 +166,7 @@
                     callbacks: {
                         label: function (ctx) {
                             var n = ctx.raw;
-                            return n === 0 ? 'No completed tasks' : n + (n === 1 ? ' task' : ' tasks');
+                            return n === 0 ? 'No time blocks finished' : n + (n === 1 ? ' time block finished' : ' time blocks finished');
                         }
                     }
                 }

@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Month summary · Emotional Planner{% endblock %}
+{% block title %}Month overview · Emotional Planner{% endblock %}
 
 {% block content %}
 <div class="month-overview-card">
 
     <div class="month-nav">
-        <a class="month-btn" href="?year={{ year }}&month={{ month|add:'-1' }}" aria-label="Previous month">← Prev</a>
+        <a class="month-btn" href="?year={{ year }}&month={{ month|add:'-1' }}" aria-label="Previous month">← Previous</a>
         <div class="month-label title-gradient">{{ month_name }} {{ year }}</div>
         <a class="month-btn" href="?year={{ year }}&month={{ month|add:'1' }}" aria-label="Next month">Next →</a>
     </div>
@@ -33,7 +33,7 @@
                     {% elif day.mood == "neutral" %}😐
                     {% elif day.mood == "good" %}🙂
                     {% elif day.mood == "very_good" %}😄
-                    {% else %}🌙
+                    {% else %}·
                     {% endif %}
                 </div>
             </a>
@@ -44,13 +44,13 @@
     </div>
 
     <div class="overview-summary">
-        <p>You have recorded <strong>{{ total_days }}</strong> day{{ total_days|pluralize }} this month.</p>
+        <p><strong>{{ total_days }}</strong> day{{ total_days|pluralize }} logged this month.</p>
         <p class="muted">{{ interpretation }}</p>
     </div>
 
     <div class="overview-actions">
         <a href="{% url 'calendar' %}" class="button">← Calendar</a>
-        <a href="{% url 'today' %}" class="button primary">Today</a>
+        <a href="{% url 'today' %}" class="button primary">Open today</a>
     </div>
 
 </div>

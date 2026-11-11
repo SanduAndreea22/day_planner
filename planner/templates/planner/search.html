@@ -5,14 +5,14 @@
 {% block content %}
 <div class="legal-card">
     <h1 class="title-gradient">Search your days</h1>
-    <p class="updated-date">Look back through what you’ve written, gently — no scoring, just finding.</p>
+    <p class="updated-date">Find any day by what you wrote or how you felt.</p>
 
     <form method="get" style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem;">
         <input
             type="text"
             name="q"
             value="{{ query }}"
-            placeholder="Search your notes..."
+            placeholder="Search your journal entries"
             style="flex:1; min-width:200px; padding:0.6rem 0.8rem; border-radius:var(--radius-md); border:1px solid var(--text-muted); background:var(--bg-card); color:var(--text-main);"
         >
         <select name="mood" style="padding:0.6rem 0.8rem; border-radius:var(--radius-md); border:1px solid var(--text-muted); background:var(--bg-card); color:var(--text-main);">
@@ -27,7 +27,7 @@
     </form>
 
     {% if query or mood_filter %}
-        <p class="updated-date">{{ days|length }} day{{ days|length|pluralize }} found</p>
+        <p class="updated-date">{% if days %}{{ days|length }} day{{ days|length|pluralize }} found{% else %}No days found.{% endif %}</p>
     {% endif %}
 
     {% if days %}
@@ -37,15 +37,15 @@
                    style="display:flex; justify-content:space-between; gap:1rem; padding:0.7rem 1rem; border-radius:14px; background:rgba(183,201,181,0.3); text-decoration:none; color:var(--text-main);">
                     <span style="font-weight:600; white-space:nowrap;">{{ day.date|date:"d M Y" }}</span>
                     <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text-muted);">
-                        {{ day.notes|default:"—"|truncatechars:80 }}
+                        {% if day.notes %}{{ day.notes|truncatechars:80 }}{% else %}<em>No journal entry</em>{% endif %}
                     </span>
                 </a>
             {% endfor %}
         </div>
     {% elif query or mood_filter %}
-        <p class="updated-date">Nothing matched. Maybe try a different word.</p>
+        <p class="updated-date">Nothing matched. Try a different word.</p>
     {% else %}
-        <p class="updated-date">Type something above, or pick a mood, to look back through your days.</p>
+        <p class="updated-date">Type a word or pick a mood to search your days.</p>
     {% endif %}
 </div>
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}My Day · Emotional Planner{% endblock %}
+{% block title %}My day{% endblock %}
 
 {% block content %}
 <div class="day-card day-page-card" style="
@@ -22,12 +22,12 @@
         <a href="{% url 'day_detail' next_date.year next_date.month next_date.day %}">Next day →</a>
     </div>
 
-    <div class="day-date-block" style="text-align:center; font-weight:600; margin-bottom:1rem;">
+    <h1 class="day-date-block" style="text-align:center; font-weight:600; font-family:var(--font-sans); font-size:1rem; letter-spacing:0; margin:0 0 1rem;">
         <span class="date-part">{{ day.date|date:"l" }}</span>
         <span class="date-part">{{ day.date|date:"d" }}</span>
         <span class="date-part">{{ day.date|date:"F" }}</span>
         <span class="date-part">{{ day.date|date:"Y" }}</span>
-    </div>
+    </h1>
 
     {% if day.mood %}
     <div class="day-mood-emoji" style="font-size:3rem; text-align:center; margin-bottom:1rem; transition: transform 0.3s;">
@@ -48,7 +48,7 @@
 
     {% if day.is_closed %}
         <div class="message closed-message" style="text-align:center; color: var(--text-muted); margin-bottom:1rem;">
-             The day is closed. You’ve done enough today.
+             This day is closed and can’t be edited.
         </div>
 
         {% include "planner/partials/day_summary.html" %}
@@ -61,7 +61,7 @@
 
     {% else %}
         <div class="day-section" style="margin-bottom:1.8rem;">
-            <label style="font-weight:600;">How did you feel today?</label>
+            <label style="font-weight:600;">{% if is_today %}How are you feeling today?{% elif is_past %}How did you feel that day?{% else %}How do you expect to feel?{% endif %}</label>
             <div class="field-hint muted" style="color:var(--text-muted); font-size:0.85rem; margin-bottom:0.3rem;">Your overall mood. It shows as an emoji on the calendar.</div>
 
             <div class="saved-field" id="mood-display" style="display:{% if day.mood %}flex{% else %}none{% endif %}; justify-content:space-between; align-items:center; padding:0.6rem 1rem; border-radius:var(--radius-md); background:rgba(183,201,181,0.3);">
@@ -93,8 +93,8 @@
 
 
         <div class="day-section" style="margin-bottom:1.8rem;">
-            <label style="font-weight:600;">What kind of day was it?</label>
-            <div class="field-hint muted" style="color:var(--text-muted); font-size:0.85rem; margin-bottom:0.3rem;">The day’s character in one color (separate from mood). It tints the day on the calendar.</div>
+            <label style="font-weight:600;">{% if is_today %}What kind of day is it?{% elif is_past %}What kind of day was it?{% else %}What kind of day will it be?{% endif %}</label>
+            <div class="field-hint muted" style="color:var(--text-muted); font-size:0.85rem; margin-bottom:0.3rem;">Pick one color for the day. It’s separate from mood and tints the day in the calendar.</div>
 
             <div class="saved-field color-{{ day.color }}" id="color-display" style="display:{% if day.color %}flex{% else %}none{% endif %}; justify-content:space-between; align-items:center; padding:0.6rem 1rem; border-radius:var(--radius-md);">
                 <span style="display:inline-flex; align-items:center; gap:0.4rem;">
@@ -102,7 +102,7 @@
                     {% if day.color == "red" %}Heavy
                     {% elif day.color == "yellow" %}Uneven
                     {% elif day.color == "green" %}Light
-                    {% elif day.color == "blue" %}Calm
+                    {% elif day.color == "blue" %}Steady
                     {% elif day.color == "purple" %}Vivid
                     {% endif %}
                 </span>
@@ -117,7 +117,7 @@
                     <option value="red" {% if day.color == "red" %}selected{% endif %}>Heavy — a draining day</option>
                     <option value="yellow" {% if day.color == "yellow" %}selected{% endif %}>Uneven — ups and downs</option>
                     <option value="green" {% if day.color == "green" %}selected{% endif %}>Light — easy and open</option>
-                    <option value="blue" {% if day.color == "blue" %}selected{% endif %}>Calm — quiet and steady</option>
+                    <option value="blue" {% if day.color == "blue" %}selected{% endif %}>Steady — quiet and even</option>
                     <option value="purple" {% if day.color == "purple" %}selected{% endif %}>Vivid — full of energy</option>
                 </select>
                 <button type="submit" class="button primary" style="margin-top:0.5rem; width:100%; padding:0.7rem; border-radius:var(--radius-md); background:var(--primary); color:white;">Save</button>
@@ -125,7 +125,7 @@
         </div>
 
         <div class="day-section" style="margin-bottom:1.8rem;">
-            <label style="font-weight:600;">A thought for today</label>
+            <label style="font-weight:600;">Journal entry</label>
 
             <div class="saved-field" id="notes-display" style="display:{% if day.notes %}block{% else %}none{% endif %}; padding:0.6rem 1rem; border-radius:var(--radius-md); background:rgba(183,201,181,0.3);">
                 <div style="white-space:pre-wrap;">{{ day.notes }}</div>
@@ -152,7 +152,7 @@
                         <div class="actions">
                             <form method="post" action="{% url 'toggle_timeblock' block.id %}" class="toggle-timeblock-form" style="display:inline;">
                                 {% csrf_token %}
-                                <button type="submit" class="link-button" title="Mark as done / not done" aria-label="Mark as done or not done">Done</button>
+                                <button type="submit" class="link-button toggle-btn" title="Mark as done or not done">{% if block.completed %}Undo{% else %}Mark done{% endif %}</button>
                             </form>
                             <form method="post" action="{% url 'delete_timeblock' block.id %}" style="display:inline;" onsubmit="return confirm('Delete this block?')">
                                 {% csrf_token %}
@@ -192,7 +192,7 @@
         </div>
 
         <div class="day-evening" style="text-align:center; margin-bottom:1.8rem;">
-            <a href="{% url 'evening_reflection' day.date.year day.date.month day.date.day %}" id="close-day-link" class="button" style="padding:0.7rem 1rem; border-radius:var(--radius-md); background:transparent; color:var(--primary); border:2px solid var(--primary); display:inline-block;" title="This locks the day in — it can't be edited afterward.">Close the day gently</a>
+            <a href="{% url 'evening_reflection' day.date.year day.date.month day.date.day %}" id="close-day-link" class="button" style="padding:0.7rem 1rem; border-radius:var(--radius-md); background:transparent; color:var(--primary); border:2px solid var(--primary); display:inline-block;" title="This locks the day in — it can't be edited afterward.">Close the day</a>
             <div style="color:var(--text-muted); font-size:0.85rem; margin-top:0.5rem;">Closing locks the day — it can’t be edited afterward.</div>
         </div>
     {% endif %}
@@ -286,6 +286,7 @@ document.querySelectorAll('.toggle-timeblock-form').forEach(function (form) {
         }).then(function (response) {
             if (!response.ok) throw new Error('Request failed');
             block.classList.toggle('done');
+            var tb = form.querySelector('.toggle-btn'); if (tb) tb.textContent = block.classList.contains('done') ? 'Undo' : 'Mark done';
             block.classList.remove('just-toggled');
             void block.offsetWidth;
             block.classList.add('just-toggled');

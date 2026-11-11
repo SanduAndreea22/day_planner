@@ -5,11 +5,11 @@
 <div class="profile-card">
 
     <h2 class="title-gradient profile-title">
-         My Profile
+         Profile
     </h2>
 
     <p class="muted profile-subtitle">
-        This is your personal space. You can change this information anytime.
+        Choose how the app greets you. You can change this any time.
     </p>
 
     {% if saved %}
@@ -29,7 +29,7 @@
                 <div class="field-error">{{ form.nickname.errors.0 }}</div>
             {% endif %}
             <div class="nickname-preview muted">
-                Ex: Hi, <span id="namePreview">{{ profile.nickname|default:"Alex" }}</span> 
+                Greeting preview: Hi, <span id="namePreview">{{ profile.nickname|default:"Alex" }}</span> 
             </div>
         </div>
 
@@ -55,9 +55,6 @@
         </div>
     </form>
 
-    <p class="profile-ending muted">
-        This space is just for you.
-    </p>
 
     <p class="profile-ending">
         <a href="{% url 'export_data' %}" class="accent-link">Export your data (CSV)</a>

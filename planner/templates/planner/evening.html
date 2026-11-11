@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Evening Reflection · Emotional Planner{% endblock %}
+{% block title %}Evening reflection · Emotional Planner{% endblock %}
 
 {% block content %}
 <div class="evening-card" id="evening-card" style="
@@ -23,7 +23,7 @@
         color: var(--heading);
         animation: fadeInUp 0.8s ease forwards;
     ">
-        Evening Reflection
+        Evening reflection
     </div>
 
     <div class="evening-date muted" style="text-align:center; color:var(--text-muted); margin-bottom:1.5rem;">
@@ -42,7 +42,7 @@
         <input type="hidden" name="notes" value="{{ day.notes }}">
 
         <div class="evening-section" style="display:flex; flex-direction:column;">
-            <label style="font-weight:600; margin-bottom:0.3rem;">What drained my energy today? <span style="font-weight:400; color:var(--text-muted);">(optional)</span></label>
+            <label style="font-weight:600; margin-bottom:0.3rem;">What drained your energy? <span style="font-weight:400; color:var(--text-muted);">(optional)</span></label>
             <textarea
                 name="drain"
                 rows="3"
@@ -52,7 +52,7 @@
         </div>
 
         <div class="evening-section" style="display:flex; flex-direction:column;">
-            <label style="font-weight:600; margin-bottom:0.3rem;">One small thing I can appreciate about myself today <span style="font-weight:400; color:var(--text-muted);">(optional)</span></label>
+            <label style="font-weight:600; margin-bottom:0.3rem;">One small thing you appreciate about yourself <span style="font-weight:400; color:var(--text-muted);">(optional)</span></label>
             <textarea
                 name="small_win"
                 rows="3"
@@ -90,7 +90,7 @@
                 text-decoration:none;
                 transition: transform 0.2s, box-shadow 0.2s;
             ">
-                Back to day
+                Back to this day
             </a>
         </div>
     </form>

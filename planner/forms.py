@@ -120,12 +120,12 @@ class ProfileForm(forms.ModelForm):
 
         labels = {
             "nickname": "What should we call you?",
-            "bio": "A few words about yourself",
+            "bio": "About you",
         }
 
         help_texts = {
             "nickname": "Can be your real name, a nickname, or a handle.",
-            "bio": "Doesn't need to be complete. Can be just one sentence.",
+            "bio": "Optional. A sentence is enough. Only you see this.",
         }
 
         widgets = {
@@ -140,7 +140,7 @@ class ProfileForm(forms.ModelForm):
                 "class": "profile-textarea",
                 "rows": 4,
                 "maxlength": 200,
-                "placeholder": "How have you been feeling lately?"
+                "placeholder": "A sentence about you, or leave it blank."
             }),
         }
 
@@ -153,11 +153,11 @@ class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
         fields = ["message"]
-        labels = {"message": "What's on your mind?"}
+        labels = {"message": "Your message"}
         widgets = {
             "message": forms.Textarea(attrs={
                 "rows": 5,
                 "maxlength": 1000,
-                "placeholder": "Tell me what's working, what's missing, or what felt off...",
+                "placeholder": "Write anything: a bug, an idea, something confusing…",
             })
         }
