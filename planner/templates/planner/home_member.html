@@ -10,17 +10,17 @@
     <div class="sanctuary-bg" aria-hidden="true"></div>
 
     <section class="hero rise d1" aria-labelledby="welcome-title">
-        <p class="hero-date">{{ today|date:"l, j F Y" }}</p>
+        <p class="hero-date">{% if nickname %}Hi, {{ nickname }} · {% endif %}{{ today|date:"l, j F Y" }}</p>
         {% if is_first_visit %}
         <h1 id="welcome-title">Welcome to <em>yourself.</em></h1>
-        <p class="hero-sub">This is your private space. There is nothing to catch up on and nothing to get right. Just start with how you feel.{% if nickname %} <span class="visually-hidden">Hi, {{ nickname }}.</span>{% endif %}</p>
+        <p class="hero-sub">This is your private space. There is nothing to catch up on and nothing to get right. Just start with how you feel.</p>
         {% else %}
         <h1 id="welcome-title">Welcome back to <em>yourself.</em></h1>
-        <p class="hero-sub">You don't have to have everything figured out today. Just start with how you feel.{% if nickname %} <span class="visually-hidden">Hi, {{ nickname }}.</span>{% endif %}</p>
+        <p class="hero-sub">You don't have to have everything figured out today. Just start with how you feel.</p>
         {% endif %}
         <p class="daily-note">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c0-6 .5-9 0-14"/><path d="M12 13c-3.5 0-6-2.2-6-6 3.8 0 6 2.4 6 6z"/><path d="M12 10c0-3.2 2-5.6 5.6-6 .2 3.6-2 6-5.6 6z"/></svg>
-            <span>{{ daily_message }}</span>
+            <span><span class="note-label">Today’s line</span> {{ daily_message }}</span>
         </p>
     </section>
 
@@ -32,9 +32,9 @@
         <div class="card">
             {% if day.is_closed %}
                 <p class="mood-status">
-                    {% if current_mood_label %}Today was marked “{{ current_mood_label }}”.{% else %}Today is closed.{% endif %}
+                    {% if current_checkin_label %}Today’s check-in: {{ current_checkin_label }}.{% else %}Today is closed.{% endif %}
                 </p>
-                <p class="mood-hint">This day is closed, so it stays just as it was. Tomorrow is a fresh page.</p>
+                <p class="mood-hint">This day is closed and can’t be edited. Tomorrow starts a new page.</p>
             {% else %}
                 <form method="post" action="{% url 'set_day_mood' %}" class="mood-form">
                     {% csrf_token %}
@@ -46,7 +46,6 @@
                                 {% include "planner/partials/mood_icon.html" with key=mood.key %}
                                 <span class="mood-text">
                                     <span class="mood-name">{{ mood.label }}</span>
-                                    <span class="mood-saved-as">{% if mood.value == "very_good" %}Very good{% elif mood.value == "good" %}Good{% elif mood.value == "neutral" %}Neutral{% elif mood.value == "bad" %}Hard{% else %}Very hard{% endif %}</span>
                                 </span>
                             </button>
                         </li>
@@ -54,7 +53,7 @@
                     </ul>
                 </form>
                 <p class="mood-hint">
-                    {% if current_mood_label %}Today is saved as “{{ current_mood_label }}”. You can change it any time before the day closes.{% else %}One tap is enough. It's saved to today in your planner.{% endif %}
+                    {% if current_checkin_label %}Today’s check-in: {{ current_checkin_label }}. It shows as “{{ current_mood_label }}” on your Today page and in your charts. You can change it any time before the day closes.{% else %}Tap a mood to save it to today.{% endif %}
                 </p>
             {% endif %}
         </div>
@@ -63,22 +62,21 @@
     <section class="section rise d3" aria-labelledby="reflection-title">
         <div class="card reflect">
             <div>
-                <p class="eyebrow">Today's reflection</p>
-                <h2 id="reflection-title" class="visually-hidden">Today's reflection</h2>
+                <p class="eyebrow" id="reflection-title">Today's reflection</p>
                 <p class="reflect-prompt">What is one thing you need more of today?</p>
             </div>
             <div>
                 {% if day.is_closed %}
-                    {% if day.notes %}<p style="white-space:pre-wrap; margin:0;">{{ day.notes }}</p>{% else %}<p class="muted" style="margin:0;">Nothing was written on this day, and that's okay.</p>{% endif %}
+                    {% if day.notes %}<p style="white-space:pre-wrap; margin:0;">{{ day.notes }}</p>{% else %}<p class="muted" style="margin:0;">No journal entry for this day.</p>{% endif %}
                 {% else %}
                     <form method="post" action="{% url 'update_day_text' %}">
                         {% csrf_token %}
                         <input type="hidden" name="day_id" value="{{ day.id }}">
                         <label for="reflection-notes" class="visually-hidden">Your journal entry for today</label>
-                        <textarea id="reflection-notes" name="notes" placeholder="Rest, quiet, a kind word… write whatever comes.">{{ day.notes }}</textarea>
+                        <textarea id="reflection-notes" name="notes" placeholder="Write a few lines about what you need today.">{{ day.notes }}</textarea>
                         <div class="reflect-actions">
-                            <button type="submit" class="btn btn-primary">Write a journal entry</button>
-                            <a href="{% url 'today' %}">Open today's full page</a>
+                            <button type="submit" class="btn btn-primary">Save journal entry</button>
+                            <a href="{% url 'today' %}">Open today's page</a>
                         </div>
                     </form>
                 {% endif %}
@@ -88,16 +86,16 @@
 
     <section class="section rise d4" aria-labelledby="progress-title">
         <div class="section-head">
-            <p class="eyebrow">Your journey, gently</p>
-            <h2 id="progress-title">A quiet look at your days</h2>
-            <p>Just a reflection of what you've chosen to record. No targets.</p>
+            <p class="eyebrow">Your recent days</p>
+            <h2 id="progress-title">What you've recorded lately</h2>
+            <p>Only what you've chosen to record.</p>
         </div>
 
         <div class="progress-grid">
             <div class="card lift">
-                <p class="stat-label">Recent check-ins</p>
+                <p class="stat-label">Days with a mood</p>
                 <p class="stat-num">{{ checkins_week }}</p>
-                <p class="stat-sub">{% if checkins_week %}day{{ checkins_week|pluralize }} with a mood in the past week{% else %}Nothing yet this week. Whenever you're ready.{% endif %}</p>
+                <p class="stat-sub">{% if checkins_week %}in the last 7 days{% else %}None in the last 7 days.{% endif %}</p>
                 {% if latest_checkins %}
                 <ul class="recent-list">
                     {% for c in latest_checkins %}
@@ -109,25 +107,30 @@
             <div class="card lift">
                 <p class="stat-label">Days with journal entries</p>
                 <p class="stat-num">{{ notes_days }}</p>
-                <p class="stat-sub">{% if notes_days %}in the past 30 days.{% else %}None yet. Your first entry will show up here.{% endif %}</p>
-                <p style="margin:1rem 0 0;"><a href="{% url 'search' %}">Browse your entries</a></p>
+                <p class="stat-sub">{% if notes_days %}in the last 30 days.{% else %}None yet. Your first entry will show up here.{% endif %}</p>
+                <p style="margin:1rem 0 0;"><a href="{% url 'search' %}">Search your entries</a></p>
             </div>
             <div class="card lift">
                 <p class="stat-label">Your week</p>
-                <p class="stat-sub" style="margin-top:0.6rem;">A soft summary of how the week felt, never a grade. Or wander back through the month.</p>
-                <p style="margin:1rem 0 0;"><a href="{% url 'weekly_score' %}">See your week</a> · <a href="{% url 'calendar' %}">Calendar</a></p>
+                <p class="stat-sub" style="margin-top:0.6rem;">See which days you checked in and how many time blocks you finished.</p>
+                <p style="margin:1rem 0 0;"><a href="{% url 'weekly_score' %}">See your week</a></p>
             </div>
         </div>
 
         <div class="card pattern-card">
             <h3>Mood patterns</h3>
-            <p class="muted" style="margin:0;">The last two weeks. Select a day to open it.</p>
+            <p class="muted" style="margin:0;">The last 14 days, one square per day. Tap a square to open that day.</p>
             <div class="strip" role="list">
                 {% for d in mood_strip %}
                 <a role="listitem" href="{% url 'day_detail' d.date.year d.date.month d.date.day %}" class="{% if d.mood %}mood-{{ d.mood }}{% endif %}{% if d.is_today %} is-today{% endif %}" title="{{ d.date|date:'D j M' }}{% if d.label %} · {{ d.label }}{% else %} · no check-in{% endif %}" aria-label="{{ d.date|date:'l j F' }}{% if d.label %}, {{ d.label }}{% else %}, no check-in{% endif %}"></a>
                 {% endfor %}
             </div>
             <div class="strip-legend"><span>{{ mood_strip.0.date|date:"j M" }}</span><span>Today</span></div>
+            <div class="mood-key" aria-label="Color key">
+                <span>Very hard</span>
+                <span class="dot mood-very_bad" aria-hidden="true"></span><span class="dot mood-bad" aria-hidden="true"></span><span class="dot mood-neutral" aria-hidden="true"></span><span class="dot mood-good" aria-hidden="true"></span><span class="dot mood-very_good" aria-hidden="true"></span>
+                <span>Very good</span>
+            </div>
 
             {% if mood_total %}
             <div class="bars">
@@ -135,11 +138,11 @@
                 <div class="bar-row">
                     <span>{{ p.label }}</span>
                     <span class="bar-track"><span class="bar-fill mood-{{ p.value }}" style="width:{{ p.percent }}%"></span></span>
-                    <span class="bar-count">{{ p.count }}</span>
+                    <span class="bar-count">{{ p.count }} day{{ p.count|pluralize }}</span>
                 </div>
                 {% endfor %}
             </div>
-            <p class="stat-sub" style="margin-top:1rem;">Across the past 30 days. Patterns are for noticing, not judging. <a href="{% url 'mood_chart' %}">Full mood chart</a></p>
+            <p class="stat-sub" style="margin-top:1rem;">Across the last 30 days. <a href="{% url 'mood_chart' %}">Full mood chart</a> · <a href="{% url 'calendar' %}">Calendar</a></p>
             {% else %}
             <p class="empty-note">Patterns appear here after your first check-ins.</p>
             {% endif %}

@@ -284,6 +284,7 @@ def build_home_context(user, today):
         "daily_message": _daily_quote_text(day_obj, today),
         "mood_checkins": MOOD_CHECKINS,
         "current_mood_label": mood_labels.get(day_obj.mood, ""),
+        "current_checkin_label": {m["value"]: m["label"] for m in MOOD_CHECKINS}.get(day_obj.mood, ""),
         "checkins_week": checkins_week,
         "notes_days": notes_days,
         "mood_strip": strip,

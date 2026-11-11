@@ -70,7 +70,7 @@ body.dark .reflect { background: var(--bg-card); }
 /* ---------- Progress ---------- */
 .progress-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
 .progress-grid .card { padding: 1.6rem; }
-.stat-num { font-family: var(--font-serif); font-size: 3.2rem; line-height: 1; margin: 0.2rem 0 0.4rem; color: var(--heading); }
+.stat-num { font-family: var(--font-sans); font-weight: 300; font-size: 3.2rem; line-height: 1; margin: 0.2rem 0 0.4rem; color: var(--heading); }
 .stat-label { font-weight: 500; margin: 0; }
 .stat-sub { color: var(--text-muted); font-size: 0.9rem; margin: 0.2rem 0 0; }
 .recent-list { list-style: none; padding: 0; margin: 0.8rem 0 0; display: grid; gap: 0.5rem; }
@@ -85,7 +85,7 @@ body.dark .reflect { background: var(--bg-card); }
 .strip a.is-today { outline: 2px solid var(--secondary); outline-offset: 2px; }
 .strip-legend { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); }
 .bars { display: grid; gap: 0.55rem; margin-top: 1.4rem; }
-.bar-row { display: grid; grid-template-columns: 5.5rem 1fr 2.5rem; gap: 0.8rem; align-items: center; font-size: 0.88rem; }
+.bar-row { display: grid; grid-template-columns: 5.5rem 1fr 4.2rem; gap: 0.8rem; align-items: center; font-size: 0.88rem; }
 .bar-track { height: 10px; border-radius: 99px; background: rgba(109,116,105,0.14); overflow: hidden; }
 .bar-fill { display: block; height: 100%; border-radius: 99px; }
 .bar-count { color: var(--text-muted); text-align: right; }
@@ -185,3 +185,7 @@ body.dark .peek-tile.is-picked { outline-color: var(--ivory); }
 .demo-cal-day.is-today { box-shadow: inset 0 0 0 2px var(--secondary); }
 .demo-cal-day.is-filled { background: var(--tile); color: #343A35; font-weight: 500; animation: rise 0.4s ease both; }
 #demo-month[hidden] { display: none; }
+
+.note-label { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-right: 0.4rem; }
+.mood-key { display: flex; align-items: center; gap: 0.35rem; justify-content: center; margin-top: 0.8rem; font-size: 0.78rem; color: var(--text-muted); }
+.mood-key .dot { width: 14px; height: 14px; }

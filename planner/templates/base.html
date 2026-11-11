@@ -91,7 +91,7 @@
             <nav class="nav-menu" id="nav-menu" aria-label="Main">
                 {% if user.is_authenticated %}
                     <a href="{% url 'home' %}" class="nav-item" {% if request.path == '/' %}aria-current="page"{% endif %}>Home</a>
-                    <a href="{{ today_url }}" class="nav-item" {% if request.path == today_url or '/day/' in request.path %}aria-current="page"{% endif %}>Today</a>
+                    <a href="{{ today_url }}" class="nav-item" {% if request.path == today_url or '/day/' in request.path %}aria-current="page"{% endif %}>My day</a>
                     <a href="{{ calendar_url }}" class="nav-item" {% if '/calendar/' in request.path %}aria-current="page"{% endif %}>Calendar</a>
                     <a href="{{ week_url }}" class="nav-item" {% if request.path == week_url %}aria-current="page"{% endif %}>Your week</a>
                     <a href="{{ search_url }}" class="nav-item" {% if request.path == search_url %}aria-current="page"{% endif %}>Search</a>
