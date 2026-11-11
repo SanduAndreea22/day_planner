@@ -103,3 +103,10 @@ def test_guest_landing_only_shows_general_quotes(client):
     for _ in range(5):
         html = client.get(reverse("home")).content.decode()
         assert "General kindness." in html and "Mood specific." not in html
+
+
+@pytest.mark.django_db
+def test_landing_labels_example_day_as_sample(client):
+    html = client.get(reverse("home")).content.decode()
+    assert "Example of one day" in html
+    assert "Not a real person" in html
